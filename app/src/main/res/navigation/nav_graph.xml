@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/welcome"
-        android:name="com.example.mvvmapp.Welcome"
+        android:name="com.example.emixerapp.Welcome"
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_welcome" >
         <action
@@ -22,16 +22,16 @@
     </fragment>
     <fragment
         android:id="@+id/userPage"
-        android:name="com.example.mvvmapp.UserPage"
+        android:name="com.example.emixerapp.UserPage"
         android:label="fragment_user_page"
         tools:layout="@layout/fragment_user_page" />
     <fragment
         android:id="@+id/manageUser"
-        android:name="com.example.mvvmapp.ManageUser"
+        android:name="com.example.emixerapp.ManageUser"
         android:label="fragment_manage_user"
         tools:layout="@layout/fragment_manage_user" />
     <fragment
         android:id="@+id/AddUser"
-        android:name="com.example.mvvmapp.AddUser"
+        android:name="com.example.emixerapp.AddUser"
         android:label="AddUser" />
 </navigation>

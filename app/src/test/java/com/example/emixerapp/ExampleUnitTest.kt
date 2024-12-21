@@ -1,4 +1,4 @@
-package com.example.mvvmapp
+package com.example.emixerapp
 
 import org.junit.Test
 
