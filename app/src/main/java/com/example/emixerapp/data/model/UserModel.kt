@@ -4,7 +4,6 @@ package com.example.emixerapp.data.model
 data class UserModel(
     val name: String = "",
     val iconIndex: Int = 0, // Added icon index
-//    val img: String = "",
     val bass: Int = 0,
     val middle: Int = 0,
     val truble: Int = 0
