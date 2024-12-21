@@ -1,4 +1,4 @@
-package com.example.mvvmapp
+package com.example.emixerapp
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

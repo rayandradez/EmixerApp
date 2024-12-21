@@ -1,11 +1,11 @@
-package com.example.mvvmapp
+package com.example.emixerapp
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.mvvmapp.databinding.FragmentAddUserBinding
+import com.example.emixerapp.databinding.FragmentAddUserBinding
 
 
 /**
