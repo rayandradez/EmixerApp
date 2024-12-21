@@ -29,6 +29,7 @@
             android:hint="@string/name">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editNewName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
