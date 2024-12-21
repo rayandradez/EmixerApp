@@ -31,7 +31,7 @@ class Welcome : Fragment() {
 
         myRecyclerUser = binding.recyclerViewUser
         userList = ArrayList<UserModel>()
-        userList.add(UserModel("Raynne", "", 0, 0, 0))
+        userList.add(UserModel("Rayanne", "", 0, 0, 0))
 
         adapterUserList = UsersAdapter(userList)
 
