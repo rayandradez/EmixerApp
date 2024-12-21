@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.emixerapp.databinding.FragmentManageUserBinding
+import com.example.mvvmapp.databinding.FragmentManageUserBinding
 
 /**
  * A simple [Fragment] subclass.
