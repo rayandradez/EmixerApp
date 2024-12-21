@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context="com.example.emixerapp.ui.screens.UserPage"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:id="@+id/rltIconItem"
+    >
+
+    <ImageView
+        android:id="@+id/imgIcon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:gravity="center_horizontal"
+        android:background="@color/design_default_color_primary"
+        />
+
+</RelativeLayout>

@@ -6,6 +6,8 @@
     <string name="select_user">Select User</string>
     <string name="add_new_user">+ Add New User</string>
     <string name="manage_users">⚙️ Manage Users</string>
+    <string name="name">Name</string>
+    <string name="give_a_name_and_icon_to_your_profile">Give a name and icon to your profile</string>
 
 
 </resources>
