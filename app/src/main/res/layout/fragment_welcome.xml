@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".Welcome">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="50dp"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="15dp"
+            android:text="Select User"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/User1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/user_1"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/User2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="@string/user_2"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/NewUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="+ Add New User"
+            android:backgroundTint="@color/black"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/ManageUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="⚙️ Manage Users"
+            android:backgroundTint="@color/black"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/welcome">
+
+    <fragment
+        android:id="@+id/welcome"
+        android:name="com.example.mvvmapp.Welcome"
+        android:label="fragment_welcome"
+        tools:layout="@layout/fragment_welcome" >
+        <action
+            android:id="@+id/action_welcome_to_userPage"
+            app:destination="@id/userPage" />
+        <action
+            android:id="@+id/action_welcome_to_manageUser"
+            app:destination="@id/manageUser" />
+        <action
+            android:id="@+id/action_welcome_to_addUser2"
+            app:destination="@id/AddUser" />
+    </fragment>
+    <fragment
+        android:id="@+id/userPage"
+        android:name="com.example.mvvmapp.UserPage"
+        android:label="fragment_user_page"
+        tools:layout="@layout/fragment_user_page" />
+    <fragment
+        android:id="@+id/manageUser"
+        android:name="com.example.mvvmapp.ManageUser"
+        android:label="fragment_manage_user"
+        tools:layout="@layout/fragment_manage_user" />
+    <fragment
+        android:id="@+id/AddUser"
+        android:name="com.example.mvvmapp.AddUser"
+        android:label="AddUser" />
+</navigation>
