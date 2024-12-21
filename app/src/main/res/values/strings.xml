@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MVVM App</string>
+    <string name="app_name">Emixer App</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="user_1">Ray</string>
     <string name="user_2">Edu</string>

@@ -6,7 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
-import com.example.emixerapp.databinding.FragmentWelcomeBinding
+import com.example.mvvmapp.R
+import com.example.mvvmapp.databinding.FragmentWelcomeBinding
 
 class Welcome : Fragment() {
 
