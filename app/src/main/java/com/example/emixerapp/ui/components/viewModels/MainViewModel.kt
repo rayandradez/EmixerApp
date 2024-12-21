@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 // TODO - Explain the data Class
 data class MainUiState(
-    val user: UserModel = UserModel("Rayanne", "", 0, 0, 0),
+    val user: UserModel = UserModel("Rayanne", 1,  0, 0),
     val usersList: List<UserModel> = arrayListOf()
 )
 
