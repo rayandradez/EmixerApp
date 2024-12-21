@@ -16,9 +16,6 @@
         <action
             android:id="@+id/action_welcome_to_manageUser"
             app:destination="@id/manageUser" />
-        <action
-            android:id="@+id/action_welcome_to_addUser2"
-            app:destination="@id/AddUser" />
     </fragment>
     <fragment
         android:id="@+id/userPage"
@@ -29,7 +26,11 @@
         android:id="@+id/manageUser"
         android:name="com.example.emixerapp.ui.screens.ManageUser"
         android:label="fragment_manage_user"
-        tools:layout="@layout/fragment_manage_user" />
+        tools:layout="@layout/fragment_manage_user" >
+        <action
+            android:id="@+id/action_manageUser_to_AddUser"
+            app:destination="@id/AddUser" />
+    </fragment>
     <fragment
         android:id="@+id/AddUser"
         android:name="com.example.emixerapp.ui.screens.AddUser"

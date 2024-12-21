@@ -31,7 +31,7 @@ class Welcome : Fragment() {
 
         myRecyclerUser = binding.recyclerViewUser
         userList = ArrayList<UserModel>()
-        userList.add(UserModel("Rayanne", 3, 0, 0, 0))
+        userList.add(UserModel("Rayanne", 1, 0, 0, 0))
 
         adapterUserList = UsersAdapter(userList)
 
@@ -42,9 +42,6 @@ class Welcome : Fragment() {
 
         binding.ManageUser.setOnClickListener {
             it.findNavController().navigate(R.id.action_welcome_to_manageUser)
-        }
-        binding.NewUser.setOnClickListener {
-            it.findNavController().navigate(R.id.action_welcome_to_addUser2)
         }
 
         return binding.root

@@ -49,6 +49,7 @@ class AddUser : Fragment() {
 
         adapterIconList.onItemClick  = { position ->
             Log.e("AddUser", "CurrentPosition: " + position)
+            binding.editNewName.setText("My new position: " + position)
         }
 
         return binding.root
