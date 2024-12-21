@@ -12,19 +12,25 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import com.example.emixerapp.ui.components.MainViewModel
+import androidx.recyclerview.widget.RecyclerView
+import com.example.emixerapp.ui.components.adapters.UsersAdapter
+import com.example.emixerapp.ui.components.viewModels.MainViewModel
 import com.example.mvvmapp.R
+import com.example.mvvmapp.databinding.ActivityMainBinding
+import com.example.mvvmapp.databinding.FragmentUserPageBinding
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
@@ -37,14 +43,15 @@ class MainActivity : AppCompatActivity() {
                 viewModel.userState.collect { data ->
                     // TODO - Update UI elements
                     // TODO - binding.txt = data.user.name
-                    Log.e("MAIN_ACTIVITY", "TESTING VIEW MODEL: " + data )
+                    Log.e("MAIN_ACTIVITY", "TESTING VIEW MODEL: " + data)
                 }
             }
         }
     }
-        override fun onSupportNavigateUp(): Boolean {
-            navController = findNavController(R.id.navHostFragmentContainerView)
-            return navController.navigateUp() || super.onSupportNavigateUp()
-        }
+
+    override fun onSupportNavigateUp(): Boolean {
+        navController = findNavController(R.id.navHostFragmentContainerView)
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
+}
 
