@@ -19,24 +19,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingBottom="15dp"
-            android:text="Select User"
+            android:text="@string/select_user"
             android:textSize="30sp" />
 
-        <Button
-            android:id="@+id/User1"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/user_1"
-            android:textSize="20sp" />
-
-        <Button
-            android:id="@+id/User2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="@string/user_2"
             android:textSize="20sp" />
 
         <Button
@@ -45,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:text="+ Add New User"
+            android:text="@string/add_new_user"
             android:backgroundTint="@color/black"
             android:textSize="20sp" />
 
@@ -55,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:text="⚙️ Manage Users"
+            android:text="@string/manage_users"
             android:backgroundTint="@color/black"
             android:textSize="20sp" />
 
