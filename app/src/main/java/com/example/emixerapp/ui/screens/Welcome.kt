@@ -1,4 +1,4 @@
-package com.example.emixerapp
+package com.example.emixerapp.ui.screens
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
