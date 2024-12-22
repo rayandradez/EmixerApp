@@ -6,9 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.emixerapp.data.model.UserModel
 import com.example.emixerapp.ui.components.adapters.IconsAdapter
+import com.example.emixerapp.ui.components.viewModels.MainViewModel
 import com.example.mvvmapp.databinding.FragmentAddUserBinding
 
 
@@ -21,6 +25,8 @@ import com.example.mvvmapp.databinding.FragmentAddUserBinding
 class AddUser : Fragment() {
 
     private lateinit var binding: FragmentAddUserBinding
+    private lateinit var viewModel: MainViewModel
+    private var selectedIconIndex = 0 //keep track of the selected icon
 
     lateinit var myRecyclerIcon: RecyclerView
     var iconList = ArrayList<String>()
@@ -32,6 +38,10 @@ class AddUser : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentAddUserBinding.inflate(inflater, container, false)
+
+        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Get ViewModel
+
+
 
         myRecyclerIcon = binding.recyclerViewIcons
         iconList = ArrayList<String>()
@@ -48,11 +58,31 @@ class AddUser : Fragment() {
         myRecyclerIcon.setHasFixedSize(true)
 
         adapterIconList.onItemClick  = { position ->
-            Log.e("AddUser", "CurrentPosition: " + position)
-            binding.editNewName.setText("My new position: " + position)
+            selectedIconIndex = position
+            // Log.e("AddUser", "CurrentPosition: " + position)
+           // binding.editNewName.setText("My new position: " + position)
+        }
+
+        binding.BtnSaveUser.setOnClickListener {
+            saveUser()
         }
 
         return binding.root
     }
+
+    private fun saveUser() {
+        val userName = binding.editNewName.text.toString()
+        if (userName.isNotEmpty()) {
+            val newUser = UserModel(userName, selectedIconIndex, 0, 0, 0)
+            viewModel.addUser(newUser)
+            findNavController().navigateUp() // Go back to the previous screen
+            binding.editNewName.text?.clear() // Clear the EditText
+            binding.editNewName.text?.clear() // Clear the EditText
+            selectedIconIndex = 0 // Reset the selected icon index
+        } else {
+            Log.e("AddUser", "User name cannot be empty")
+        }
+    }
+
 
 }
