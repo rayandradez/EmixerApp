@@ -5,26 +5,28 @@ import com.example.emixerapp.data.model.UserModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
-// TODO - Explain the data Class
 data class MainUiState(
-    val user: UserModel = UserModel("Rayanne", 1,  0, 0),
+    val user: UserModel = UserModel("Rayanne", 1, 0, 0),
     val usersList: List<UserModel> = arrayListOf()
 )
 
-// TODO - Explain the view model
-class MainViewModel: ViewModel() {
+class MainViewModel : ViewModel() {
 
-    // TODO - Added comment about the StateFlow
     private val _user = MutableStateFlow(MainUiState())
     val userState: StateFlow<MainUiState> = _user.asStateFlow()
 
-    private val _users_list = MutableStateFlow(MainUiState())
-    val userListState: StateFlow<MainUiState> = _users_list.asStateFlow()
+    // TODO - Added comment about the StateFlow
+
+    private val _usersList = MutableStateFlow(MainUiState())
+    val userListState: StateFlow<MainUiState> = _usersList.asStateFlow()
 
     // TODO - Add functions update users data
-    fun updateUsersList(usersList: List<UserModel>) {
-        _users_list.value = _users_list.value.copy(usersList = usersList)
-    }
 
+    fun addUser(newUser: UserModel) {
+        _usersList.update { currentState ->
+            currentState.copy(usersList = currentState.usersList + newUser)
+        }
+    }
 }

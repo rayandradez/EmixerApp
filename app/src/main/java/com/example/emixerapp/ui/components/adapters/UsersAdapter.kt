@@ -8,7 +8,7 @@ import com.example.emixerapp.data.model.UserModel
 import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.AdapterUserBinding
 
-class UsersAdapter(private val dataSet: ArrayList<UserModel>) :
+class UsersAdapter(val dataSet: ArrayList<UserModel>) :
     RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding = AdapterUserBinding.inflate(
