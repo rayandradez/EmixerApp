@@ -23,5 +23,16 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun updateUser(user: UserModel) {
+        _uiState.update { currentState ->
+            val updatedList = currentState.usersList.toMutableList()
+            val index = updatedList.indexOfFirst { it.id == user.id }
+            if (index != -1) {
+                updatedList[index] = user
+            }
+            currentState.copy(usersList = updatedList)
+        }
+    }
+
     //Other functions, if needed, to update the user list or individual users.  These should all update _uiState.
 }

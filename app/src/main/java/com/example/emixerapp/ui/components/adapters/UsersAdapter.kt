@@ -12,6 +12,8 @@ import com.example.mvvmapp.databinding.AdapterUserBinding
 
 class UsersAdapter(var dataSet: ArrayList<UserModel>) :
     RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
+    var onItemClick: ((Int) -> Unit)? = null
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding = AdapterUserBinding.inflate(
             LayoutInflater.from(viewGroup.context),
