@@ -5,13 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.emixerapp.data.model.UserModel
 import com.example.emixerapp.ui.components.adapters.UsersAdapter
+import com.example.emixerapp.ui.components.viewModels.MainViewModel
 import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.FragmentManageUserBinding
+import kotlinx.coroutines.launch
 
 
 class ManageUser : Fragment() {
@@ -19,8 +27,7 @@ class ManageUser : Fragment() {
     private lateinit var binding: FragmentManageUserBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: UsersAdapter
-    private lateinit var userList: ArrayList<UserModel> // Make userList a property
-
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,36 +35,49 @@ class ManageUser : Fragment() {
     ): View? {
         binding = FragmentManageUserBinding.inflate(inflater, container, false)
         recyclerView = binding.recyclerViewUser // Get reference to RecyclerView in your layout
+        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
 
-        // Fetch the user list (replace with your actual data fetching logic)
-        userList = fetchUserList() //  Get users from ViewModel or repository
-
-        adapter = UsersAdapter(userList)
+        adapter = UsersAdapter(ArrayList()) // Initialize the adapter only ONCE
+        adapter.onItemClick = { selectedUser -> // Set the listener immediately after adapter creation
+            val action = ManageUserDirections.actionManageUserToAddUser(selectedUser)
+            findNavController().navigate(action)
+        }
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false) // Vertical list
+        recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         recyclerView.setHasFixedSize(true)
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { uiState ->
+                    val newList = uiState.usersList
+                    if (newList.isNotEmpty()) {
+                        val diffResult = DiffUtil.calculateDiff(UsersDiffCallback(adapter.dataSet, newList))
+                        adapter.dataSet.clear()
+                        adapter.dataSet.addAll(newList)
+                        diffResult.dispatchUpdatesTo(adapter)
+                    } else {
+                        // Handle empty list (e.g., show a message)
+                    }
+                }
+            }
+        }
 
         binding.addNewUserButton.setOnClickListener {
-            it.findNavController().navigate(R.id.action_manageUser_to_AddUser)
+            findNavController().navigate(ManageUserDirections.actionManageUserToAddUser(null)) // Explicitly pass null for new user
         }
+
 
         binding.backButton.setOnClickListener {
-            it.findNavController().navigateUp()
+            findNavController().navigateUp()
         }
-
         return binding.root
     }
+}
 
-    // Function to fetch the user list (replace with your data source)
-    private fun fetchUserList(): ArrayList<UserModel> {
-        //  Implement your data fetching logic here
-        // This could involve getting data from a ViewModel, database, or network call.
-        // For now, we'll use a placeholder list.  Replace this with your actual data loading.
-        val list = ArrayList<UserModel>()
-        list.add(UserModel("Rayanne", 1, 0, 0, 0))
-        list.add(UserModel("Another User", 2, 1, 1, 1))
-        return list
-    }
+class UsersDiffCallback(private val oldList: List<UserModel>, private val newList: List<UserModel>) : DiffUtil.Callback() {
+    override fun getOldListSize(): Int = oldList.size
+    override fun getNewListSize(): Int = newList.size
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = oldList[oldItemPosition].id == newList[newItemPosition].id
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = oldList[oldItemPosition] == newList[newItemPosition]
 }

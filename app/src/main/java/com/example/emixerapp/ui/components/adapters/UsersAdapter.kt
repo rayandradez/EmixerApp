@@ -12,6 +12,8 @@ import com.example.mvvmapp.databinding.AdapterUserBinding
 
 class UsersAdapter(var dataSet: ArrayList<UserModel>) :
     RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
+    var onItemClick: ((UserModel) -> Unit)? = null
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding = AdapterUserBinding.inflate(
             LayoutInflater.from(viewGroup.context),
@@ -28,9 +30,15 @@ class UsersAdapter(var dataSet: ArrayList<UserModel>) :
     }
     override fun getItemCount() = dataSet.size
 
+
+
     // ViewHolder class to hold the view binding
-    class ViewHolder(private val binding: AdapterUserBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun binding(user: UserModel) {
+    inner class ViewHolder(val binding: AdapterUserBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            itemView.setOnClickListener {
+                onItemClick?.invoke(dataSet[adapterPosition]) // Call onItemClick with the UserModel
+            }
+        }        fun binding(user: UserModel) {
             binding.userNameTextView.text = user.name
 
             // Use IconManager to get the drawable

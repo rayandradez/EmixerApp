@@ -1,7 +1,9 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("androidx.navigation.safeargs.kotlin")
 }
+
 
 android {
     namespace = "com.example.mvvmapp"
@@ -55,6 +57,6 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("androidx.recyclerview:recyclerview:1.0.0")
-    implementation ("androidx.constraintlayout:constraintlayout:2.1.4") // Or latest version
+    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
 
 }

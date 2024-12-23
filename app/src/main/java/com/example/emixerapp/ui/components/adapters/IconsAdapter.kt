@@ -1,39 +1,44 @@
 package com.example.emixerapp.ui.components.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.AdapterIconsBinding
 
 class IconsAdapter(private val dataSet: ArrayList<Int>) :
     RecyclerView.Adapter<IconsAdapter.ViewHolder>() {
     var onItemClick: ((Int) -> Unit)? = null
+    private var selectedPosition = -1 // Track the currently selected position
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding = AdapterIconsBinding.inflate(
-            LayoutInflater.from(viewGroup.context),
-            viewGroup,
-            false
-        )
-        return ViewHolder(binding)
-    }
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val currentItem = dataSet[position]
-        viewHolder.binding(currentItem)
-        viewHolder.itemView.setOnClickListener {
-            onItemClick?.invoke(position)
+        inner class ViewHolder(val binding: AdapterIconsBinding) : RecyclerView.ViewHolder(binding.root) {
+            init {
+                itemView.setOnClickListener {
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        selectedPosition = if (selectedPosition == position) -1 else position // Toggle selection
+                        notifyDataSetChanged()
+                        onItemClick?.invoke(position) // Pass the position to the callback
+                    }
+                }
+            }
+
+            fun bind(iconResource: Int, isSelected: Boolean) {
+                binding.iconImageView.setImageResource(iconResource)
+                binding.iconImageView.setBackgroundColor(if (isSelected) ContextCompat.getColor(itemView.context, R.color.green) else Color.TRANSPARENT)
+            }
         }
 
-    }
-    override fun getItemCount() = dataSet.size
-
-    // ViewHolder class to hold the view binding
-    class ViewHolder(private val binding: AdapterIconsBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun binding(icon: Int) {
-            binding.imgIcon.setImageResource(icon) // Set the image resource
-            binding.imgIcon.setBackgroundColor(ContextCompat.getColor(itemView.context, android.R.color.darker_gray))
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val binding = AdapterIconsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ViewHolder(binding)
         }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.bind(dataSet[position], position == selectedPosition) // Call the bind function here
+        }
+
+        override fun getItemCount(): Int = dataSet.size
     }
-}
