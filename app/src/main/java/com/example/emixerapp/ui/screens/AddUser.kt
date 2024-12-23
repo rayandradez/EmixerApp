@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.emixerapp.IconManager
@@ -30,6 +31,8 @@ class AddUser : Fragment() {
     lateinit var myRecyclerIcon: RecyclerView
     // Adapter for the icon RecyclerView
     lateinit var adapterIconList: IconsAdapter
+    private val args: AddUserArgs by navArgs() // Get arguments
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +55,12 @@ class AddUser : Fragment() {
             selectedIconIndex = position
         }
 
+        args.selectedUser?.let { user ->
+            // Pre-fill the form with existing user data
+            binding.editNewName.setText(user.name)
+            selectedIconIndex = user.iconIndex
+        }
+
         // Handle Save button click
         binding.BtnSaveUser.setOnClickListener {
             saveUser()
@@ -63,16 +72,16 @@ class AddUser : Fragment() {
     private fun saveUser() {
         val userName = binding.editNewName.text.toString()
         if (userName.isNotEmpty()) {
-            val newUser = UserModel(userName, selectedIconIndex, 0, 0, 0)
-            viewModel.addUser(newUser)
-            findNavController().navigateUp() // Go back to the previous screen
-            binding.editNewName.text?.clear() // Clear the EditText
-            binding.editNewName.text?.clear() // Clear the EditText
-            selectedIconIndex = 0 // Reset the selected icon index
+            val user = args.selectedUser ?: UserModel(name = userName, iconIndex = selectedIconIndex) // Create a new user if needed
+
+            viewModel.updateUser(user) // Pass the user to update the ViewModel
+
+            findNavController().navigateUp()
+            binding.editNewName.text?.clear()
+            selectedIconIndex = 0
         } else {
             Log.e("AddUser", "User name cannot be empty")
         }
     }
-
 
 }

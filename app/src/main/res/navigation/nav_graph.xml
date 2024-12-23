@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,7 +8,7 @@
         android:id="@+id/welcome"
         android:name="com.example.emixerapp.ui.screens.Welcome"
         android:label="fragment_welcome"
-        tools:layout="@layout/fragment_welcome" >
+        tools:layout="@layout/fragment_welcome">
         <action
             android:id="@+id/action_welcome_to_userPage"
             app:destination="@id/userPage" />
@@ -26,13 +25,28 @@
         android:id="@+id/manageUser"
         android:name="com.example.emixerapp.ui.screens.ManageUser"
         android:label="fragment_manage_user"
-        tools:layout="@layout/fragment_manage_user" >
+        tools:layout="@layout/fragment_manage_user">
         <action
-            android:id="@+id/action_manageUser_to_AddUser"
-            app:destination="@id/AddUser" />
+            android:id="@+id/action_manageUser_to_addUser3"
+            app:destination="@id/addUser3">
+            <argument
+                android:name="selectedUser"
+                app:argType="com.example.emixerapp.data.model.UserModel"
+                app:nullable="true" />
+        </action>
+        <action
+            android:id="@+id/action_manageUser_to_addNewUser"
+            app:destination="@id/addUser3" />
     </fragment>
     <fragment
-        android:id="@+id/AddUser"
+        android:id="@+id/addUser3"
         android:name="com.example.emixerapp.ui.screens.AddUser"
-        android:label="AddUser" />
+        android:label="fragment_add_user"
+        tools:layout="@layout/fragment_add_user">
+        <argument
+            android:name="selectedUser"
+            app:argType="com.example.emixerapp.data.model.UserModel"
+            app:nullable="true" />
+    </fragment>
+
 </navigation>
