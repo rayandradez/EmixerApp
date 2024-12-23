@@ -54,7 +54,7 @@
             android:id="@+id/addNewUserButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/add_new_user"
+            android:text="@string/add_profile_button_text"
             android:backgroundTint="@color/black"
             android:textSize="20sp"
             android:layout_weight="1"

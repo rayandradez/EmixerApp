@@ -3,11 +3,19 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="user_1">Ray</string>
     <string name="user_2">Edu</string>
-    <string name="select_user">Select User</string>
-    <string name="add_new_user">+ Add New User</string>
-    <string name="manage_users">⚙️ Manage Users</string>
     <string name="name">Name</string>
+
+    <!--  Headers  -->
+    <string name="select_profile_header_text">Select or manage your profiles</string>
     <string name="give_a_name_and_icon_to_your_profile">Give a name and icon to your profile</string>
+    <string name="manage_profile_header_text">Select the profile you want to edit</string>
+    <string name="edit_profile_header_text">Give a name and icon to your profile</string>
 
-
+    <!--  Buttons  -->
+    <string name="manage_users_button_text">Manage Profiles</string>
+    <string name="add_profile_button_text">+</string>
+    <string name="reset_button_text">Reset</string>
+    <string name="profile_button_text">Profile</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="cancel_button_text">Cancel</string>
 </resources>
