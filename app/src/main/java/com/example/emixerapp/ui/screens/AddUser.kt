@@ -61,6 +61,7 @@ class AddUser : Fragment() {
         // Set click listener for icon selection
         adapterIconList.onItemClick = { position ->
             selectedIconIndex = position // Update the index in the fragment
+            hasChanges = true // Set hasChanges to true when icon changes
             updateIconDisplay() // Update the display
         }
 
@@ -78,6 +79,15 @@ class AddUser : Fragment() {
         binding.BtnSaveUser.setOnClickListener {
             saveUser()
         }
+
+        binding.BtnCancelUser.setOnClickListener {
+            if (hasChanges) {
+                showDiscardChangesDialog()
+            } else {
+                findNavController().navigateUp()
+            }
+        }
+
 
         binding.editNewName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
