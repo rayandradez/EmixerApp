@@ -8,25 +8,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
 data class MainUiState(
-    val user: UserModel = UserModel("Rayanne", 1, 0, 0),
-    val usersList: List<UserModel> = arrayListOf()
+    val user: UserModel? = null,
+    val usersList: List<UserModel> = emptyList()
 )
 
 class MainViewModel : ViewModel() {
 
-    private val _user = MutableStateFlow(MainUiState())
-    val userState: StateFlow<MainUiState> = _user.asStateFlow()
-
-    // TODO - Added comment about the StateFlow
-
-    private val _usersList = MutableStateFlow(MainUiState())
-    val userListState: StateFlow<MainUiState> = _usersList.asStateFlow()
-
-    // TODO - Add functions update users data
+    private val _uiState = MutableStateFlow(MainUiState())
+    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
     fun addUser(newUser: UserModel) {
-        _usersList.update { currentState ->
+        _uiState.update { currentState ->
             currentState.copy(usersList = currentState.usersList + newUser)
         }
     }
+
+    //Other functions, if needed, to update the user list or individual users.  These should all update _uiState.
 }

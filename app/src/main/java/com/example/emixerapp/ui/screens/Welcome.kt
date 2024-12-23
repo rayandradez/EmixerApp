@@ -51,12 +51,30 @@ class Welcome : Fragment() {
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userListState.collect { uiState ->
-                    Log.d("WelcomeFragment", "Received userListState update: ${uiState.usersList}")
-                    adapterUserList.dataSet.clear()
-                    adapterUserList.dataSet.addAll(uiState.usersList)
-                    adapterUserList.notifyDataSetChanged()
+                viewModel.uiState.collectLatest { uiState ->
+                    val previousListSize = adapterUserList.itemCount
+                    val newList = uiState.usersList ?: emptyList()
+                    adapterUserList.dataSet = newList.toCollection(ArrayList()) // Update the adapter's data directly
+
+                    if (previousListSize == 0 && newList.isNotEmpty()) {
+                        // List was empty, now it's not.  Use notifyDataSetChanged for simplicity.
+                        adapterUserList.notifyDataSetChanged()
+                    } else if (previousListSize < newList.size) {
+                        //Items were added.
+                        val addedItems = newList.size - previousListSize
+                        adapterUserList.notifyItemRangeInserted(previousListSize, addedItems)
+
+                    } else if (previousListSize > newList.size) {
+                        // Items were removed.
+                        val removedItems = previousListSize - newList.size
+                        adapterUserList.notifyItemRangeRemoved(newList.size, removedItems)
+
+                    } else {
+                        // Items were modified (this check is less precise)
+                        adapterUserList.notifyDataSetChanged() // Or use more specific notifyItemChanged if possible
+                    }
                 }
+
             }
         }
 

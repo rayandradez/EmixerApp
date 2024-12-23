@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.emixerapp.IconManager
 import com.example.emixerapp.data.model.UserModel
 import com.example.emixerapp.ui.components.adapters.IconsAdapter
 import com.example.emixerapp.ui.components.viewModels.MainViewModel
@@ -17,19 +18,17 @@ import com.example.mvvmapp.databinding.FragmentAddUserBinding
 
 
 /**
- * A simple [Fragment] subclass.
- * Use the [ManageUser.newInstance] factory method to
- * create an instance of this fragment.
+ * Fragment for adding new users.
  */
-
 class AddUser : Fragment() {
 
     private lateinit var binding: FragmentAddUserBinding
     private lateinit var viewModel: MainViewModel
     private var selectedIconIndex = 0 //keep track of the selected icon
 
+    // RecyclerView for displaying icons
     lateinit var myRecyclerIcon: RecyclerView
-    var iconList = ArrayList<String>()
+    // Adapter for the icon RecyclerView
     lateinit var adapterIconList: IconsAdapter
 
     override fun onCreateView(
@@ -38,31 +37,22 @@ class AddUser : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentAddUserBinding.inflate(inflater, container, false)
-
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Get ViewModel
 
-
-
+        // Initialize RecyclerView and Adapter
         myRecyclerIcon = binding.recyclerViewIcons
-        iconList = ArrayList<String>()
-        iconList.add("HeadSet")
-        iconList.add("Trombone")
-        iconList.add("Safona")
-        iconList.add("AcousticViolon")
-
-        adapterIconList = IconsAdapter(iconList)
-
+        adapterIconList = IconsAdapter(IconManager.iconDrawables.toCollection(ArrayList()))
         myRecyclerIcon.adapter = adapterIconList
         myRecyclerIcon.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         myRecyclerIcon.setHasFixedSize(true)
 
+        // Set click listener for icon selection
         adapterIconList.onItemClick  = { position ->
             selectedIconIndex = position
-            // Log.e("AddUser", "CurrentPosition: " + position)
-           // binding.editNewName.setText("My new position: " + position)
         }
 
+        // Handle Save button click
         binding.BtnSaveUser.setOnClickListener {
             saveUser()
         }
