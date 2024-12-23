@@ -2,10 +2,11 @@ package com.example.emixerapp.ui.components.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mvvmapp.databinding.AdapterIconsBinding
 
-class IconsAdapter(private val dataSet: ArrayList<String>) :
+class IconsAdapter(private val dataSet: ArrayList<Int>) :
     RecyclerView.Adapter<IconsAdapter.ViewHolder>() {
     var onItemClick: ((Int) -> Unit)? = null
 
@@ -30,8 +31,9 @@ class IconsAdapter(private val dataSet: ArrayList<String>) :
     // ViewHolder class to hold the view binding
     class ViewHolder(private val binding: AdapterIconsBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun binding(icon: String) {
-
+        fun binding(icon: Int) {
+            binding.imgIcon.setImageResource(icon) // Set the image resource
+            binding.imgIcon.setBackgroundColor(ContextCompat.getColor(itemView.context, android.R.color.darker_gray))
         }
     }
 }

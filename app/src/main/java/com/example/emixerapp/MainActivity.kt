@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         val viewModel: MainViewModel by viewModels()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userState.collect { data ->
+                viewModel.uiState.collect { data ->
                     // TODO - Update UI elements
                     // TODO - binding.txt = data.user.name
                     Log.e("MAIN_ACTIVITY", "TESTING VIEW MODEL: " + data)
