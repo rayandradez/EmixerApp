@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.emixerapp.data.model.UserModel
 import com.example.emixerapp.ui.components.adapters.UsersAdapter
@@ -27,7 +28,6 @@ class Welcome : Fragment() {
     private lateinit var viewModel: MainViewModel
 
     lateinit var myRecyclerUser: RecyclerView
-    var userList = ArrayList<UserModel>()
     lateinit var adapterUserList: UsersAdapter
 
 
@@ -49,36 +49,33 @@ class Welcome : Fragment() {
         binding.ManageUser.setOnClickListener {
             it.findNavController().navigate(R.id.action_welcome_to_manageUser)
         }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest { uiState ->
-                    val previousListSize = adapterUserList.itemCount
-                    val newList = uiState.usersList ?: emptyList()
-                    adapterUserList.dataSet = newList.toCollection(ArrayList()) // Update the adapter's data directly
-
-                    if (previousListSize == 0 && newList.isNotEmpty()) {
-                        // List was empty, now it's not.  Use notifyDataSetChanged for simplicity.
-                        adapterUserList.notifyDataSetChanged()
-                    } else if (previousListSize < newList.size) {
-                        //Items were added.
-                        val addedItems = newList.size - previousListSize
-                        adapterUserList.notifyItemRangeInserted(previousListSize, addedItems)
-
-                    } else if (previousListSize > newList.size) {
-                        // Items were removed.
-                        val removedItems = previousListSize - newList.size
-                        adapterUserList.notifyItemRangeRemoved(newList.size, removedItems)
-
-                    } else {
-                        // Items were modified (this check is less precise)
-                        adapterUserList.notifyDataSetChanged() // Or use more specific notifyItemChanged if possible
-                    }
+                viewModel.uiState.collect { uiState ->
+                    val newList = uiState.usersList
+                    val diffResult = DiffUtil.calculateDiff(UsersDiffCallback(adapterUserList.dataSet, newList))
+                    adapterUserList.dataSet.clear() // Clear the existing data
+                    adapterUserList.dataSet.addAll(newList) // Add the new data
+                    diffResult.dispatchUpdatesTo(adapterUserList) //Efficiently update the RecyclerView
                 }
-
             }
         }
-
         return binding.root
+
     }
+
+        class UsersDiffCallback(private val oldList: List<UserModel>, private val newList: List<UserModel>) : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = oldList.size
+            override fun getNewListSize(): Int = newList.size
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldList[oldItemPosition].id == newList[newItemPosition].id
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldList[oldItemPosition] == newList[newItemPosition]
+            }
+        }
 
 }

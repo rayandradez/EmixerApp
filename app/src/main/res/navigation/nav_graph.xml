@@ -27,19 +27,16 @@
         android:label="fragment_manage_user"
         tools:layout="@layout/fragment_manage_user">
         <action
-            android:id="@+id/action_manageUser_to_addUser3"
-            app:destination="@id/addUser3">
+            android:id="@+id/action_manageUser_to_addUser"
+            app:destination="@id/addUser">
             <argument
                 android:name="selectedUser"
                 app:argType="com.example.emixerapp.data.model.UserModel"
                 app:nullable="true" />
         </action>
-        <action
-            android:id="@+id/action_manageUser_to_addNewUser"
-            app:destination="@id/addUser3" />
     </fragment>
     <fragment
-        android:id="@+id/addUser3"
+        android:id="@+id/addUser"
         android:name="com.example.emixerapp.ui.screens.AddUser"
         android:label="fragment_add_user"
         tools:layout="@layout/fragment_add_user">

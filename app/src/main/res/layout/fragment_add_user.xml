@@ -36,6 +36,16 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <ImageView
+        android:id="@+id/userIconImageView"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filledTextField" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_icons"
         android:layout_width="0dp"
@@ -43,9 +53,8 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filledTextField"
+        app:layout_constraintTop_toBottomOf="@+id/userIconImageView"
         tools:listitem="@layout/adapter_icons" />
-
 
     <LinearLayout
         android:layout_width="0dp"
