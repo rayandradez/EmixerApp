@@ -19,8 +19,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingBottom="15dp"
-            android:text="@string/select_user"
-            android:textSize="30sp" />
+            android:text="@string/select_profile_header_text"
+            android:textSize="30sp"
+            android:fontFamily="@font/latolight"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_user"
@@ -37,8 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:text="@string/manage_users"
-            android:backgroundTint="@color/black"
+            android:text="@string/manage_users_button_text"
+            android:backgroundTint="@color/grey"
             android:textSize="20sp" />
 
 
