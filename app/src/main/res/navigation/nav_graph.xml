@@ -10,17 +10,18 @@
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_welcome">
         <action
-            android:id="@+id/action_welcome_to_userPage"
-            app:destination="@id/userPage" />
-        <action
             android:id="@+id/action_welcome_to_manageUser"
             app:destination="@id/manageUser" />
+        <action
+            android:id="@+id/action_welcome_to_userPage"
+            app:destination="@id/userPage">
+            <argument
+                android:name="user"
+                app:argType="com.example.emixerapp.data.model.UserModel"
+                app:nullable="true"/>
+        </action>
+
     </fragment>
-    <fragment
-        android:id="@+id/userPage"
-        android:name="com.example.emixerapp.ui.screens.UserPage"
-        android:label="fragment_user_page"
-        tools:layout="@layout/fragment_user_page" />
     <fragment
         android:id="@+id/manageUser"
         android:name="com.example.emixerapp.ui.screens.ManageUser"
@@ -44,6 +45,15 @@
             android:name="selectedUser"
             app:argType="com.example.emixerapp.data.model.UserModel"
             app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/userPage"
+        android:name="your_package_name.ui.screens.UserPage"
+        android:label="UserPage"
+        tools:layout="@layout/fragment_user_page">
+        <action
+            android:id="@+id/action_userPage_to_welcome"
+            app:destination="@id/welcome" />
     </fragment>
 
 </navigation>

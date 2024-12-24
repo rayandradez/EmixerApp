@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.emixerapp.data.model.UserModel
@@ -50,6 +51,15 @@ class Welcome : Fragment() {
             it.findNavController().navigate(R.id.action_welcome_to_manageUser)
         }
 
+        adapterUserList.onItemClick = { user ->
+            findNavController().navigate(WelcomeDirections.actionWelcomeToUserPage(UserModel()))
+        }
+
+        binding.recyclerViewUser.setOnClickListener {
+            val selectedUser = adapterUserList.dataSet[0] // replace with your actual selection logic
+            findNavController().navigate(WelcomeDirections.actionWelcomeToUserPage(selectedUser))
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
@@ -61,6 +71,7 @@ class Welcome : Fragment() {
                 }
             }
         }
+
         return binding.root
 
     }
