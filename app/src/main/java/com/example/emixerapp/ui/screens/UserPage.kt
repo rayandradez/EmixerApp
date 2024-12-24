@@ -1,9 +1,15 @@
 package your_package_name.ui.screens
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.media.session.MediaSession
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -24,6 +30,18 @@ class UserPage : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
+            // Permission granted, proceed with audio adjustments
+        } else {
+            Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+            // Permission denied, handle appropriately (e.g., show a message)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,6 +54,15 @@ class UserPage : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel =
             ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Get ViewModel
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.MODIFY_AUDIO_SETTINGS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(Manifest.permission.MODIFY_AUDIO_SETTINGS)
+        }
+
 
         binding.saveAudioSettingsButton.setOnClickListener {
             saveAudioSettings()
@@ -74,6 +101,8 @@ class UserPage : Fragment() {
                 binding.panSeekBar.progress
             )
         })
+        Toast.makeText(requireContext(), "Audio settings saved (simulated)", Toast.LENGTH_SHORT)
+            .show()
     }
 
     private fun resetToDefaults() {
