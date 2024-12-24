@@ -1,7 +1,6 @@
 package com.example.emixerapp.ui.screens
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +35,6 @@ class Welcome : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = FragmentWelcomeBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
@@ -52,12 +50,8 @@ class Welcome : Fragment() {
         }
 
         adapterUserList.onItemClick = { user ->
+            viewModel.setCurrentUser(user)
             findNavController().navigate(WelcomeDirections.actionWelcomeToUserPage(UserModel()))
-        }
-
-        binding.recyclerViewUser.setOnClickListener {
-            val selectedUser = adapterUserList.dataSet[0] // replace with your actual selection logic
-            findNavController().navigate(WelcomeDirections.actionWelcomeToUserPage(selectedUser))
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
