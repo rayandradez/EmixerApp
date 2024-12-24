@@ -1,85 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/light_grey"
     tools:context="your_package_name.ui.screens.UserPage">
 
-    <TextView
-        android:id="@+id/welcomeMessage"
+    <ImageView
+        android:id="@+id/ImgUserPageLogo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/logo" />
+
+    <RelativeLayout
+        android:id="@+id/welcomeUserContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="16dp"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        tools:text="Welcome, [Username]!" />
+        android:layout_below="@+id/ImgUserPageLogo">
+
+        <TextView
+            android:id="@+id/welcomeMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:fontFamily="@font/latolight"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="5dp"
+            android:paddingBottom="5dp"
+            android:text="Welcome,"
+            android:textColor="@color/black"
+            android:textSize="40sp" />
+
+        <TextView
+            android:id="@+id/txtUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_toEndOf="@+id/welcomeMessage"
+            android:fontFamily="@font/latolight"
+            android:gravity="center"
+            android:paddingLeft="0dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="5dp"
+            android:text="Joao"
+            android:textColor="@color/black"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtUserPageMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/welcomeMessage"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
+            android:fontFamily="@font/latolight"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="Click here to select another profile"
+            android:textColor="@color/grey"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
 
     <LinearLayout
+        android:id="@+id/soundContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:layout_below="@+id/welcomeUserContainer"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:weightSum="4"
+        android:layout_marginTop="20dp">
+
+        <!-- Primeira coluna com SeekBar de Bass -->
+        <LinearLayout
+            android:id="@+id/relativebass"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:id="@+id/basstxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bass"
+                android:layout_gravity="center_horizontal" />
+
+            <SeekBar
+                android:id="@+id/bassSeekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:layout_marginTop="20dp"
+                android:rotation="270" />
+        </LinearLayout>
+
+        <!-- Segunda coluna com SeekBar de Mid -->
+        <LinearLayout
+            android:id="@+id/relativemid"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:id="@+id/midtxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mid"
+                android:layout_gravity="center_horizontal" />
+
+            <SeekBar
+                android:id="@+id/midSeekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:layout_marginTop="20dp"
+                android:rotation="270" />
+        </LinearLayout>
+
+        <!-- Terceira coluna com SeekBar de High -->
+        <LinearLayout
+            android:id="@+id/relativehigh"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:id="@+id/hightxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="High"
+                android:layout_gravity="center_horizontal" />
+
+            <SeekBar
+                android:id="@+id/highSeekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:layout_marginTop="20dp"
+                android:rotation="270" />
+        </LinearLayout>
+
+        <!-- Quarta coluna com SeekBar de Main Volume -->
+        <LinearLayout
+            android:id="@+id/relativeseek"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/seektxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Main"
+                android:layout_gravity="center_horizontal" />
+
+            <SeekBar
+                android:id="@+id/mainVolumeSeekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:layout_marginTop="20dp"
+                android:rotation="270" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/relativePan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/soundContainer">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Bass" />
-        <SeekBar
-            android:id="@+id/bassSeekBar"
+            android:id="@+id/txtpan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:max="100" />
+            android:text="Pan"
+            android:textAlignment="center"
+            android:layout_centerHorizontal="true"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Mid" />
-        <SeekBar
-            android:id="@+id/midSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:max="100" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="High" />
-        <SeekBar
-            android:id="@+id/highSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:max="100" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Main Volume" />
-        <SeekBar
-            android:id="@+id/mainVolumeSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:max="100"
-            android:orientation="vertical"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Pan" />
         <SeekBar
             android:id="@+id/panSeekBar"
             android:layout_width="match_parent"
@@ -87,30 +215,52 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:max="100"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal"
+            android:layout_below="@+id/txtpan"
+            android:layout_marginTop="5dp"
+            />
 
+    </RelativeLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-    <Button
-        android:id="@+id/resetAudioSettingsButton"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Reset" />
+        android:layout_below="@+id/soundContainer"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp">
 
-    <Button
-        android:id="@+id/saveAudioSettingsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save" />
-    </LinearLayout>
+        <Button
+            android:id="@+id/resetAudioSettingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_toEndOf="@+id/saveAudioSettingsButton"
+            android:background="@drawable/transparent_background"
+            android:fontFamily="@font/latolight"
+            android:text="Reset"
+            android:textAlignment="textEnd"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/saveAudioSettingsButton"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/circleborderbutton"
+            android:fontFamily="@font/latolight"
+            android:text="✔"
+            android:textColor="@color/white"
+            android:textSize="40sp" />
+    </RelativeLayout>
+
+</RelativeLayout>
 
 
 
