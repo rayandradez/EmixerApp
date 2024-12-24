@@ -2,8 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permission to record audio.
+         Required for capturing audio input from the microphone on devices below API level 33. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Permission to modify audio settings.
+         Automatically granted at install time, no runtime request needed.
+         Allows the app to modify global audio settings, e.g., equalizer. -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!-- Permission to read media audio.
+         Required for accessing audio files on devices with API level 33 and above. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <application
         android:allowBackup="true"

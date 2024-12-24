@@ -2,6 +2,7 @@ package your_package_name.ui.screens
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,24 +28,14 @@ class UserPage : Fragment() {
     private var _binding: FragmentUserPageBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
-    private val AUDIO_PERMISSION_REQUEST = 100
+    private val AUDIO_PERMISSION_REQUEST = 100 // Constant for permission request code
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
-            // Permission granted, proceed with audio adjustments
-        } else {
-            Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
-            // Permission denied, handle appropriately (e.g., show a message)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // Inflate the layout for this fragment using view binding
         _binding = FragmentUserPageBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -52,22 +43,30 @@ class UserPage : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel =
+                // Obtain the ViewModel to manage UI state
             ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Get ViewModel
 
+        // Check and request necessary audio permissions based on API level
         checkAudioPermissions()
 
+        // Set click listener to save audio settings
         binding.saveAudioSettingsButton.setOnClickListener {
             saveAudioSettings()
             findNavController().navigate(R.id.action_userPage_to_welcome)
         }
 
+        // Set click listener to reset audio settings to default values
         binding.resetAudioSettingsButton.setOnClickListener {
             resetToDefaults()
         }
 
+        // Observe the UI state and update the UI components
         viewLifecycleOwner.lifecycleScope.launch {
+            // Repeat this block of code whenever the lifecycle is in the STARTED state
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Collect data from the ViewModel's UI state flow
                 viewModel.uiState.collect { data ->
+                    // Update UI components with user data
                     binding.txtUserName.text = data.user?.name?.substringBefore(" ")
                     binding.bassSeekBar.progress = data.user?.bass!!
                     binding.midSeekBar.progress = data.user!!.middle
@@ -81,6 +80,7 @@ class UserPage : Fragment() {
     }
 
     private fun saveAudioSettings() {
+        // Update and save the user's audio settings in the ViewModel
         viewModel.updateUser(viewModel.uiState.value.user?.let {
             UserModel(
                 it.id,
@@ -93,11 +93,13 @@ class UserPage : Fragment() {
                 binding.panSeekBar.progress
             )
         })
+        // Notify the user that settings have been saved
         Toast.makeText(requireContext(), "Audio settings saved (simulated)", Toast.LENGTH_SHORT)
             .show()
     }
 
     private fun resetToDefaults() {
+        // Reset all audio settings to default values
         binding.bassSeekBar.progress = 0
         binding.midSeekBar.progress = 0
         binding.highSeekBar.progress = 0
@@ -106,25 +108,42 @@ class UserPage : Fragment() {
     }
 
     private fun checkAudioPermissions() {
-        if (ContextCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.RECORD_AUDIO,
-                    Manifest.permission.MODIFY_AUDIO_SETTINGS
-                ),
-                AUDIO_PERMISSION_REQUEST
-            )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // For API level 33 and above, use READ_MEDIA_AUDIO
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_MEDIA_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(
+                        Manifest.permission.READ_MEDIA_AUDIO
+                    ),
+                    AUDIO_PERMISSION_REQUEST
+                )
+            }
+        } else {
+            // For API levels below 33, consider using older permissions like RECORD_AUDIO if applicable
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.RECORD_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(
+                        Manifest.permission.RECORD_AUDIO
+                    ),
+                    AUDIO_PERMISSION_REQUEST
+                )
+            }
         }
     }
 
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        _binding = null // Clear binding reference to prevent memory leaks
     }
 }
