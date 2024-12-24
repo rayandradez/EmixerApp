@@ -19,6 +19,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permission to record audio.
+         Required for capturing audio input from the microphone on devices below API level 33. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Permission to modify audio settings.
+         Automatically granted at install time, no runtime request needed.
+         Allows the app to modify global audio settings, e.g., equalizer. -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!-- Permission to read media audio.
+         Required for accessing audio files on devices with API level 33 and above. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
     <!-- O elemento <application> contém atributos que definem as configurações da aplicação -->
     <application
         android:allowBackup="true"
@@ -38,9 +51,9 @@
             <!-- name - Nome da classe da atividade principal -->
             <!-- exported - Permite que a atividade seja acessada por outras aplicações -->
             <intent-filter>
-                <!-- O elemento <intent-filter> define quais intenções podem iniciar esta atividade -->
-                <action android:name="android.intent.action.MAIN" /> <!-- Ação que indica que esta é a atividade principal -->
-                <category android:name="android.intent.category.LAUNCHER" /> <!-- Categoria que indica que esta atividade deve aparecer na tela inicial -->
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>

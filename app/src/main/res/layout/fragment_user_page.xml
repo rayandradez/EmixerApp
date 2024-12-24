@@ -101,15 +101,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bass"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/latolight"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
 
             <SeekBar
                 android:id="@+id/bassSeekBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
                 android:max="100"
-                android:layout_marginTop="20dp"
-                android:rotation="270" />
+                android:layout_marginTop="5dp"
+                android:rotation="270"
+                style="@style/CustomSeekBar"
+                />
         </LinearLayout>
 
         <!-- Segunda coluna com SeekBar de Mid -->
@@ -120,22 +126,28 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:layout_marginEnd="16dp">
+            android:layout_marginEnd="16dp"
+            >
 
             <TextView
                 android:id="@+id/midtxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Mid"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/latolight"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
 
             <SeekBar
                 android:id="@+id/midSeekBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
                 android:max="100"
-                android:layout_marginTop="20dp"
-                android:rotation="270" />
+                android:layout_marginTop="5dp"
+                android:rotation="270"
+                style="@style/CustomSeekBar"
+                />
         </LinearLayout>
 
         <!-- Terceira coluna com SeekBar de High -->
@@ -153,15 +165,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="High"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/latolight"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
 
             <SeekBar
                 android:id="@+id/highSeekBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
                 android:max="100"
-                android:layout_marginTop="20dp"
-                android:rotation="270" />
+                android:layout_marginTop="5dp"
+                android:rotation="270"
+                style="@style/CustomSeekBar"
+                />
         </LinearLayout>
 
         <!-- Quarta coluna com SeekBar de Main Volume -->
@@ -171,22 +188,28 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginEnd="16dp">
 
             <TextView
                 android:id="@+id/seektxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Main"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/latolight"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
 
             <SeekBar
                 android:id="@+id/mainVolumeSeekBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
                 android:max="100"
-                android:layout_marginTop="20dp"
-                android:rotation="270" />
+                android:layout_marginTop="5dp"
+                android:rotation="270"
+                style="@style/CustomSeekBar"
+                />
         </LinearLayout>
 
     </LinearLayout>
@@ -206,19 +229,77 @@
             android:layout_marginStart="16dp"
             android:text="Pan"
             android:textAlignment="center"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/latolight"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            />
 
-        <SeekBar
-            android:id="@+id/panSeekBar"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:max="100"
-            android:orientation="horizontal"
             android:layout_below="@+id/txtpan"
-            android:layout_marginTop="5dp"
-            />
+            android:background="@drawable/seekbar_background_component"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            >
+
+            <TextView
+                android:id="@+id/txtleft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="L"
+                android:textAlignment="center"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/latolight"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="0dp"
+                />
+
+            <SeekBar
+                android:id="@+id/panSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:max="100"
+                android:progress="50"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                style="@style/CustomSeekBar"
+                android:layout_toEndOf="@+id/txtleft"
+                android:layout_toStartOf="@+id/txtright"
+                android:layout_centerVertical="true"
+                />
+
+            <TextView
+                android:id="@+id/txtright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R"
+                android:textAlignment="center"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/latolight"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="10dp"
+                />
+
+        </RelativeLayout>
+
+
 
     </RelativeLayout>
 
@@ -227,7 +308,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/soundContainer"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="10dp">
 
         <Button
             android:id="@+id/resetAudioSettingsButton"

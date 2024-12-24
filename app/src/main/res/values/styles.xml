@@ -2,12 +2,17 @@
 <resources>
     <style name="CustomSeekBar" parent="Widget.AppCompat.SeekBar">
         <!-- Aumenta a altura da barra -->
-        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_height">5dp</item>
+        <item name="android:layout_width">5dp</item>
+        <item name="android:background">@drawable/seekbar_background_component</item>
 
         <!-- Personaliza o estilo do "thumb" (círculo do indicador) -->
         <item name="android:thumb">@drawable/seekbar_thumb</item>
 
         <!-- Personaliza a cor da barra -->
         <item name="android:progressDrawable">@drawable/seekbar_progress</item>
+
+
+
     </style>
 </resources>
