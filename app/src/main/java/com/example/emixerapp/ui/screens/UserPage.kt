@@ -7,18 +7,27 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.emixerapp.data.model.UserModel
+import com.example.emixerapp.ui.components.viewModels.MainViewModel
 import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.FragmentUserPageBinding
-import androidx.navigation.fragment.navArgs
+import kotlinx.coroutines.launch
+
 
 class UserPage : Fragment() {
     //Please, fix the navigation @joao
   //  private val args: UserPageArgs by navArgs()
     private var _binding: FragmentUserPageBinding? = null
     private val binding get() = _binding!!
+    private lateinit var viewModel: MainViewModel
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
@@ -31,7 +40,7 @@ class UserPage : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Get ViewModel
         sharedPreferences = requireActivity().getSharedPreferences("audio_settings", Context.MODE_PRIVATE)
 
    //     val user = args.user ?: UserModel() // Get the user object, or a default
@@ -47,6 +56,18 @@ class UserPage : Fragment() {
         binding.resetAudioSettingsButton.setOnClickListener {
             resetToDefaults()
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { data ->
+                    // Atualize os elementos da UI com os dados coletados
+                    // Exemplo:
+                    binding.txtUserName.text = data.user?.name?.substringBefore(" ")
+                    Log.e("FRAGMENT", "TESTING VIEW MODEL: $data")
+                }
+            }
+        }
+
     }
 
     private fun saveAudioSettings() {

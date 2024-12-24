@@ -2,7 +2,15 @@
     <item
         android:id="@android:id/background"
         android:drawable="@drawable/seekbar_background" />
-    <item
-        android:id="@android:id/progress"
-        android:drawable="@drawable/seekbar_progress_color" />
+    <item android:id="@android:id/progress">
+        <clip android:drawable="@drawable/seekbar_progress_color" />
+    </item>
+    <item android:id="@android:id/secondaryProgress">
+        <scale
+            android:scaleWidth="-1"
+            android:clipOrientation="horizontal"
+            android:gravity="right">
+            <clip android:drawable="@drawable/seekbar_progress_color" />
+        </scale>
+    </item>
 </layer-list>
