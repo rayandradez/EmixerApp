@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Este arquivo Android Manifest define as configurações essenciais para o aplicativo eMixer,
+    desenvolvido no CURSO DE DESENVOLVIMENTO DE SISTEMAS EMBARCADOS - ANDROID.
+
+    O eMixer é um aplicativo Android nativo que permite a configuração e gerenciamento de perfis de
+    equalização de áudio automotivo. Com ele, os usuários podem criar, salvar e recuperar
+    configurações personalizadas de equalização, ajustando graves, médios, agudos,
+    balanceamento e volume geral, proporcionando uma experiência auditiva aprimorada no veículo.
+    A interface intuitiva do aplicativo facilita a personalização do som, atendendo à demanda
+    por soluções de áudio mais flexíveis e personalizadas.
+
+    Este trabalho é uma colaboração dos autores:
+    Alisson Freitas, Eduardo Perez Uanús, João Gabriel A. Gomes Alves, e Rayanne da Silva Andrade.
+
+    Data de criação: 25 de Dezembro de 2024.
+-->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- O elemento <application> contém atributos que definem as configurações da aplicação -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,13 +30,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MVVMApp"
         tools:targetApi="31">
+
         <activity
             android:name="com.example.emixerapp.MainActivity"
             android:exported="true">
+            <!-- O elemento <activity> define uma atividade da aplicação -->
+            <!-- name - Nome da classe da atividade principal -->
+            <!-- exported - Permite que a atividade seja acessada por outras aplicações -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!-- O elemento <intent-filter> define quais intenções podem iniciar esta atividade -->
+                <action android:name="android.intent.action.MAIN" /> <!-- Ação que indica que esta é a atividade principal -->
+                <category android:name="android.intent.category.LAUNCHER" /> <!-- Categoria que indica que esta atividade deve aparecer na tela inicial -->
             </intent-filter>
         </activity>
     </application>
