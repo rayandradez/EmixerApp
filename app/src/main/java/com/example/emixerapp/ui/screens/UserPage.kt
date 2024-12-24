@@ -2,13 +2,13 @@ package your_package_name.ui.screens
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.media.session.MediaSession
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -24,11 +24,10 @@ import kotlinx.coroutines.launch
 
 
 class UserPage : Fragment() {
-    //Please, fix the navigation @joao
-    //  private val args: UserPageArgs by navArgs()
     private var _binding: FragmentUserPageBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
+    private val AUDIO_PERMISSION_REQUEST = 100
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -55,14 +54,7 @@ class UserPage : Fragment() {
         viewModel =
             ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Get ViewModel
 
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.MODIFY_AUDIO_SETTINGS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissionLauncher.launch(Manifest.permission.MODIFY_AUDIO_SETTINGS)
-        }
-
+        checkAudioPermissions()
 
         binding.saveAudioSettingsButton.setOnClickListener {
             saveAudioSettings()
@@ -112,6 +104,24 @@ class UserPage : Fragment() {
         binding.mainVolumeSeekBar.progress = 50
         binding.panSeekBar.progress = 50
     }
+
+    private fun checkAudioPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.MODIFY_AUDIO_SETTINGS
+                ),
+                AUDIO_PERMISSION_REQUEST
+            )
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
