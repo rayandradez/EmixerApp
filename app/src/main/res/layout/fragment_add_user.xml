@@ -92,7 +92,7 @@
             android:id="@+id/BtnSaveUser"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:text="@string/add_profile_button_text"
+            android:text="✔"
             android:background="@drawable/circleborderbutton"
             android:textSize="40sp"
             android:textColor="@color/white"
