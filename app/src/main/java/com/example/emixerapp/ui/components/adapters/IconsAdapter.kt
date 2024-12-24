@@ -27,7 +27,9 @@ class IconsAdapter(private val dataSet: ArrayList<Int>) :
 
             fun bind(iconResource: Int, isSelected: Boolean) {
                 binding.iconImageView.setImageResource(iconResource)
-                binding.iconImageView.setBackgroundColor(if (isSelected) ContextCompat.getColor(itemView.context, R.color.green) else Color.TRANSPARENT)
+                binding.iconImageView.setBackgroundResource(
+                    if (isSelected) R.drawable.circle_selected_icon else R.drawable.transparent_background
+                )
             }
         }
 
