@@ -26,16 +26,18 @@ import kotlinx.coroutines.launch
 
 class UserPage : Fragment() {
     private var _binding: FragmentUserPageBinding? = null
+    // Define uma propriedade somente leitura para acessar a binding, evitando o uso direto de _binding.
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
-    private val AUDIO_PERMISSION_REQUEST = 100 // Constant for permission request code
+    // Constante para o código de solicitação de permissão de áudio.
+    private val AUDIO_PERMISSION_REQUEST = 100
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment using view binding
+        // Infla o layout usando view binding.
         _binding = FragmentUserPageBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -43,30 +45,32 @@ class UserPage : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel =
-                // Obtain the ViewModel to manage UI state
-            ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Get ViewModel
+                // Obtém o ViewModel para gerenciar o estado da UI.
+            ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Obtém o ViewModel
 
-        // Check and request necessary audio permissions based on API level
+        // Verifica e solicita as permissões de áudio necessárias com base no nível da API.
         checkAudioPermissions()
 
-        // Set click listener to save audio settings
+        // Define o listener de clique para o botão "Salvar Configurações de Áudio".
         binding.saveAudioSettingsButton.setOnClickListener {
+            // Salva as configurações de áudio e navega para a tela inicial.
             saveAudioSettings()
             findNavController().navigate(R.id.action_userPage_to_welcome)
         }
 
-        // Set click listener to reset audio settings to default values
+        // Define o listener de clique para o botão "Redefinir Configurações de Áudio".
         binding.resetAudioSettingsButton.setOnClickListener {
+            // Redefine as configurações de áudio para os valores padrão.
             resetToDefaults()
         }
 
-        // Observe the UI state and update the UI components
+        // Observa o estado da UI e atualiza os componentes da UI.
         viewLifecycleOwner.lifecycleScope.launch {
-            // Repeat this block of code whenever the lifecycle is in the STARTED state
+            // Repete este bloco de código sempre que o ciclo de vida estiver no estado STARTED.
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Collect data from the ViewModel's UI state flow
+                // Coleta dados do fluxo de estado da UI do ViewModel.
                 viewModel.uiState.collect { data ->
-                    // Update UI components with user data
+                    // Atualiza os componentes da UI com os dados do usuário.
                     binding.txtUserName.text = data.user?.name?.substringBefore(" ")
                     binding.bassSeekBar.progress = data.user?.bass!!
                     binding.midSeekBar.progress = data.user!!.middle
@@ -80,7 +84,7 @@ class UserPage : Fragment() {
     }
 
     private fun saveAudioSettings() {
-        // Update and save the user's audio settings in the ViewModel
+        // Atualiza e salva as configurações de áudio do usuário no ViewModel.
         viewModel.updateUser(viewModel.uiState.value.user?.let {
             UserModel(
                 it.id,
@@ -93,13 +97,13 @@ class UserPage : Fragment() {
                 binding.panSeekBar.progress
             )
         })
-        // Notify the user that settings have been saved
+        // Informa ao usuário que as configurações foram salvas.
         Toast.makeText(requireContext(), "Audio settings saved (simulated)", Toast.LENGTH_SHORT)
             .show()
     }
 
     private fun resetToDefaults() {
-        // Reset all audio settings to default values
+        // Redefine todas as configurações de áudio para os valores padrão.
         binding.bassSeekBar.progress = 0
         binding.midSeekBar.progress = 0
         binding.highSeekBar.progress = 0
@@ -109,12 +113,13 @@ class UserPage : Fragment() {
 
     private fun checkAudioPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // For API level 33 and above, use READ_MEDIA_AUDIO
+            // Para API nível 33 e superior, use READ_MEDIA_AUDIO
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.READ_MEDIA_AUDIO
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
+                // Solicita a permissão READ_MEDIA_AUDIO
                 ActivityCompat.requestPermissions(
                     requireActivity(),
                     arrayOf(
@@ -124,12 +129,13 @@ class UserPage : Fragment() {
                 )
             }
         } else {
-            // For API levels below 33, consider using older permissions like RECORD_AUDIO if applicable
+            // Para níveis de API abaixo de 33, considere usar permissões mais antigas, como RECORD_AUDIO, se aplicável.
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.RECORD_AUDIO
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
+                // Solicita a permissão RECORD_AUDIO
                 ActivityCompat.requestPermissions(
                     requireActivity(),
                     arrayOf(
@@ -144,6 +150,6 @@ class UserPage : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // Clear binding reference to prevent memory leaks
+        _binding = null // Limpa a referência de vinculação para evitar vazamentos de memória
     }
 }
