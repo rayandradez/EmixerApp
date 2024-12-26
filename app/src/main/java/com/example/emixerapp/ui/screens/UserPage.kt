@@ -1,6 +1,7 @@
 package your_package_name.ui.screens
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -31,6 +33,8 @@ class UserPage : Fragment() {
     private lateinit var viewModel: MainViewModel
     // Constante para o código de solicitação de permissão de áudio.
     private val AUDIO_PERMISSION_REQUEST = 100
+    private var hasChanges = false  // Indica se há mudanças não salvas.
+
 
 
     override fun onCreateView(
@@ -44,9 +48,25 @@ class UserPage : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Adiciona um callback para o botão de voltar do sistema.
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Mostra um diálogo para confirmar o descarte das alterações, se houver.
+                if (hasChanges) {
+                    showDiscardChangesDialog()
+                } else {
+                    findNavController().navigateUp()  // Navega para a tela anterior.
+                }
+            }
+        })
+
         viewModel =
                 // Obtém o ViewModel para gerenciar o estado da UI.
             ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Obtém o ViewModel
+
+
+
 
         // Verifica e solicita as permissões de áudio necessárias com base no nível da API.
         checkAudioPermissions()
@@ -61,6 +81,7 @@ class UserPage : Fragment() {
         // Define o listener de clique para o botão "Redefinir Configurações de Áudio".
         binding.resetAudioSettingsButton.setOnClickListener {
             // Redefine as configurações de áudio para os valores padrão.
+            hasChanges = true // Define hasChanges como true quando o ícone muda.
             resetToDefaults()
         }
 
@@ -77,6 +98,7 @@ class UserPage : Fragment() {
                     binding.highSeekBar.progress = data.user!!.high
                     binding.mainVolumeSeekBar.progress = data.user!!.mainVolume
                     binding.panSeekBar.progress = data.user!!.pan
+                    hasChanges = true // Define hasChanges como true quando o ícone muda.
                 }
             }
         }
@@ -152,4 +174,20 @@ class UserPage : Fragment() {
         super.onDestroyView()
         _binding = null // Limpa a referência de vinculação para evitar vazamentos de memória
     }
+
+    // Mostra um diálogo para confirmar o descarte das alterações.
+    private fun showDiscardChangesDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Discard Changes?")
+        builder.setMessage("You have unsaved changes. Do you want to discard them?")
+        builder.setPositiveButton("Discard") { _, _ ->
+            findNavController().navigateUp()
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+
+    }
+
 }
