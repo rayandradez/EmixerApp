@@ -11,7 +11,7 @@ data class MainUiState(
     var user: UserModel? = null,
     val usersList: List<UserModel> = emptyList()
 )
-
+// testing
 class MainViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState())
