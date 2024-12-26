@@ -41,7 +41,6 @@ class AddUser : Fragment() {
     // Obtém os argumentos passados para o fragmento.
     private val args: AddUserArgs by navArgs() // Get arguments
 
-    //teste
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
