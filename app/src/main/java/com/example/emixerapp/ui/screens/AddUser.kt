@@ -157,6 +157,14 @@ class AddUser : Fragment() {
     }
 
     private fun deleteUser() {
+        val userName = binding.editNewName.text.toString()
+        if (userName.isNotEmpty()) {
+            val user = args.selectedUser ?: UserModel(name = userName, iconIndex = selectedIconIndex)
+            viewModel.deleteUser(user)
+            findNavController().navigateUp()
+            binding.editNewName.text?.clear()
+            selectedIconIndex = 0
+        }
     }
 
     // Mostra um diálogo para confirmar o descarte das alterações.
@@ -179,8 +187,7 @@ class AddUser : Fragment() {
         builder.setTitle("Delete Profile?")
         builder.setMessage("Do you want to delete this profile? This can't be undone")
         builder.setPositiveButton("Delete") { _, _ ->
-
-            findNavController().navigateUp()
+            deleteUser()
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
             dialog.dismiss()

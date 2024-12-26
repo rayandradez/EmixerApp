@@ -70,6 +70,20 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun deleteUser(user: UserModel?) {
+        _uiState.update { currentState ->
+            val updatedList = currentState.usersList.toMutableList()
+            val index = updatedList.indexOfFirst { it.id == user?.id }
+            if (index != -1) {
+                // Atualiza o usuário existente se o ID for encontrado.
+                if (user != null) {
+                    updatedList.remove(user)
+                } // Remove se user for null
+            }
 
+            // Copia o estado atual, atualizando a lista de usuários.
+            currentState.copy(usersList = updatedList)
+        }
+    }
 
 }
