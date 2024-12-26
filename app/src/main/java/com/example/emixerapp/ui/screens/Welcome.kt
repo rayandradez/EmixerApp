@@ -27,6 +27,7 @@ class Welcome : Fragment() {
     private lateinit var binding: FragmentWelcomeBinding
     private lateinit var viewModel: MainViewModel
 
+    // Referências para a RecyclerView e o adaptador.  Declaradas aqui para melhor organização.
     lateinit var myRecyclerUser: RecyclerView
     lateinit var adapterUserList: UsersAdapter
 
@@ -35,41 +36,51 @@ class Welcome : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Infla a view do layout.
         binding = FragmentWelcomeBinding.inflate(inflater, container, false)
+        // Obtém uma instância do ViewModel usando o ViewModelProvider.
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
+        // Configura a RecyclerView.
         myRecyclerUser = binding.recyclerViewUser
         adapterUserList = UsersAdapter(arrayListOf())
         myRecyclerUser.adapter = adapterUserList
         myRecyclerUser.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        myRecyclerUser.setHasFixedSize(true)
+        myRecyclerUser.setHasFixedSize(true) // Otimização de performance.
 
+        // Define o listener para o botão "Gerenciar Usuário".
         binding.ManageUser.setOnClickListener {
+            // Navega para a tela de gerenciamento de usuários.
             it.findNavController().navigate(R.id.action_welcome_to_manageUser)
         }
 
+        // Define o listener de clique para os itens da RecyclerView.
         adapterUserList.onItemClick = { user ->
+            // Define o usuário atual no ViewModel e navega para a tela de detalhes do usuário.
             viewModel.setCurrentUser(user)
             findNavController().navigate(WelcomeDirections.actionWelcomeToUserPage(UserModel()))
         }
 
+        // Coleta as mudanças no estado da UI do ViewModel e atualiza a RecyclerView usando DiffUtil para melhor performance.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
                     val newList = uiState.usersList
                     val diffResult = DiffUtil.calculateDiff(UsersDiffCallback(adapterUserList.dataSet, newList))
-                    adapterUserList.dataSet.clear() // Clear the existing data
-                    adapterUserList.dataSet.addAll(newList) // Add the new data
-                    diffResult.dispatchUpdatesTo(adapterUserList) //Efficiently update the RecyclerView
+                    adapterUserList.dataSet.clear() // Limpa os dados existentes
+                    adapterUserList.dataSet.addAll(newList) // Adiciona os novos dados
+                    diffResult.dispatchUpdatesTo(adapterUserList) // Atualiza a RecyclerView eficientemente
                 }
             }
         }
 
+        // Retorna a view raiz.
         return binding.root
 
     }
 
+        // Callback para calcular as diferenças entre listas de usuários para atualização eficiente da RecyclerView.
         class UsersDiffCallback(private val oldList: List<UserModel>, private val newList: List<UserModel>) : DiffUtil.Callback() {
             override fun getOldListSize(): Int = oldList.size
             override fun getNewListSize(): Int = newList.size

@@ -24,21 +24,21 @@ import androidx.activity.OnBackPressedCallback
 
 
 /**
- * Fragment for adding new users.
+ * Fragmento para adicionar novos usuários ou editar usuários existentes.
  */
 class AddUser : Fragment() {
 
     private lateinit var binding: FragmentAddUserBinding
     private lateinit var viewModel: MainViewModel
-    private var selectedIconIndex = 0 //keep track of the selected icon
+    private var selectedIconIndex = 0 // Índice do ícone selecionado.
+    private var hasChanges = false  // Indica se há mudanças não salvas.
 
-    private var hasChanges = false
 
-
-    // RecyclerView for displaying icons
+    // RecyclerView para exibir os ícones.
     lateinit var myRecyclerIcon: RecyclerView
-    // Adapter for the icon RecyclerView
+    // Adaptador para a RecyclerView de ícones.
     lateinit var adapterIconList: IconsAdapter
+    // Obtém os argumentos passados para o fragmento.
     private val args: AddUserArgs by navArgs() // Get arguments
 
 
@@ -46,80 +46,85 @@ class AddUser : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        // Infla o layout do fragmento.
         binding = FragmentAddUserBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Get ViewModel
+        // Obtém uma instância do ViewModel.
+        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
-        // Initialize RecyclerView and Adapter
+        // Inicializa a RecyclerView e o adaptador.
         myRecyclerIcon = binding.recyclerViewIcons
         adapterIconList = IconsAdapter(IconManager.iconDrawables.toCollection(ArrayList()))
         myRecyclerIcon.adapter = adapterIconList
         myRecyclerIcon.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-        myRecyclerIcon.setHasFixedSize(true)
+        myRecyclerIcon.setHasFixedSize(true)  // Otimização de performance.
 
-        // Set click listener for icon selection
+        // Define o listener de clique para seleção de ícone.
         adapterIconList.onItemClick = { position ->
-            selectedIconIndex = position // Update the index in the fragment
-            hasChanges = true // Set hasChanges to true when icon changes
-            updateIconDisplay() // Update the display
+            selectedIconIndex = position // Atualiza o índice do ícone selecionado.
+            hasChanges = true // Define hasChanges como true quando o ícone muda.
+            updateIconDisplay() // Atualiza a exibição do ícone.
         }
 
+        // Preenche o formulário com os dados do usuário, se houver.
         args.selectedUser?.let { user ->
-            // Pre-fill the form with existing user data
             binding.editNewName.setText(user.name)
             selectedIconIndex = user.iconIndex
             updateIconDisplay()
         } ?: run {
-            //Handle the case where no user was selected.  The form should be empty.
-            //This is already handled in your saveUser() method, but this section is important for the UI
+            // Lidar com o caso em que nenhum usuário foi selecionado. O formulário deve estar vazio.
+            // Isso já é tratado no método saveUser(), mas esta seção é importante para a UI.
         }
 
-        // Handle Save button click
+        // Define o listener de clique para o botão "Salvar".
         binding.BtnSaveUser.setOnClickListener {
-            saveUser()
+            saveUser()  // Salva as informações do usuário.
         }
 
+        // Define o listener de clique para o botão "Cancelar".
         binding.BtnCancelUser.setOnClickListener {
+            // Mostra um diálogo para confirmar o descarte das alterações, se houver.
             if (hasChanges) {
                 showDiscardChangesDialog()
             } else {
-                findNavController().navigateUp()
+                findNavController().navigateUp()  // Navega para a tela anterior.
             }
         }
 
-
+        // Adiciona um listener para detectar mudanças no campo de nome.
         binding.editNewName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                hasChanges = true
+                hasChanges = true  // Define hasChanges como true quando o texto muda.
             }
         })
-
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Adiciona um callback para o botão de voltar do sistema.
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                // Mostra um diálogo para confirmar o descarte das alterações, se houver.
                 if (hasChanges) {
                     showDiscardChangesDialog()
                 } else {
-                    findNavController().navigateUp()
+                    findNavController().navigateUp()  // Navega para a tela anterior.
                 }
             }
         })
     }
 
-
+    // Atualiza a exibição do ícone selecionado.
     private fun updateIconDisplay() {
         val drawableResource = IconManager.getDrawableResource(selectedIconIndex)
         binding.userIconImageView.setImageResource(drawableResource)
     }
 
+    // Salva as informações do usuário.
     private fun saveUser() {
         val userName = binding.editNewName.text.toString()
         if (userName.isNotEmpty()) {
@@ -135,6 +140,7 @@ class AddUser : Fragment() {
         }
     }
 
+    // Mostra um diálogo para confirmar o descarte das alterações.
     private fun showDiscardChangesDialog() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Discard Changes?")

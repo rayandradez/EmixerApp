@@ -19,17 +19,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permission to record audio.
-         Required for capturing audio input from the microphone on devices below API level 33. -->
+    <!-- Permissão para gravar áudio.
+         Necessária para capturar entrada de áudio do microfone em dispositivos com nível de API menor que 33. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-    <!-- Permission to modify audio settings.
-         Automatically granted at install time, no runtime request needed.
-         Allows the app to modify global audio settings, e.g., equalizer. -->
+    <!-- Permissão para modificar as configurações de áudio.
+         Concedida automaticamente no momento da instalação, não requer solicitação em tempo de execução (runtime).
+         Permite que o aplicativo modifique as configurações de áudio globais, por exemplo, o equalizador. -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-
-    <!-- Permission to read media audio.
-         Required for accessing audio files on devices with API level 33 and above. -->
+    <!-- Permissão para ler áudio de mídia.
+         Necessária para acessar arquivos de áudio em dispositivos com nível de API 33 e superior. -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <!-- O elemento <application> contém atributos que definem as configurações da aplicação -->
@@ -47,13 +46,18 @@
         <activity
             android:name="com.example.emixerapp.MainActivity"
             android:exported="true">
-            <!-- O elemento <activity> define uma atividade da aplicação -->
-            <!-- name - Nome da classe da atividade principal -->
-            <!-- exported - Permite que a atividade seja acessada por outras aplicações -->
+            <!-- Define a atividade principal do aplicativo. -->
+            <!-- android:name: Especifica o nome completo da classe da atividade.  -->
+            <!--             'com.example.emixerapp.MainActivity' é o caminho completo da classe. -->
+            <!-- android:exported: Indica se a atividade pode ser iniciada por componentes de outros aplicativos. -->
+            <!--             'true' permite que outras aplicações iniciem esta atividade.  -->
+            <!--             Considere 'false' por segurança se a atividade não precisar ser acessível externamente. -->
             <intent-filter>
+                <!-- Este filtro de intenção declara como esta atividade pode ser iniciada. -->
                 <action android:name="android.intent.action.MAIN" />
-
+                <!-- android.intent.action.MAIN: Indica que esta atividade é o ponto de entrada principal do aplicativo. -->
                 <category android:name="android.intent.category.LAUNCHER" />
+                <!-- android.intent.category.LAUNCHER:  Indica que esta atividade deve aparecer no lançador de aplicativos. -->
             </intent-filter>
         </activity>
     </application>

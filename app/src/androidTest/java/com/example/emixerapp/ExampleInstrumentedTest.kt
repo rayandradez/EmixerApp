@@ -9,16 +9,21 @@ import org.junit.runner.RunWith
 import org.junit.Assert.*
 
 /**
- * Instrumented test, which will execute on an Android device.
+ * Teste instrumentado, que será executado em um dispositivo Android.
  *
- * See [testing documentation](http://d.android.com/tools/testing).
+ * Este teste verifica o nome do pacote do aplicativo para garantir que o contexto
+ * do aplicativo esteja configurado corretamente. É um teste básico para verificar
+ * a configuração do ambiente de teste.
+ *
+ * Veja a [documentação de testes](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
     @Test
     fun useAppContext() {
-        // Context of the app under test.
+        // Obtém o contexto do aplicativo que está sendo testado.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        // Verifica se o nome do pacote do aplicativo corresponde ao esperado.
         assertEquals("com.example.mvvmapp", appContext.packageName)
     }
 }
