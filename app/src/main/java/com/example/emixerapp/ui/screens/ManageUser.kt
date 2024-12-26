@@ -33,48 +33,58 @@ class ManageUser : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Infla o layout do fragmento.
         binding = FragmentManageUserBinding.inflate(inflater, container, false)
-        recyclerView = binding.recyclerViewUser // Get reference to RecyclerView in your layout
+        // Obtém referências para a RecyclerView e o ViewModel.
+        recyclerView = binding.recyclerViewUser
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
-
-        adapter = UsersAdapter(ArrayList()) // Initialize the adapter only ONCE
-        adapter.onItemClick = { selectedUser -> // Set the listener immediately after adapter creation
+        // Inicializa o adaptador apenas uma vez.
+        adapter = UsersAdapter(ArrayList())
+        // Define o listener de clique para os itens da lista de usuários.
+        adapter.onItemClick = { selectedUser ->
+            // Navega para a tela de adicionar/editar usuário, passando o usuário selecionado como argumento.
             val action = ManageUserDirections.actionManageUserToAddUser(selectedUser)
             findNavController().navigate(action)
         }
+        // Configura a RecyclerView.
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        recyclerView.setHasFixedSize(true)
+        recyclerView.setHasFixedSize(true)  // Otimiza o desempenho.
 
+        // Observa as mudanças no estado da UI do ViewModel e atualiza a RecyclerView usando DiffUtil.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
                     val newList = uiState.usersList
                     if (newList.isNotEmpty()) {
+                        // Calcula as diferenças entre a lista antiga e a nova usando DiffUtil para atualizações eficientes.
                         val diffResult = DiffUtil.calculateDiff(UsersDiffCallback(adapter.dataSet, newList))
                         adapter.dataSet.clear()
                         adapter.dataSet.addAll(newList)
                         diffResult.dispatchUpdatesTo(adapter)
                     } else {
-                        // Handle empty list (e.g., show a message)
+                        // Lidar com a lista vazia (exibir uma mensagem, etc.)  - Implementação a ser adicionada conforme necessário.
                     }
                 }
             }
         }
 
+        // Define o listener de clique para o botão "Adicionar Novo Usuário".
         binding.addNewUserButton.setOnClickListener {
+            // Navega para a tela de adicionar usuário, passando null como argumento para indicar um novo usuário.
             findNavController().navigate(ManageUserDirections.actionManageUserToAddUser(null)) // Explicitly pass null for new user
         }
 
-
+        // Define o listener de clique para o botão "Voltar".
         binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().navigateUp()  // Navega para a tela anterior.
         }
         return binding.root
     }
 }
 
+// Callback para calcular as diferenças entre listas de usuários para atualização eficiente da RecyclerView.
 class UsersDiffCallback(private val oldList: List<UserModel>, private val newList: List<UserModel>) : DiffUtil.Callback() {
     override fun getOldListSize(): Int = oldList.size
     override fun getNewListSize(): Int = newList.size

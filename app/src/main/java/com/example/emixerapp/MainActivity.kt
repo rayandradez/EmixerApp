@@ -27,30 +27,54 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Habilita a exibição de borda a borda, removendo as áreas de inserção da UI do sistema.
         enableEdgeToEdge()
+
+        // Infla o layout para a activity.
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Define um listener para lidar com as áreas de inserção da janela (barras do sistema, como status e navegação).
+        // Isso garante que o conteúdo seja desenhado corretamente, evitando sobreposição com elementos da UI do sistema.
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // TODO - Explain the implementation and the viewModels
+        // Obtém uma instância do MainViewModel usando o delegado viewModels().  Este é um padrão
+        // do AndroidX que simplifica a criação e gerenciamento de ViewModels.  O uso de
+        // viewModels() garante que:
+        //   - Um único MainViewModel é criado e associado a esta Activity.
+        //   - O ViewModel sobrevive a mudanças de configuração (como rotações de tela).
+        //   - O ViewModel é automaticamente destruído quando a Activity é destruída, prevenindo vazamentos de memória.
+        //   - O ViewModel é criado usando a injeção de dependências (se configurado), garantindo a testabilidade.
         val viewModel: MainViewModel by viewModels()
+
+        // Inicia uma corrotina dentro do escopo do ciclo de vida da activity.
         lifecycleScope.launch {
+            // repeatOnLifecycle garante que a corrotina esteja ativa apenas enquanto o ciclo de vida estiver no estado STARTED ou superior.
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Coleta o fluxo de uiState do viewModel. Isso será executado sempre que o uiState mudar.
                 viewModel.uiState.collect { data ->
-                    // TODO - Update UI elements
-                    // TODO - binding.txt = data.user.name
+                    // Atualize os elementos da UI com base nos dados recebidos.  Por exemplo:
+                    // binding.textViewUserName.text = data.user.name
+                    // binding.imageViewUserAvatar.setImageURI(data.user.avatarUrl)
+                    // ... atualize outros elementos da UI conforme necessário ...
+
+                    // Registra os dados recebidos para fins de depuração.
                     Log.e("MAIN_ACTIVITY", "TESTING VIEW MODEL: " + data)
                 }
             }
         }
     }
 
+    // Lidar com a ação de navegação para cima, tipicamente usada para navegação para trás em uma configuração de componente de navegação.
     override fun onSupportNavigateUp(): Boolean {
+        // Obtém o NavController associado ao fragmento de host de navegação.
         navController = findNavController(R.id.navHostFragmentContainerView)
+        // Tenta navegar para cima. Se bem-sucedido, retorna true; caso contrário, delega para a superclasse.
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }
