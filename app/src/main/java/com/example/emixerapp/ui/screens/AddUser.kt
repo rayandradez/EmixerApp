@@ -42,7 +42,8 @@ class AddUser : Fragment() {
     private val args: AddUserArgs by navArgs() // Get arguments
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Infla o layout do fragmento.
@@ -65,22 +66,28 @@ class AddUser : Fragment() {
             updateIconDisplay() // Atualiza a exibição do ícone.
         }
 
+
         // Preenche o formulário com os dados do usuário, se houver.
         args.selectedUser?.let { user ->
             binding.editNewName.setText(user.name)
             selectedIconIndex = user.iconIndex
+            updateDeleteButtonVisibility(true)
             updateIconDisplay()
         } ?: run {
             // Lidar com o caso em que nenhum usuário foi selecionado. O formulário deve estar vazio.
-            // Isso já é tratado no método saveUser(), mas esta seção é importante para a UI.
+//             Isso já é tratado no métod saveUser(), mas esta seção é importante para a UI.
+            updateDeleteButtonVisibility(false)
         }
 
-        // Define o listener de clique para o botão "Salvar".
+
+
+
+        // Define o listener de clique para o botão de salvar.
         binding.BtnSaveUser.setOnClickListener {
             saveUser()  // Salva as informações do usuário.
         }
 
-        // Define o listener de clique para o botão "Cancelar".
+        // Define o listener de clique para o botão "Cancel".
         binding.BtnCancelUser.setOnClickListener {
             // Mostra um diálogo para confirmar o descarte das alterações, se houver.
             if (hasChanges) {
@@ -88,6 +95,12 @@ class AddUser : Fragment() {
             } else {
                 findNavController().navigateUp()  // Navega para a tela anterior.
             }
+        }
+
+
+        // Define o listener de clique para o botão "Delete".
+        binding.BtndeleteUser.setOnClickListener() {
+            showDeleteProfileDialog()
         }
 
         // Adiciona um listener para detectar mudanças no campo de nome.
@@ -117,6 +130,10 @@ class AddUser : Fragment() {
         })
     }
 
+    private fun updateDeleteButtonVisibility(shouldDisplayDeleteButton: Boolean) {
+        binding.BtndeleteUser.visibility = if (shouldDisplayDeleteButton) View.VISIBLE else View.GONE
+    }
+
     // Atualiza a exibição do ícone selecionado.
     private fun updateIconDisplay() {
         val drawableResource = IconManager.getDrawableResource(selectedIconIndex)
@@ -139,6 +156,9 @@ class AddUser : Fragment() {
         }
     }
 
+    private fun deleteUser() {
+    }
+
     // Mostra um diálogo para confirmar o descarte das alterações.
     private fun showDiscardChangesDialog() {
         val builder = AlertDialog.Builder(requireContext())
@@ -151,8 +171,22 @@ class AddUser : Fragment() {
             dialog.dismiss()
         }
         builder.show()
+    }
 
-}
+    // Mostra um diálogo para confirmar a deleção.
+    private fun showDeleteProfileDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Delete Profile?")
+        builder.setMessage("Do you want to delete this profile? This can't be undone")
+        builder.setPositiveButton("Delete") { _, _ ->
+
+            findNavController().navigateUp()
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
 }
 
 

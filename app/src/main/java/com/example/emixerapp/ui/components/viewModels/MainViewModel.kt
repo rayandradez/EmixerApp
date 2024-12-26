@@ -69,4 +69,7 @@ class MainViewModel : ViewModel() {
             currentState.copy(usersList = updatedList)
         }
     }
+
+
+
 }
