@@ -140,6 +140,7 @@ class MainViewModel(private val usersRepository: UsersRepository) : ViewModel() 
     }
 
     fun deleteUser(user: UserModel?) {
+        // Atualiza o estado da UI para remover um usuário
         _uiState.update { currentState ->
             val updatedList = currentState.usersList.toMutableList()
             val index = updatedList.indexOfFirst { it.id == user?.id }

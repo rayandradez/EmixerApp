@@ -35,10 +35,10 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
-    private lateinit var navController: NavController
-    private lateinit var viewModel: MainViewModel
-    private lateinit var receiver: AirplaneModeBroadcastReceiver
+    private lateinit var binding: ActivityMainBinding   // Binding para acessar os componentes da UI
+    private lateinit var navController: NavController   // Controlador de navegação para gerenciar as transições entre fragments
+    private lateinit var viewModel: MainViewModel   // ViewModel para gerenciar dados e lógica de negócios
+    private lateinit var receiver: AirplaneModeBroadcastReceiver    // Receptor para escutar mudanças no modo avião
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,24 +59,27 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        // Inicializa o receptor para mudanças no modo avião e registra para receber esses eventos.
         receiver = AirplaneModeBroadcastReceiver()
         IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
             registerReceiver(receiver, it)
         }
 
-
+        // Registra um launcher para solicitar permissão de leitura de contatos.
         val requestPermissionLauncher =
             this.registerForActivityResult(
                 ActivityResultContracts.RequestPermission()
             ) { isGranted: Boolean ->
+                // Ação a ser tomada com base na concessão da permissão
                 if (isGranted) {
+                    // Define as colunas a serem consultadas no banco de dados de contatos
                     val projection = arrayOf(
                         ContactsContract.Contacts._ID,
                         ContactsContract.Contacts.DISPLAY_NAME,
 
                     )
 
-
+                    // Consulta os contatos do usuário
                     contentResolver.query(
                         ContactsContract.Contacts.CONTENT_URI,
                         projection,
@@ -84,21 +87,24 @@ class MainActivity : AppCompatActivity() {
                         null,
                         null
                     )?.use { cursor ->
+                        // Obtém os índices das colunas relevantes
                         val idContactColumn = cursor.getColumnIndex(
                             ContactsContract.Contacts._ID
                         )
                         val nameContactColumn = cursor.getColumnIndex(
                             ContactsContract.Contacts.DISPLAY_NAME
                         )
-                        val profile = mutableListOf<Profile>()
+                        val profile = mutableListOf<Profile>()  // Lista para armazenar perfis de contatos
                         while (cursor.moveToNext()) {
+                            // Extrai os dados do contato
                             val id = cursor.getLong(idContactColumn)
                             val name = cursor.getString(nameContactColumn)
                             val uri =
                                 ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id)
 
-                            profile.add(Profile(id, name, uri))
+                            profile.add(Profile(id, name, uri)) // Adiciona o perfil à lista
 
+                            // Cria um UserModel e atualiza no ViewModel
                             val user = UserModel(name = name, iconIndex = 0)
                             viewModel.updateUser(user)
 
@@ -106,6 +112,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
                 } else {
+                    // Exibe um Toast informando que a importação do perfil falhou
                     Toast.makeText(
                         this@MainActivity,
                         "Unable to import your profile",
@@ -114,20 +121,21 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-
+        // Verifica o estado da permissão de leitura de contatos
         when {
             ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED -> {}
+            ) == PackageManager.PERMISSION_GRANTED -> {}    // Permissão já concedida; nenhuma ação necessária
 
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this, Manifest.permission.READ_CONTACTS
             ) -> {
-
+                // Aqui você pode mostrar uma explicação ao usuário sobre por que a permissão é necessária
             }
 
             else -> {
+                // Solicita a permissão ao usuário
                 requestPermissionLauncher.launch(
                     Manifest.permission.READ_CONTACTS
                 )
@@ -183,13 +191,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        // Desregistra o receptor para evitar vazamentos de memória
         unregisterReceiver(receiver)
     }
 }
 
-
+// Classe de dados para representar um perfil de contato
 data class Profile(
-    val id: Long,
-    val name: String,
-    val uri: Uri
+    val id: Long,   // ID do contato
+    val name: String,   // Nome do contato
+    val uri: Uri    // URI do contato
 )
