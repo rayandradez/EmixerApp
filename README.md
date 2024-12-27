@@ -59,7 +59,6 @@ O desenvolvimento futuro se concentrará em:
 ```markdown
 ![Tela Principal](images/screensapp.png)
 ![Tela Principal](images/userPag.png)
-```markdown
-
+```
 
 
