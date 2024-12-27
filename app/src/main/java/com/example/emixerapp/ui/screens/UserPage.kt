@@ -30,6 +30,7 @@ import com.example.mvvmapp.databinding.FragmentUserPageBinding
 import kotlinx.coroutines.launch
 
 
+
 class UserPage : Fragment() {
     private var _binding: FragmentUserPageBinding? = null
     // Define uma propriedade somente leitura para acessar a binding, evitando o uso direto de _binding.
@@ -45,6 +46,8 @@ class UserPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+
         // Infla o layout usando view binding.
         _binding = FragmentUserPageBinding.inflate(inflater, container, false)
         return binding.root
@@ -93,7 +96,7 @@ class UserPage : Fragment() {
         }
 
 
-        binding.bassSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+        binding.bassSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true
             }
@@ -101,7 +104,7 @@ class UserPage : Fragment() {
             override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
 
-        binding.midSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+        binding.midSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true
             }
@@ -109,7 +112,7 @@ class UserPage : Fragment() {
             override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
 
-        binding.highSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+        binding.highSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true
             }
@@ -117,7 +120,7 @@ class UserPage : Fragment() {
             override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
 
-        binding.mainVolumeSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+        binding.mainVolumeSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true
             }
@@ -125,7 +128,7 @@ class UserPage : Fragment() {
             override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
 
-        binding.panSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+        binding.panSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true
             }

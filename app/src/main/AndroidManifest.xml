@@ -30,6 +30,10 @@
     <!-- Permissão para ler áudio de mídia.
          Necessária para acessar arquivos de áudio em dispositivos com nível de API 33 e superior. -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <!-- Permissão para ler contatos.
+         Necessária para acessar contatos e importa-los como perfil. -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
 
     <!-- O elemento <application> contém atributos que definem as configurações da aplicação -->
     <application

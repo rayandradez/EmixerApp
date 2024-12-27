@@ -61,7 +61,7 @@ class UsersAdapter(var dataSet: ArrayList<UserModel>) :
             val drawableResource = IconManager.getDrawableResource(user.iconIndex)
             binding.userIconImageView.setImageResource(drawableResource)
 
-            // Define o tamanho do ícone.  Considere tornar isso uma constante.
+            // Define o tamanho do ícone.
             val iconSize = 60
             val layoutParams = binding.userIconImageView.layoutParams
             layoutParams.width = iconSize
