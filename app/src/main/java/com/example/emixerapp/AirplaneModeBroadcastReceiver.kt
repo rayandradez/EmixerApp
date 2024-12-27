@@ -10,9 +10,9 @@ class AirplaneModeBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val isAirplaneModeOn =  intent?.getBooleanExtra("state", false) ?: return
         if (isAirplaneModeOn){
-            Toast.makeText(context, "Airplane Mode On, won't sync across devices", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Airplane mode On, won't sync across devices", Toast.LENGTH_LONG).show()
         } else {
-            Toast.makeText(context, "Airplane Mode off, syncing across devices", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Airplane mode off, syncing across devices", Toast.LENGTH_LONG).show()
         }
     }
 }
