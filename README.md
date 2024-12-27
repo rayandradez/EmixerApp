@@ -62,10 +62,10 @@ screensapp.png.png
 ## Imagens do Aplicativo
 
 ```markdown
-![Logo do Aplicativo](screensapp.png.png)
+![Logo do Aplicativo](images/screensapp.png.png)
 ```
 
 
 ```markdown
-![Logo do Aplicativo](screensapp.png.png)
+![Logo do Aplicativo](images/screensapp.png.png)
 
