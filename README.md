@@ -42,13 +42,29 @@ Este aplicativo utiliza as seguintes tecnologias:
 * **Importação de perfis:** Content Provider
 * **Injeção de Dependências:** Gerenciamento manual de dependências.
 
-## Permissão de Acesso a Áudio
+# Permissões de Acesso a Áudio
 
-Para garantir a funcionalidade completa do equalizador, o aplicativo requer acesso aos arquivos de áudio do dispositivo.  Isso permite que o aplicativo ajuste os parâmetros de equalização de forma eficaz.
+Para garantir a funcionalidade completa do equalizador, o aplicativo requer algumas permissões específicas relacionadas ao áudio. Abaixo estão as permissões necessárias e suas funcionalidades:
 
-A primeira vez que o usuário tenta acessar as configurações de áudio (na página "Página do Usuário" - UserPage), é solicitada uma permissão de acesso.  Esta permissão é essencial para o correto funcionamento do equalizador e não coleta informações pessoais.
+## Permissão para Acesso a Arquivos de Áudio
 
-**Observação:**  A permissão solicitada é `android.permission.READ_MEDIA_AUDIO`, que garante o acesso somente à leitura dos arquivos de mídia de áudio, sem acesso a outros dados do dispositivo.  Sem esta permissão, o aplicativo não poderá ajustar as configurações de equalização.
+Para ajustar os parâmetros de equalização de forma eficaz, o aplicativo precisa acessar os arquivos de áudio do dispositivo. A primeira vez que o usuário tenta acessar as configurações de áudio na "Página do Usuário" (UserPage), é solicitada uma permissão de acesso.
+
+- **Permissão Solicitada:** `android.permission.READ_MEDIA_AUDIO`
+- **Função:** Esta permissão garante acesso somente à leitura dos arquivos de mídia de áudio, sem acesso a outros dados do dispositivo.
+- **Importância:** Sem esta permissão, o aplicativo não poderá ajustar as configurações de equalização.
+- **Privacidade:** Não coleta informações pessoais.
+
+## Permissão para Modificar Configurações de Áudio
+
+O aplicativo também possui a permissão necessária para modificar as configurações de áudio globais.
+
+- **Permissão Incluída:** `android.permission.MODIFY_AUDIO_SETTINGS`
+- **Função:** Permite que o aplicativo modifique as configurações de áudio globais, como o equalizador.
+- **Concessão:** Esta permissão é concedida automaticamente no momento da instalação, não requer solicitação em tempo de execução (runtime).
+
+Estas permissões são essenciais para oferecer uma experiência de áudio otimizada e personalizável para o usuário.
+
 
 ## Permissão de Acesso a lista de Contatos
 
