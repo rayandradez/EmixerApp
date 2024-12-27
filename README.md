@@ -31,7 +31,15 @@ Este aplicativo utiliza as seguintes tecnologias:
 * **Banco de Dados:** Room Persistence Library
 * **Tratamento do Modo Avião:** Broadcast Receivers
 * **Testes:** []
-* **Injeção de Dependências:** []
+* **Injeção de Dependências:** Gerenciamento manual de dependências.
+
+## Permissão de Acesso a Áudio
+
+Para garantir a funcionalidade completa do equalizador, o aplicativo requer acesso aos arquivos de áudio do dispositivo.  Isso permite que o aplicativo ajuste os parâmetros de equalização de forma eficaz.
+
+A primeira vez que o usuário tenta acessar as configurações de áudio (na página "Página do Usuário" - UserPage), é solicitada uma permissão de acesso.  Esta permissão é essencial para o correto funcionamento do equalizador e não coleta informações pessoais.
+
+**Observação:**  A permissão solicitada é `android.permission.READ_MEDIA_AUDIO`, que garante o acesso somente à leitura dos arquivos de mídia de áudio, sem acesso a outros dados do dispositivo.  Sem esta permissão, o aplicativo não poderá ajustar as configurações de equalização.
 
 
 ## Equipe
@@ -50,15 +58,5 @@ O desenvolvimento futuro se concentrará em:
 * **Recursos Avançados de Equalização:** Explorar algoritmos e opções de equalização mais sofisticados.
 * **Recursos Adicionais:** Implementar recursos como predefinições, visualizações, etc.
 
-## Iniciando
-
-[]
-
-## Imagens do Aplicativo
-
-```markdown
-![Tela Principal](images/screensapp.png)
-![Tela Principal](images/userPag.png)
-```
 
 
