@@ -52,5 +52,12 @@ O desenvolvimento futuro se concentrará em:
 
 ## Iniciando
 
-[Instruções sobre como construir e executar o aplicativo (se aplicável)]
+[]
+
+## Imagens do Aplicativo
+
+```markdown
+![Logo do Aplicativo](drawable/logo.png)
+
+
 
