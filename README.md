@@ -2,6 +2,13 @@
 
 **Um aplicativo Android personalizável para equalização de áudio precisa.**
 
+## Equipe
+
+* Alisson Freitas
+* Eduardo Perez Uanús
+* João Gabriel A. Gomes Alves
+* Rayanne da Silva Andrade
+
 ## Visão Geral
 
 Este projeto é um aplicativo Android nativo desenvolvido como parte de um curso de pós-graduação em Sistemas Embarcados (foco em Desenvolvimento Android). Embora uma versão futura vise a integração direta com sistemas de áudio automotivos, a versão atual fornece uma experiência independente em um smartphone Android, permitindo que os usuários criem e gerenciem perfis de equalização de áudio personalizados. Isso permite o teste e desenvolvimento da funcionalidade principal antes da integração com o sistema do veículo.
@@ -40,14 +47,6 @@ Para garantir a funcionalidade completa do equalizador, o aplicativo requer aces
 A primeira vez que o usuário tenta acessar as configurações de áudio (na página "Página do Usuário" - UserPage), é solicitada uma permissão de acesso.  Esta permissão é essencial para o correto funcionamento do equalizador e não coleta informações pessoais.
 
 **Observação:**  A permissão solicitada é `android.permission.READ_MEDIA_AUDIO`, que garante o acesso somente à leitura dos arquivos de mídia de áudio, sem acesso a outros dados do dispositivo.  Sem esta permissão, o aplicativo não poderá ajustar as configurações de equalização.
-
-
-## Equipe
-
-* Alisson Freitas
-* Eduardo Perez Uanús
-* João Gabriel A. Gomes Alves
-* Rayanne da Silva Andrade
 
 
 ## Melhorias Futuras
