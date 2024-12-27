@@ -5,16 +5,19 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import com.example.emixerapp.data.local.database.AppDatabase
+import com.example.emixerapp.data.repository.UsersRepository
 import com.example.emixerapp.ui.components.viewModels.MainViewModel
+import com.example.emixerapp.ui.components.viewModels.MainViewModelFactory
 import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
@@ -23,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private lateinit var viewModel: MainViewModel
     private lateinit var receiver: AirplaneModeBroadcastReceiver
 
 
@@ -58,7 +62,13 @@ class MainActivity : AppCompatActivity() {
         //   - O ViewModel sobrevive a mudanças de configuração (como rotações de tela).
         //   - O ViewModel é automaticamente destruído quando a Activity é destruída, prevenindo vazamentos de memória.
         //   - O ViewModel é criado usando a injeção de dependências (se configurado), garantindo a testabilidade.
-        val viewModel: MainViewModel by viewModels()
+        // Inicializar o banco de dados e o repositório
+        val database = AppDatabase.getDatabase(applicationContext)
+        val usersRepository = UsersRepository(database.usersDao())
+
+        // Inicializar o ViewModel com o Factory
+        val factory = MainViewModelFactory(usersRepository)
+        viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
 
         // Inicia uma corrotina dentro do escopo do ciclo de vida da activity.
         lifecycleScope.launch {

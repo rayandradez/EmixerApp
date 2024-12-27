@@ -19,7 +19,6 @@ import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.FragmentWelcomeBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.emixerapp.ui.components.viewModels.MainViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class Welcome : Fragment() {
