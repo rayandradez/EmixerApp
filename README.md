@@ -42,37 +42,38 @@ Este aplicativo utiliza as seguintes tecnologias:
 * **Importação de perfis:** Content Provider
 * **Injeção de Dependências:** Gerenciamento manual de dependências.
 
-# Permissões de Acesso a Áudio
+# Permissões do Aplicativo
 
-Para garantir a funcionalidade completa do equalizador, o aplicativo requer algumas permissões específicas relacionadas ao áudio. Abaixo estão as permissões necessárias e suas funcionalidades:
+Para garantir o funcionamento completo e eficaz do aplicativo, são necessárias algumas permissões específicas. Abaixo estão listadas as permissões essenciais e suas funcionalidades:
 
 ## Permissão para Acesso a Arquivos de Áudio
 
-Para ajustar os parâmetros de equalização de forma eficaz, o aplicativo precisa acessar os arquivos de áudio do dispositivo. A primeira vez que o usuário tenta acessar as configurações de áudio na "Página do Usuário" (UserPage), é solicitada uma permissão de acesso.
+Para ajustar os parâmetros de equalização de forma eficaz, o aplicativo precisa acessar os arquivos de áudio do dispositivo.
 
 - **Permissão Solicitada:** `android.permission.READ_MEDIA_AUDIO`
-- **Função:** Esta permissão garante acesso somente à leitura dos arquivos de mídia de áudio, sem acesso a outros dados do dispositivo.
+- **Função:** Garante acesso somente à leitura dos arquivos de mídia de áudio, sem acessar outros dados do dispositivo.
 - **Importância:** Sem esta permissão, o aplicativo não poderá ajustar as configurações de equalização.
 - **Privacidade:** Não coleta informações pessoais.
 
 ## Permissão para Modificar Configurações de Áudio
 
-O aplicativo também possui a permissão necessária para modificar as configurações de áudio globais.
+O aplicativo tem a capacidade de modificar as configurações de áudio globais.
 
 - **Permissão Incluída:** `android.permission.MODIFY_AUDIO_SETTINGS`
 - **Função:** Permite que o aplicativo modifique as configurações de áudio globais, como o equalizador.
 - **Concessão:** Esta permissão é concedida automaticamente no momento da instalação, não requer solicitação em tempo de execução (runtime).
 
-Estas permissões são essenciais para oferecer uma experiência de áudio otimizada e personalizável para o usuário.
+## Permissão de Acesso à Lista de Contatos
 
+Para permitir a importação de perfis, o aplicativo requer acesso à lista de contatos do dispositivo.
 
-## Permissão de Acesso a lista de Contatos
+- **Permissão Solicitada:** `android.permission.READ_CONTACTS`
+- **Função:** Garante acesso somente à leitura da lista de contatos, sem acessar outros dados do dispositivo.
+- **Importância:** Sem esta permissão, o aplicativo não poderá importar as configurações para a criação do perfil.
+- **Privacidade:** Não coleta informações pessoais.
 
-Para garantir a funcionalidade completa da importação de perfis, o aplicativo requer acesso aos contatos cadastrados no dispositivo. Isso permite que o aplicativo crie perfis de forma automatizada.
+Essas permissões são fundamentais para oferecer uma experiência de uso otimizada e personalizável aos usuários.
 
-A primeira vez que o usuário tenta acessar o aplicativo, é solicitada uma permissão de acesso.  Esta permissão é essencial para o correto funcionamento da importação dos contatos.
-
-**Observação:**  A permissão solicitada é `android.permission.READ_CONTACTS`, que garante o acesso somente à leitura da lista de contatos, sem acesso a outros dados do dispositivo.  Sem esta permissão, o aplicativo não poderá importar as configurações para criação do perfil.
 
 ## Testes
 
