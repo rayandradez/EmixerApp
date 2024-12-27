@@ -9,7 +9,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.emixerapp.data.model.UserModel
 import com.example.emixerapp.ui.components.adapters.UsersAdapter
 import com.example.emixerapp.ui.components.viewModels.MainViewModel
-import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.FragmentManageUserBinding
 import kotlinx.coroutines.launch
 
@@ -32,7 +30,8 @@ class ManageUser : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+
         // Infla o layout do fragmento.
         binding = FragmentManageUserBinding.inflate(inflater, container, false)
         // Obtém referências para a RecyclerView e o ViewModel.
@@ -52,6 +51,7 @@ class ManageUser : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         recyclerView.setHasFixedSize(true)  // Otimiza o desempenho.
 
+
         // Observa as mudanças no estado da UI do ViewModel e atualiza a RecyclerView usando DiffUtil.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -69,6 +69,8 @@ class ManageUser : Fragment() {
                 }
             }
         }
+
+
 
         // Define o listener de clique para o botão "Adicionar Novo Usuário".
         binding.addNewUserButton.setOnClickListener {

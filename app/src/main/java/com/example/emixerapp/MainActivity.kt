@@ -1,11 +1,20 @@
 package com.example.emixerapp
 
+import android.Manifest
+import android.content.ContentUris
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
@@ -14,7 +23,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.emixerapp.data.local.database.AppDatabase
+import com.example.emixerapp.data.model.UserModel
 import com.example.emixerapp.data.repository.UsersRepository
 import com.example.emixerapp.ui.components.viewModels.MainViewModel
 import com.example.emixerapp.ui.components.viewModels.MainViewModelFactory
@@ -49,9 +60,78 @@ class MainActivity : AppCompatActivity() {
         }
 
         receiver = AirplaneModeBroadcastReceiver()
-
         IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
             registerReceiver(receiver, it)
+        }
+
+
+        val requestPermissionLauncher =
+            this.registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                if (isGranted) {
+                    val projection = arrayOf(
+                        ContactsContract.Contacts._ID,
+                        ContactsContract.Contacts.DISPLAY_NAME,
+
+                    )
+
+
+                    contentResolver.query(
+                        ContactsContract.Contacts.CONTENT_URI,
+                        projection,
+                        null,
+                        null,
+                        null
+                    )?.use { cursor ->
+                        val idContactColumn = cursor.getColumnIndex(
+                            ContactsContract.Contacts._ID
+                        )
+                        val nameContactColumn = cursor.getColumnIndex(
+                            ContactsContract.Contacts.DISPLAY_NAME
+                        )
+                        val profile = mutableListOf<Profile>()
+                        while (cursor.moveToNext()) {
+                            val id = cursor.getLong(idContactColumn)
+                            val name = cursor.getString(nameContactColumn)
+                            val uri =
+                                ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id)
+
+                            profile.add(Profile(id, name, uri))
+
+                            val user = UserModel(name = name, iconIndex = 0)
+                            viewModel.updateUser(user)
+
+                        }
+
+                    }
+                } else {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Unable to import your profile",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_CONTACTS
+            ) == PackageManager.PERMISSION_GRANTED -> {}
+
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this, Manifest.permission.READ_CONTACTS
+            ) -> {
+
+            }
+
+            else -> {
+                requestPermissionLauncher.launch(
+                    Manifest.permission.READ_CONTACTS
+                )
+            }
         }
 
 
@@ -66,9 +146,12 @@ class MainActivity : AppCompatActivity() {
         val database = AppDatabase.getDatabase(applicationContext)
         val usersRepository = UsersRepository(database.usersDao())
 
+
         // Inicializar o ViewModel com o Factory
         val factory = MainViewModelFactory(usersRepository)
         viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
+
+
 
         // Inicia uma corrotina dentro do escopo do ciclo de vida da activity.
         lifecycleScope.launch {
@@ -88,6 +171,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     // Lidar com a ação de navegação para cima, tipicamente usada para navegação para trás em uma configuração de componente de navegação.
     override fun onSupportNavigateUp(): Boolean {
         // Obtém o NavController associado ao fragmento de host de navegação.
@@ -102,3 +187,9 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+
+data class Profile(
+    val id: Long,
+    val name: String,
+    val uri: Uri
+)
