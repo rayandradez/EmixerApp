@@ -31,10 +31,10 @@ class AddUserInstrumentedTest {
         ActivityScenario.launch(MainActivity::class.java)
 
         // Aguarda a tela Welcome estar pronta
-        onView(withId(R.id.ManageUser)).check(matches(isDisplayed()))
+        onView(withId(R.id.BtnManageUser)).check(matches(isDisplayed()))
 
         // Navega do fragmento Welcome para ManageUser
-        onView(withId(R.id.ManageUser)).perform(click())
+        onView(withId(R.id.BtnManageUser)).perform(click())
 
         // Aguarda a tela ManageUser estar pronta
         onView(withId(R.id.addNewUserButton)).check(matches(isDisplayed()))
@@ -71,10 +71,10 @@ class AddUserInstrumentedTest {
         ActivityScenario.launch(MainActivity::class.java)
 
         // Navega para o fragmento Welcome e espera que o botão ManageUser esteja visível
-        onView(withId(R.id.ManageUser)).check(matches(isDisplayed()))
+        onView(withId(R.id.BtnManageUser)).check(matches(isDisplayed()))
 
         // Clica no botão para ir para ManageUser
-        onView(withId(R.id.ManageUser)).perform(click())
+        onView(withId(R.id.BtnManageUser)).perform(click())
 
         // Verifica se a RecyclerView está visível
         onView(withId(R.id.recycler_view_user)).check(matches(isDisplayed()))
@@ -110,10 +110,10 @@ class AddUserInstrumentedTest {
         ActivityScenario.launch(MainActivity::class.java)
 
         // Navega para o fragmento Welcome e verifica se o botão ManageUser está visível
-        onView(withId(R.id.ManageUser)).check(matches(isDisplayed()))
+        onView(withId(R.id.BtnManageUser)).check(matches(isDisplayed()))
 
         // Clica no botão para ir para ManageUser
-        onView(withId(R.id.ManageUser)).perform(click())
+        onView(withId(R.id.BtnManageUser)).perform(click())
 
         // Verifica se a RecyclerView está visível em ManageUser
         onView(withId(R.id.recycler_view_user)).check(matches(isDisplayed()))
