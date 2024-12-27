@@ -49,7 +49,7 @@ class Welcome : Fragment() {
         myRecyclerUser.setHasFixedSize(true) // Otimização de performance.
 
         // Define o listener para o botão "Gerenciar Usuário".
-        binding.ManageUser.setOnClickListener {
+        binding.BtnManageUser.setOnClickListener {
             // Navega para a tela de gerenciamento de usuários.
             it.findNavController().navigate(R.id.action_welcome_to_manageUser)
         }

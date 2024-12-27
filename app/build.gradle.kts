@@ -105,5 +105,8 @@ dependencies {
         // Kotlin Coroutines Test library for testing coroutines
         testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
 
+        androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.4.0")
+
+
 
 }
