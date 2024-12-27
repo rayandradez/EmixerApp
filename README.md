@@ -57,8 +57,8 @@ O desenvolvimento futuro se concentrará em:
 ## Imagens do Aplicativo
 
 ```markdown
-![Tela Principal](images/screens-app.png)
-![Tela Principal](images/screens-app)
+![Tela Principal](images/screensapp.png)
+![Tela Principal](images/userPag.png)
 ```markdown
 
 
