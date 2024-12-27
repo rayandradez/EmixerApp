@@ -90,4 +90,20 @@ dependencies {
     // optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$room_version")
 
+    // MockK for mocking
+    testImplementation("io.mockk:mockk:1.12.0")
+
+        // Unit testing framework
+        testImplementation("junit:junit:4.13.2")
+
+        // Mockito for mocking
+        testImplementation("org.mockito:mockito-core:3.11.2")
+
+        // Mockito Kotlin extension to make mocking easier in Kotlin
+        testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
+        // Kotlin Coroutines Test library for testing coroutines
+        testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+
+
 }
