@@ -50,7 +50,7 @@ class UserPage : Fragment() {
 
         // Infla o layout usando view binding.
         _binding = FragmentUserPageBinding.inflate(inflater, container, false)
-        return binding.root
+        return binding.root // Retorna a raiz do layout inflado.
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,12 +82,13 @@ class UserPage : Fragment() {
         // Define o listener de clique para o botão "Salvar Configurações de Áudio".
         binding.saveAudioSettingsButton.setOnClickListener {
             // Salva as configurações de áudio e navega para a tela inicial.
-            hasChanges = false
+            hasChanges = false  // Reseta a flag de mudanças.
             saveAudioSettings()
-            findNavController().navigate(R.id.action_userPage_to_welcome)
+            findNavController().navigate(R.id.action_userPage_to_welcome)   // Navega para a tela de boas-vindas.
         }
 
         binding.txtUserPageMessage.setOnClickListener {
+            // Verifica se há mudanças antes de navegar para a tela anterior.
             if (hasChanges) {
                 showDiscardChangesDialog()
             } else {
@@ -95,10 +96,10 @@ class UserPage : Fragment() {
             }
         }
 
-
+        // Define listeners para as seek bars de ajuste de áudio.
         binding.bassSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                hasChanges = true
+                hasChanges = true   // Marca que houve mudanças.
             }
             override fun onStartTrackingTouch(p0: SeekBar?) {}
             override fun onStopTrackingTouch(p0: SeekBar?) {}
@@ -106,7 +107,7 @@ class UserPage : Fragment() {
 
         binding.midSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                hasChanges = true
+                hasChanges = true   // Marca que houve mudanças.
             }
             override fun onStartTrackingTouch(p0: SeekBar?) {}
             override fun onStopTrackingTouch(p0: SeekBar?) {}
@@ -114,7 +115,7 @@ class UserPage : Fragment() {
 
         binding.highSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                hasChanges = true
+                hasChanges = true   // Marca que houve mudanças.
             }
             override fun onStartTrackingTouch(p0: SeekBar?) {}
             override fun onStopTrackingTouch(p0: SeekBar?) {}
@@ -122,7 +123,7 @@ class UserPage : Fragment() {
 
         binding.mainVolumeSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                hasChanges = true
+                hasChanges = true   // Marca que houve mudanças.
             }
             override fun onStartTrackingTouch(p0: SeekBar?) {}
             override fun onStopTrackingTouch(p0: SeekBar?) {}
@@ -130,7 +131,7 @@ class UserPage : Fragment() {
 
         binding.panSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                hasChanges = true
+                hasChanges = true   // Marca que houve mudanças.
             }
             override fun onStartTrackingTouch(p0: SeekBar?) {}
             override fun onStopTrackingTouch(p0: SeekBar?) {}
@@ -144,7 +145,7 @@ class UserPage : Fragment() {
         binding.resetAudioSettingsButton.setOnClickListener {
             // Redefine as configurações de áudio para os valores padrão.
             hasChanges = true // Define hasChanges como true quando o ícone muda.
-            resetToDefaults()
+            resetToDefaults()   // Chama a função que redefine as configurações.
         }
 
         // Observa o estado da UI e atualiza os componentes da UI.
