@@ -5,7 +5,6 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -15,10 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.example.emixerapp.data.local.database.AppDatabase
 import com.example.emixerapp.data.repository.UsersRepository
-import com.example.emixerapp.ui.components.adapters.UsersAdapter
 import com.example.emixerapp.ui.components.viewModels.MainViewModel
 import com.example.emixerapp.ui.components.viewModels.MainViewModelFactory
 import com.example.mvvmapp.R
