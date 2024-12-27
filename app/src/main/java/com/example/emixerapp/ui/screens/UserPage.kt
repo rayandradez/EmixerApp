@@ -20,8 +20,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.emixerapp.data.local.database.AppDatabase
 import com.example.emixerapp.data.model.UserModel
+import com.example.emixerapp.data.repository.UsersRepository
 import com.example.emixerapp.ui.components.viewModels.MainViewModel
+import com.example.emixerapp.ui.components.viewModels.MainViewModelFactory
 import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.FragmentUserPageBinding
 import kotlinx.coroutines.launch
@@ -62,12 +65,13 @@ class UserPage : Fragment() {
             }
         })
 
-        viewModel =
-                // Obtém o ViewModel para gerenciar o estado da UI.
-            ViewModelProvider(requireActivity()).get(MainViewModel::class.java) // Obtém o ViewModel
+        // Inicializar o banco de dados e o repositório
+        val database = AppDatabase.getDatabase(requireContext().applicationContext)
+        val usersRepository = UsersRepository(database.usersDao())
 
-
-
+        // Inicializar o ViewModel com o Factory compartilhado com a Activity
+        val factory = MainViewModelFactory(usersRepository)
+        viewModel = ViewModelProvider(requireActivity(), factory).get(MainViewModel::class.java)
 
         // Verifica e solicita as permissões de áudio necessárias com base no nível da API.
         checkAudioPermissions()
