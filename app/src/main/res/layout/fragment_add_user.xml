@@ -66,17 +66,17 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:layout_marginTop="20dp"
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/recycler_view_icons"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="16dp"
         >
 
         <Button
             android:id="@+id/BtnCancelUser"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:text="Cancel"
             android:background="@drawable/transparent_background"
             android:textColor="@color/black"
@@ -105,7 +105,7 @@
             android:id="@+id/BtndeleteUser"
             android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_marginStart="0dp"
             android:text="Delete"
             android:background="@drawable/transparent_background"
