@@ -76,7 +76,8 @@ Os testes unitários validam a funcionalidade individual de componentes menores 
 
 ### Testes Instrumentais (UI)
 
-Os testes instrumentais utilizam o Espresso para simular interações do usuário com a interface do aplicativo em um ambiente real (ou simulado).  Eles validam fluxos de trabalho completos, garantindo que a experiência do usuário seja fluida e intuitiva.  Os testes foram focados nas telas críticas de interação com o usuário, assegurando a correta funcionalidade das telas.
+Os testes instrumentais utilizam o Espresso para simular interações do usuário com a interface do aplicativo em um ambiente real (ou simulado). Eles validam fluxos de trabalho completos, garantindo que a experiência do usuário seja fluida e intuitiva. Os testes foram focados nas telas críticas de interação com o usuário, assegurando a correta funcionalidade das telas, incluindo o `AddUser` and `ManageUser` Fragment.
+
 
 **Casos de Teste Instrumentais:**
 
