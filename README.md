@@ -18,9 +18,11 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
 ## Recursos Principais
 
 * **Gerenciamento de Usuários:**
-    * **Seleção de Perfil:** Alterne facilmente entre perfis de usuário existentes.
-    * **Criação/Edição de Usuário:** Adicione, edite (incluindo nome e ícone do perfil) e exclua perfis de usuário.
-* **Equalizador Intuitivo:**
+    * **Seleção de Perfil:** Alterne facilmente entre perfis de usuário existentes;
+    * **Criação/Edição de Usuário:** Adicione, edite (incluindo nome e ícone do perfil) e exclua perfis de usuário;
+    * **Importação de Perfis:** Importe os perfis dos seus contatos salvos para dentro do app;
+    * **Aviso de Modo Avião:** Avisamos quando o Modo Avião está ativo ou inativo. Pois a sincronização entre os dispositivos não é possível se eles estiverem em Modo Avião.
+* **Equalizador Intuitivo:** 
     * **Controle Preciso:** Ajuste os parâmetros de áudio com um mixer amigável.
     * **Graves (Low):** Controle de frequências baixas (aprox. 100Hz e abaixo, faixa de ajuste de -15dB a +15dB).
     * **Médias (Mid):** Ajuste de frequências médias (aprox. 1kHz a 4kHz, faixa de ajuste de -15dB a +15dB).
@@ -37,6 +39,7 @@ Este aplicativo utiliza as seguintes tecnologias:
 * **Navegação:** Navigation Graph
 * **Banco de Dados:** Room Persistence Library
 * **Tratamento do Modo Avião:** Broadcast Receivers
+* **Importação de perfis:** Content Provider
 * **Testes:** []
 * **Injeção de Dependências:** Gerenciamento manual de dependências.
 
@@ -48,6 +51,14 @@ A primeira vez que o usuário tenta acessar as configurações de áudio (na pá
 
 **Observação:**  A permissão solicitada é `android.permission.READ_MEDIA_AUDIO`, que garante o acesso somente à leitura dos arquivos de mídia de áudio, sem acesso a outros dados do dispositivo.  Sem esta permissão, o aplicativo não poderá ajustar as configurações de equalização.
 
+## Permissão de Acesso a lista de Contatos
+
+Para garantir a funcionalidade completa da importação de perfis, o aplicativo requer acesso aos contatos cadastrados no dispositivo. Isso permite que o aplicativo crie perfis de forma automatizada.
+
+A primeira vez que o usuário tenta acessar o aplicativo, é solicitada uma permissão de acesso.  Esta permissão é essencial para o correto funcionamento da importação dos contatos.
+
+**Observação:**  A permissão solicitada é `android.permission.READ_CONTACTS`, que garante o acesso somente à leitura da lista de contatos, sem acesso a outros dados do dispositivo.  Sem esta permissão, o aplicativo não poderá importar as configurações para criação do perfil.
+
 
 ## Melhorias Futuras
 
@@ -55,5 +66,5 @@ O desenvolvimento futuro se concentrará em:
 
 * **Integração com Sistemas Automotivos:** Conectar o aplicativo ao sistema de áudio de um veículo para controle direto.
 * **Recursos Avançados de Equalização:** Explorar algoritmos e opções de equalização mais sofisticados.
-* **Recursos Adicionais:** Implementar recursos como predefinições, visualizações, etc.
+* **Recursos Adicionais:** Implementar recursos como predefinições, visualizações, sincronização entre dispositivos, tela para escolha de quais contatos importar, modo escuro, controle de acesso e recursos de interação social.
 
