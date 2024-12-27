@@ -308,12 +308,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/soundContainer"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="16dp">
 
         <Button
             android:id="@+id/resetAudioSettingsButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_centerVertical="true"
