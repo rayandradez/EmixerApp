@@ -78,6 +78,14 @@ class UserPage : Fragment() {
             findNavController().navigate(R.id.action_userPage_to_welcome)
         }
 
+        binding.txtUserPageMessage.setOnClickListener {
+            if (hasChanges) {
+                showDiscardChangesDialog()
+            } else {
+                findNavController().navigateUp()  // Navega para a tela anterior.
+            }
+        }
+
         // Define o listener de clique para o botão "Redefinir Configurações de Áudio".
         binding.resetAudioSettingsButton.setOnClickListener {
             // Redefine as configurações de áudio para os valores padrão.
