@@ -57,5 +57,15 @@ O desenvolvimento futuro se concentrará em:
 * **Recursos Avançados de Equalização:** Explorar algoritmos e opções de equalização mais sofisticados.
 * **Recursos Adicionais:** Implementar recursos como predefinições, visualizações, etc.
 
+screensapp.png.png
 
+## Imagens do Aplicativo
+
+```markdown
+![Logo do Aplicativo](screensapp.png.png)
+```
+
+
+```markdown
+![Logo do Aplicativo](screensapp.png.png)
 
