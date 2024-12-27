@@ -8,9 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -74,6 +75,7 @@ class UserPage : Fragment() {
         // Define o listener de clique para o botão "Salvar Configurações de Áudio".
         binding.saveAudioSettingsButton.setOnClickListener {
             // Salva as configurações de áudio e navega para a tela inicial.
+            hasChanges = false
             saveAudioSettings()
             findNavController().navigate(R.id.action_userPage_to_welcome)
         }
@@ -85,6 +87,35 @@ class UserPage : Fragment() {
                 findNavController().navigateUp()  // Navega para a tela anterior.
             }
         }
+
+
+        binding.bassSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                hasChanges = true
+            }
+            override fun onStartTrackingTouch(p0: SeekBar?) {}
+            override fun onStopTrackingTouch(p0: SeekBar?) {}
+        })
+
+        binding.midSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                hasChanges = true
+            }
+            override fun onStartTrackingTouch(p0: SeekBar?) {}
+            override fun onStopTrackingTouch(p0: SeekBar?) {}
+        })
+
+        binding.highSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                hasChanges = true
+            }
+            override fun onStartTrackingTouch(p0: SeekBar?) {}
+            override fun onStopTrackingTouch(p0: SeekBar?) {}
+        })
+
+
+
+
 
         // Define o listener de clique para o botão "Redefinir Configurações de Áudio".
         binding.resetAudioSettingsButton.setOnClickListener {
@@ -106,7 +137,7 @@ class UserPage : Fragment() {
                     binding.highSeekBar.progress = data.user!!.high
                     binding.mainVolumeSeekBar.progress = data.user!!.mainVolume
                     binding.panSeekBar.progress = data.user!!.pan
-                    hasChanges = true // Define hasChanges como true quando o ícone muda.
+                    hasChanges = false // Define hasChanges como false no primeiro carregamento da tela.
                 }
             }
         }
@@ -128,6 +159,7 @@ class UserPage : Fragment() {
             )
         })
         // Informa ao usuário que as configurações foram salvas.
+        hasChanges = false
         Toast.makeText(requireContext(), "Audio settings saved (simulated)", Toast.LENGTH_SHORT)
             .show()
     }
