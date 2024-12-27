@@ -4,15 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
     tools:context="com.example.emixerapp.ui.screens.Welcome"
     android:background="@color/light_grey">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp">
 
         <ImageView
             android:id="@+id/ImgWelcomeLogo"
@@ -20,7 +18,7 @@
             android:layout_height="100dp"
             android:src="@drawable/logo"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="0dp"
             android:layout_marginEnd="10dp"/>
 
         <TextView
@@ -29,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/ImgWelcomeLogo"
             android:layout_gravity="center"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="16dp"
             android:fontFamily="@font/latolight"
             android:paddingBottom="15dp"
             android:text="@string/select_profile_header_text"
@@ -39,7 +37,7 @@
             android:id="@+id/recycler_view_user"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/ManageUser"
+            android:layout_above="@+id/BtnManageUser"
             android:layout_below="@+id/txtwelcome"
             android:layout_centerVertical="true"
             android:textSize="20sp"
@@ -50,10 +48,11 @@
         <Button
             android:id="@+id/BtnManageUser"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_alignParentBottom="true"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/grey"
             android:padding="5dp"
             android:text="@string/manage_users_button_text"
