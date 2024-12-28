@@ -23,7 +23,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.emixerapp.data.local.database.AppDatabase
 import com.example.emixerapp.data.model.UserModel
 import com.example.emixerapp.data.repository.UsersRepository
@@ -31,6 +30,9 @@ import com.example.emixerapp.ui.components.viewModels.MainViewModel
 import com.example.emixerapp.ui.components.viewModels.MainViewModelFactory
 import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.ActivityMainBinding
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -39,10 +41,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController   // Controlador de navegação para gerenciar as transições entre fragments
     private lateinit var viewModel: MainViewModel   // ViewModel para gerenciar dados e lógica de negócios
     private lateinit var receiver: AirplaneModeBroadcastReceiver    // Receptor para escutar mudanças no modo avião
-
+    private lateinit var analytics: FirebaseAnalytics // Firebase para rastrear eventos do usuário
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Obrir a instância do Firebase Analytics.
+        analytics = Firebase.analytics
 
         // Habilita a exibição de borda a borda, removendo as áreas de inserção da UI do sistema.
         enableEdgeToEdge()
@@ -173,7 +178,7 @@ class MainActivity : AppCompatActivity() {
                     // ... atualize outros elementos da UI conforme necessário ...
 
                     // Registra os dados recebidos para fins de depuração.
-                    Log.e("MAIN_ACTIVITY", "TESTING VIEW MODEL: " + data)
+                    Log.i("MAIN_ACTIVITY", "TESTING VIEW MODEL: " + data)
                 }
             }
         }

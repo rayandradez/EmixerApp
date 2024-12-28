@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "525391607160",
+    "project_id": "emixer-d531b",
+    "storage_bucket": "emixer-d531b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:525391607160:android:a79002dcc3a7257ab4c48d",
+        "android_client_info": {
+          "package_name": "com.example.mvvmapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRIbTxUzcVmKuf6IshGO1YHTpvo4WRv9Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
