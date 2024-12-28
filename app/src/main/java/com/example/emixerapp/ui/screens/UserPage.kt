@@ -27,8 +27,11 @@ import com.example.emixerapp.ui.components.viewModels.MainViewModel
 import com.example.emixerapp.ui.components.viewModels.MainViewModelFactory
 import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.FragmentUserPageBinding
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.google.firebase.analytics.logEvent
 import kotlinx.coroutines.launch
-
 
 
 class UserPage : Fragment() {
@@ -39,7 +42,7 @@ class UserPage : Fragment() {
     // Constante para o código de solicitação de permissão de áudio.
     private val AUDIO_PERMISSION_REQUEST = 100
     private var hasChanges = false  // Indica se há mudanças não salvas.
-
+    private lateinit var analytics: FirebaseAnalytics
 
 
     override fun onCreateView(
@@ -55,6 +58,8 @@ class UserPage : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        analytics = Firebase.analytics
 
         // Adiciona um callback para o botão de voltar do sistema.
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -171,6 +176,15 @@ class UserPage : Fragment() {
     private fun saveAudioSettings() {
         // Atualiza e salva as configurações de áudio do usuário no ViewModel.
         viewModel.updateUser(viewModel.uiState.value.user?.let {
+            analytics.logEvent("eqSave", ) {
+                param("profileid", it.id)
+                param("profilename", it.name)
+                param("bass", binding.bassSeekBar.progress.toLong())
+                param("mid", binding.midSeekBar.progress.toLong())
+                param("high", binding.highSeekBar.progress.toLong())
+                param("main", binding.mainVolumeSeekBar.progress.toLong())
+                param("pan", binding.panSeekBar.progress.toLong())
+            }
             UserModel(
                 it.id,
                 it.name,
@@ -182,6 +196,7 @@ class UserPage : Fragment() {
                 binding.panSeekBar.progress
             )
         })
+
         // Informa ao usuário que as configurações foram salvas.
         hasChanges = false
         Toast.makeText(requireContext(), "Audio settings saved (simulated)", Toast.LENGTH_SHORT)
