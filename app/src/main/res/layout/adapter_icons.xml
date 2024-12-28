@@ -11,9 +11,10 @@
 
     <ImageView
         android:id="@+id/iconImageView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:gravity="center_horizontal"
+        android:scaleType="fitCenter"
         android:padding="14dp"
         />
 

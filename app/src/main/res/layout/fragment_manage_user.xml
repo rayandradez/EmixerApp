@@ -1,75 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.emixerapp.ui.screens.ManageUser"
-    android:background="@color/light_grey">
+    android:background="@color/light_grey"
+    android:orientation="vertical"
+    tools:context="com.example.emixerapp.ui.screens.ManageUser">
 
-    <TextView
-        android:id="@+id/manageProfilesTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select the profile you want to edit"
-        android:fontFamily="@font/latolight"
-        android:paddingBottom="15dp"
-        android:textSize="40sp"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_user"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/manageProfilesTitle"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        tools:listitem="@layout/adapter_user"
-        />
 
     <RelativeLayout
-        android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="16dp"
-        >
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp">
 
 
-        <Button
-            android:id="@+id/backButton"
+        <TextView
+            android:id="@+id/manageProfilesTitle"
             android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:text="Profiles"
-            android:layout_marginEnd="0dp"
-            android:layout_marginStart="0dp"
-            android:layout_alignParentEnd="true"
-            android:background="@drawable/transparent_background"
-            android:textColor="@color/black"
-            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
             android:fontFamily="@font/latolight"
-            android:textSize="30sp"
-            android:textAlignment="textEnd"
-            android:layout_toEndOf="@+id/addNewUserButton"
-            />
+            android:paddingBottom="14dp"
+            android:layout_marginBottom="174dp"
+            android:text="Select the profile you want to edit"
+            android:textSize="40sp" />
 
-        <Button
-            android:id="@+id/addNewUserButton"
-            android:layout_width="80dp"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_user"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/manageProfilesTitle"
+            android:layout_above="@id/buttonLayout"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="16dp"
+            tools:listitem="@layout/adapter_user" />
+
+
+        <RelativeLayout
+            android:id="@+id/buttonLayout"
+            android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="@string/add_profile_button_text"
-            android:background="@drawable/circleborderbutton"
-            android:textSize="40sp"
-            android:textColor="@color/white"
-            android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:fontFamily="@font/latolight"
-            />
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
 
+
+            <Button
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toEndOf="@+id/addNewUserButton"
+                android:background="@drawable/transparent_background"
+                android:fontFamily="@font/latolight"
+                android:text="Profiles"
+                android:textAlignment="textEnd"
+                android:textColor="@color/black"
+                android:textSize="30sp"/>
+
+            <Button
+                android:id="@+id/addNewUserButton"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/circleborderbutton"
+                android:fontFamily="@font/latolight"
+                android:text="@string/add_profile_button_text"
+                android:textColor="@color/white"
+                android:textSize="40sp" />
+
+        </RelativeLayout>
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

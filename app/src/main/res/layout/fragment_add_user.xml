@@ -83,6 +83,7 @@
             android:layout_alignParentBottom="true"
             android:fontFamily="@font/latolight"
             android:textSize="30sp"
+            android:layout_marginRight="16dp"
             android:textAlignment="textEnd"
             android:layout_toEndOf="@+id/BtnSaveUser"
             android:layout_alignParentEnd="true"
@@ -116,7 +117,6 @@
             android:layout_alignParentBottom="true"
             android:fontFamily="@font/latolight"
             android:textSize="30sp"
-            android:textAlignment="textStart"
             android:layout_toStartOf="@+id/BtnSaveUser"
             android:visibility="gone"
             />
