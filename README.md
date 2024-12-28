@@ -41,6 +41,7 @@ Este aplicativo utiliza as seguintes tecnologias:
 * **Tratamento do Modo Avião:** Broadcast Receivers
 * **Importação de perfis:** Content Provider
 * **Injeção de Dependências:** Gerenciamento manual de dependências.
+* **Link do Figma:** https://www.figma.com/design/ahaN4lSCMNpfLZp3OSnHPf/Emixer?node-id=0-1&p=f&t=YtUwxEKy6SIWXL8c-0
 
 # Permissões do Aplicativo
 
