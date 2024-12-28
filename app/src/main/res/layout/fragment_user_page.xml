@@ -318,12 +318,11 @@
             android:layout_alignParentBottom="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
+            android:layout_marginEnd="16dp"
             android:layout_toEndOf="@+id/saveAudioSettingsButton"
             android:background="@drawable/transparent_background"
             android:fontFamily="@font/latolight"
             android:text="Reset"
-            android:textAlignment="textEnd"
             android:textColor="@color/black"
             android:textSize="30sp" />
 
