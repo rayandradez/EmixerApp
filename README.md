@@ -37,7 +37,7 @@ Este aplicativo utiliza as seguintes tecnologias:
 
 * **Arquitetura:** Model-View-ViewModel (MVVM)
 * **Navegação:** Navigation Graph
-* **Banco de Dados:** Room Persistence Library
+* **Banco de Dados:** Room Persistence Library, Firebase
 * **Tratamento do Modo Avião:** Broadcast Receivers
 * **Importação de perfis:** Content Provider
 * **Injeção de Dependências:** Gerenciamento manual de dependências.
