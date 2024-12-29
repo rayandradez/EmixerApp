@@ -79,7 +79,7 @@ class UserPage : Fragment() {
 
         // Inicializar o ViewModel com o Factory compartilhado com a Activity
         val factory = MainViewModelFactory(usersRepository)
-        viewModel = ViewModelProvider(requireActivity(), factory).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(), factory)[MainViewModel::class.java]
 
         // Verifica e solicita as permissões de áudio necessárias com base no nível da API.
         checkAudioPermissions()
@@ -106,45 +106,77 @@ class UserPage : Fragment() {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true   // Marca que houve mudanças.
             }
-            override fun onStartTrackingTouch(p0: SeekBar?) {}
-            override fun onStopTrackingTouch(p0: SeekBar?) {}
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
+            }
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação quando o usuário termina a interação com o SeekBar.
+            }
         })
 
         binding.midSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true   // Marca que houve mudanças.
             }
-            override fun onStartTrackingTouch(p0: SeekBar?) {}
-            override fun onStopTrackingTouch(p0: SeekBar?) {}
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
+            }
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
+            }
         })
 
         binding.highSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true   // Marca que houve mudanças.
             }
-            override fun onStartTrackingTouch(p0: SeekBar?) {}
-            override fun onStopTrackingTouch(p0: SeekBar?) {}
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação quando o usuário termina a interação com o SeekBar.
+            }
         })
 
         binding.mainVolumeSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true   // Marca que houve mudanças.
             }
-            override fun onStartTrackingTouch(p0: SeekBar?) {}
-            override fun onStopTrackingTouch(p0: SeekBar?) {}
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação quando o usuário termina a interação com o SeekBar.
+            }
         })
 
         binding.panSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true   // Marca que houve mudanças.
             }
-            override fun onStartTrackingTouch(p0: SeekBar?) {}
-            override fun onStopTrackingTouch(p0: SeekBar?) {}
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação quando o usuário termina a interação com o SeekBar.
+            }
         })
-
-
-
-
 
         // Define o listener de clique para o botão "Redefinir Configurações de Áudio".
         binding.resetAudioSettingsButton.setOnClickListener {

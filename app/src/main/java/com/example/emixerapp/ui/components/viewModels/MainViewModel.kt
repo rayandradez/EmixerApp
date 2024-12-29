@@ -143,17 +143,19 @@ class MainViewModel(private val usersRepository: UsersRepository) : ViewModel() 
         // Atualiza o estado da UI para remover um usuário
         _uiState.update { currentState ->
             val updatedList = currentState.usersList.toMutableList()
-            val index = updatedList.indexOfFirst { it.id == user?.id }
-            if (index != -1) {
-                // Atualiza o usuário existente se o ID for encontrado.
-                if (user != null) {
-                    updatedList.remove(user)
-                } // Remove se user for null
+
+            // Verifica se o user não é nulo e se o ID do user é encontrado na lista
+            if (user != null) {
+                val index = updatedList.indexOfFirst { it.id == user.id }
+                if (index != -1) {
+                    updatedList.removeAt(index) // Remove o usuário pelo índice
+                }
             }
 
             // Copia o estado atual, atualizando a lista de usuários.
             currentState.copy(usersList = updatedList)
         }
     }
+
 
 }

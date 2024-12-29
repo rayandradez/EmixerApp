@@ -18,4 +18,19 @@
     <string name="profile_button_text">Profile</string>
     <string name="delete_button_text">Delete</string>
     <string name="cancel_button_text">Cancel</string>
+    <string name="select_the_profile_you_want_to_edit">Select the profile you want to edit</string>
+    <string name="profiles">Profiles</string>
+    <string name="welcome">Welcome,</string>
+    <string name="joao">Joao</string>
+    <string name="click_here_to_select_another_profile">Click here to select another profile</string>
+    <string name="bass">Bass</string>
+    <string name="mid">Mid</string>
+    <string name="high">High</string>
+    <string name="main">Main</string>
+    <string name="pan">Pan</string>
+    <string name="l">L</string>
+    <string name="r">R</string>
+    <string name="reset">Reset</string>
+    <string name="logo_of_the_app">Logo of the APP</string>
+    <string name="save_settings">Save Settings</string>
 </resources>
