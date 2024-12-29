@@ -109,7 +109,7 @@ Os testes instrumentais utilizam o Espresso para simular interações do usuári
 A combinação de testes unitários e instrumentais oferece uma cobertura de teste robusta.  Testes unitários garantem a correta funcionalidade da lógica interna, enquanto os testes instrumentais validam a interação do usuário com a interface e a integração entre diferentes componentes.  Esta abordagem minimiza a probabilidade de erros e contribui para a criação de um aplicativo estável e confiável.
 
 
-**Executando os Testes:**
+### Executando os Testes:
 
 Para executar os testes:
 
