@@ -1,4 +1,4 @@
-package com.example.emixerapp.ui.screens
+package com.reaj.emixer.ui.screens
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -14,11 +14,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.emixerapp.IconManager
-import com.example.emixerapp.data.model.UserModel
-import com.example.emixerapp.ui.components.adapters.IconsAdapter
-import com.example.emixerapp.ui.components.viewModels.MainViewModel
-import com.example.mvvmapp.databinding.FragmentAddUserBinding
+import com.reaj.emixer.IconManager
+import com.reaj.emixer.data.model.UserModel
+import com.reaj.emixer.ui.components.adapters.IconsAdapter
+import com.reaj.emixer.ui.components.viewModels.MainViewModel
+import com.reaj.emixer.databinding.FragmentAddUserBinding
 import androidx.activity.OnBackPressedCallback
 
 

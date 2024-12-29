@@ -1,15 +1,15 @@
 {
   "project_info": {
-    "project_number": "525391607160",
-    "project_id": "emixer-d531b",
-    "storage_bucket": "emixer-d531b.firebasestorage.app"
+    "project_number": "1008811049961",
+    "project_id": "emixer-3dbb5",
+    "storage_bucket": "emixer-3dbb5.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:525391607160:android:a79002dcc3a7257ab4c48d",
+        "mobilesdk_app_id": "1:1008811049961:android:caaca8d175d4f7ebadc178",
         "android_client_info": {
-          "package_name": "com.example.mvvmapp"
+          "package_name": "com.reaj.emixer"
         }
       },
       "oauth_client": [],

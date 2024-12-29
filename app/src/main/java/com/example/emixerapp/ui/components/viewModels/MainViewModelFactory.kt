@@ -1,8 +1,8 @@
-package com.example.emixerapp.ui.components.viewModels
+package com.reaj.emixer.ui.components.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.emixerapp.data.repository.UsersRepository
+import com.reaj.emixer.data.repository.UsersRepository
 
 // Fábrica de ViewModel para criar instâncias de MainViewModel
 class MainViewModelFactory(

@@ -1,9 +1,9 @@
-package com.example.emixerapp.data.local.entity
+package com.reaj.emixer.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.emixerapp.data.model.UserModel
+import com.reaj.emixer.data.model.UserModel
 import java.util.UUID
 
 // Define uma entidade de banco de dados chamada UsersEntity, representando a tabela de usuários

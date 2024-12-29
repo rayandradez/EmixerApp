@@ -1,11 +1,11 @@
-package com.example.emixerapp.ui.components.viewModels
+package com.reaj.emixer.ui.components.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.emixerapp.data.local.entity.UsersEntity
-import com.example.emixerapp.data.local.entity.toUserModel
-import com.example.emixerapp.data.model.UserModel
-import com.example.emixerapp.data.repository.UsersRepository
+import com.reaj.emixer.data.local.entity.UsersEntity
+import com.reaj.emixer.data.local.entity.toUserModel
+import com.reaj.emixer.data.model.UserModel
+import com.reaj.emixer.data.repository.UsersRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.example.emixerapp
+package com.reaj.emixer
 
 import android.content.BroadcastReceiver
 import android.content.Context

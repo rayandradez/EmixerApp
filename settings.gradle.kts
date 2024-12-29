@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MVVM App"
+rootProject.name = "Emixer App"
 include(":app")
  

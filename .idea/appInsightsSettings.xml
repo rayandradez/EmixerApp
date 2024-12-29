@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.example.mvvmapp" />
-                  <option name="mobileSdkAppId" value="1:525391607160:android:a79002dcc3a7257ab4c48d" />
-                  <option name="projectId" value="emixer-d531b" />
-                  <option name="projectNumber" value="525391607160" />
+                  <option name="appId" value="com.reaj.emixer" />
+                  <option name="mobileSdkAppId" value="1:1008811049961:android:caaca8d175d4f7ebadc178" />
+                  <option name="projectId" value="emixer-3dbb5" />
+                  <option name="projectNumber" value="1008811049961" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

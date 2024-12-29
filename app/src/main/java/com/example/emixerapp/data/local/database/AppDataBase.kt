@@ -1,11 +1,11 @@
-package com.example.emixerapp.data.local.database
+package com.reaj.emixer.data.local.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.emixerapp.data.local.dao.UsersDao
-import com.example.emixerapp.data.local.entity.UsersEntity
+import com.reaj.emixer.data.local.dao.UsersDao
+import com.reaj.emixer.data.local.entity.UsersEntity
 
 
 @Database(entities = [UsersEntity::class], version = 1)

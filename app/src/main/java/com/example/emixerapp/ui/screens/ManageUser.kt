@@ -1,4 +1,4 @@
-package com.example.emixerapp.ui.screens
+package com.reaj.emixer.ui.screens
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,10 +13,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.emixerapp.data.model.UserModel
-import com.example.emixerapp.ui.components.adapters.UsersAdapter
-import com.example.emixerapp.ui.components.viewModels.MainViewModel
-import com.example.mvvmapp.databinding.FragmentManageUserBinding
+import com.reaj.emixer.data.model.UserModel
+import com.reaj.emixer.ui.components.adapters.UsersAdapter
+import com.reaj.emixer.ui.components.viewModels.MainViewModel
+import com.reaj.emixer.databinding.FragmentManageUserBinding
 import kotlinx.coroutines.launch
 
 

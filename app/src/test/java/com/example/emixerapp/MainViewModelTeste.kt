@@ -1,8 +1,8 @@
-package com.example.emixerapp
+package com.reaj.emixer
 
-import com.example.emixerapp.data.model.UserModel
-import com.example.emixerapp.data.repository.UsersRepository
-import com.example.emixerapp.ui.components.viewModels.MainViewModel
+import com.reaj.emixer.data.model.UserModel
+import com.reaj.emixer.data.repository.UsersRepository
+import com.reaj.emixer.ui.components.viewModels.MainViewModel
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

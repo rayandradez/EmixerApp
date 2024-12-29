@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context="com.example.emixerapp.ui.screens.UserPage"
+    tools:context="com.reaj.emixer.ui.screens.UserPage"
     android:layout_marginStart="10dp"
     android:layout_marginEnd="10dp"
     android:id="@+id/rltIconItem"

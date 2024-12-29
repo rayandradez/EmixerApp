@@ -1,4 +1,4 @@
-package com.example.emixerapp.ui.screens
+package com.reaj.emixer.ui.screens
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -13,12 +13,12 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.emixerapp.data.model.UserModel
-import com.example.emixerapp.ui.components.adapters.UsersAdapter
-import com.example.mvvmapp.R
-import com.example.mvvmapp.databinding.FragmentWelcomeBinding
+import com.reaj.emixer.data.model.UserModel
+import com.reaj.emixer.ui.components.adapters.UsersAdapter
+import com.reaj.emixer.R
+import com.reaj.emixer.databinding.FragmentWelcomeBinding
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.emixerapp.ui.components.viewModels.MainViewModel
+import com.reaj.emixer.ui.components.viewModels.MainViewModel
 import kotlinx.coroutines.launch
 
 class Welcome : Fragment() {

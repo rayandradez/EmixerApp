@@ -1,4 +1,4 @@
-package com.example.emixerapp.data.model
+package com.reaj.emixer.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
