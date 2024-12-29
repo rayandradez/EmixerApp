@@ -1,4 +1,4 @@
-package com.example.emixerapp.data.local.dao
+package com.reaj.emixer.data.local.dao
 
 import android.util.Log
 import androidx.room.Dao
@@ -7,7 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.emixerapp.data.local.entity.UsersEntity
+import com.reaj.emixer.data.local.entity.UsersEntity
 import kotlinx.coroutines.flow.Flow
 
 // Define uma interface DAO (Data Access Object) para interagir com a tabela de usuários no banco de dados

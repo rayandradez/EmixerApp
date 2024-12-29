@@ -1,4 +1,4 @@
-package com.example.emixerapp
+package com.reaj.emixer
 
 import android.Manifest
 import android.content.ContentUris
@@ -23,13 +23,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import com.example.emixerapp.data.local.database.AppDatabase
-import com.example.emixerapp.data.model.UserModel
-import com.example.emixerapp.data.repository.UsersRepository
-import com.example.emixerapp.ui.components.viewModels.MainViewModel
-import com.example.emixerapp.ui.components.viewModels.MainViewModelFactory
-import com.example.mvvmapp.R
-import com.example.mvvmapp.databinding.ActivityMainBinding
+import com.reaj.emixer.data.local.database.AppDatabase
+import com.reaj.emixer.data.model.UserModel
+import com.reaj.emixer.data.repository.UsersRepository
+import com.reaj.emixer.ui.components.viewModels.MainViewModel
+import com.reaj.emixer.ui.components.viewModels.MainViewModelFactory
+import com.reaj.emixer.R
+import com.reaj.emixer.databinding.ActivityMainBinding
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics

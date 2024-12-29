@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/welcome"
-        android:name="com.example.emixerapp.ui.screens.Welcome"
+        android:name="com.reaj.emixer.ui.screens.Welcome"
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_welcome">
         <action
@@ -17,14 +17,14 @@
             app:destination="@id/userPage">
             <argument
                 android:name="user"
-                app:argType="com.example.emixerapp.data.model.UserModel"
+                app:argType="com.reaj.emixer.data.model.UserModel"
                 app:nullable="true"/>
         </action>
 
     </fragment>
     <fragment
         android:id="@+id/manageUser"
-        android:name="com.example.emixerapp.ui.screens.ManageUser"
+        android:name="com.reaj.emixer.ui.screens.ManageUser"
         android:label="fragment_manage_user"
         tools:layout="@layout/fragment_manage_user">
         <action
@@ -32,18 +32,18 @@
             app:destination="@id/addUser">
             <argument
                 android:name="selectedUser"
-                app:argType="com.example.emixerapp.data.model.UserModel"
+                app:argType="com.reaj.emixer.data.model.UserModel"
                 app:nullable="true" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/addUser"
-        android:name="com.example.emixerapp.ui.screens.AddUser"
+        android:name="com.reaj.emixer.ui.screens.AddUser"
         android:label="fragment_add_user"
         tools:layout="@layout/fragment_add_user">
         <argument
             android:name="selectedUser"
-            app:argType="com.example.emixerapp.data.model.UserModel"
+            app:argType="com.reaj.emixer.data.model.UserModel"
             app:nullable="true" />
     </fragment>
     <fragment

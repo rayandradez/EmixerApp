@@ -1,4 +1,4 @@
-package com.example.emixerapp
+package com.reaj.emixer
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -24,6 +24,6 @@ class ExampleInstrumentedTest {
         // Obtém o contexto do aplicativo que está sendo testado.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         // Verifica se o nome do pacote do aplicativo corresponde ao esperado.
-        assertEquals("com.example.mvvmapp", appContext.packageName)
+        assertEquals("com.reaj.emixer", appContext.packageName)
     }
 }

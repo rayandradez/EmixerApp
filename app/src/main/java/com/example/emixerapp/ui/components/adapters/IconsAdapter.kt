@@ -1,10 +1,10 @@
-package com.example.emixerapp.ui.components.adapters
+package com.reaj.emixer.ui.components.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mvvmapp.R
-import com.example.mvvmapp.databinding.AdapterIconsBinding
+import com.reaj.emixer.R
+import com.reaj.emixer.databinding.AdapterIconsBinding
 
 /**
  * Adaptador para RecyclerView que exibe uma lista de ícones.

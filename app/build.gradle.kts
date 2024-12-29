@@ -8,11 +8,11 @@ plugins {
 
 
 android {
-    namespace = "com.example.mvvmapp"
+    namespace = "com.reaj.emixer"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.mvvmapp"
+        applicationId = "com.reaj.emixer"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -20,7 +20,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val apiKey: String = project.findProperty("FIREBASE_API_KEY") as? String ?: ""
+        val apiKey: String = project.findProperty("FIREBASE_API_KEY") as? String ?: "API_KEY_PLACEHOLDER"
         buildConfigField("String", "FIREBASE_API_KEY", "\"$apiKey\"")
 
     }
@@ -44,6 +44,7 @@ android {
 
     buildFeatures{
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -121,8 +122,8 @@ dependencies {
 // Task to replace the API key placeholder in google-services.json
 tasks.register("replaceApiKey") {
     doLast {
-        val apiKey = project.findProperty("FIREBASE_API_KEY") as? String ?: ""
-        val jsonFile = file("src/main/resources/google-services.json")
+        val apiKey = project.findProperty("FIREBASE_API_KEY") as? String ?: "API_KEY_PLACEHOLDER"
+        val jsonFile = file("google-services.json")
         val content = jsonFile.readText()
         val newContent = content.replace("API_KEY_PLACEHOLDER", apiKey)
         jsonFile.writeText(newContent)

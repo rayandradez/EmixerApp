@@ -1,6 +1,6 @@
-package com.example.emixerapp
+package com.reaj.emixer
 
-import com.example.mvvmapp.R
+import com.reaj.emixer.R
 
 /**
  * Gerenciador de ícones para o aplicativo.  Fornece acesso fácil aos recursos de desenho de ícones.

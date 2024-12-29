@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.emixerapp.ui.screens.AddUser"
+    tools:context="com.reaj.emixer.ui.screens.AddUser"
     android:background="@color/light_grey">
 
     <TextView
