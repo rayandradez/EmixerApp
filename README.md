@@ -104,7 +104,7 @@ Os testes instrumentais utilizam o Espresso para simular interações do usuári
 * **`deleteUserTest()`:** Verifica o fluxo de exclusão de um usuário, incluindo a confirmação da ação e a remoção do usuário da lista.
 
 
-**Estratégia de Testes:**
+### Estratégia de Testes:
 
 A combinação de testes unitários e instrumentais oferece uma cobertura de teste robusta.  Testes unitários garantem a correta funcionalidade da lógica interna, enquanto os testes instrumentais validam a interação do usuário com a interface e a integração entre diferentes componentes.  Esta abordagem minimiza a probabilidade de erros e contribui para a criação de um aplicativo estável e confiável.
 
