@@ -19,6 +19,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val apiKey: String = project.findProperty("FIREBASE_API_KEY") as? String ?: ""
+        buildConfigField("String", "FIREBASE_API_KEY", "\"$apiKey\"")
+
     }
 
     buildTypes {
@@ -112,4 +116,20 @@ dependencies {
 
 
 
+}
+
+// Task to replace the API key placeholder in google-services.json
+tasks.register("replaceApiKey") {
+    doLast {
+        val apiKey = project.findProperty("FIREBASE_API_KEY") as? String ?: ""
+        val jsonFile = file("src/main/resources/google-services.json")
+        val content = jsonFile.readText()
+        val newContent = content.replace("API_KEY_PLACEHOLDER", apiKey)
+        jsonFile.writeText(newContent)
+    }
+}
+
+// Make sure the replaceApiKey task runs before the build
+tasks.named("preBuild") {
+    dependsOn("replaceApiKey")
 }
