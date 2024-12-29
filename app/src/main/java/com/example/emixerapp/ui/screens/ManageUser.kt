@@ -36,7 +36,7 @@ class ManageUser : Fragment() {
         binding = FragmentManageUserBinding.inflate(inflater, container, false)
         // Obtém referências para a RecyclerView e o ViewModel.
         recyclerView = binding.recyclerViewUser
-        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         // Inicializa o adaptador apenas uma vez.
         adapter = UsersAdapter(ArrayList())

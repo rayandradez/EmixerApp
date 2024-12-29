@@ -49,7 +49,7 @@ class AddUser : Fragment() {
         // Infla o layout do fragmento.
         binding = FragmentAddUserBinding.inflate(inflater, container, false)
         // Obtém uma instância do ViewModel.
-        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         // Inicializa a RecyclerView e o adaptador.
         myRecyclerIcon = binding.recyclerViewIcons
@@ -66,11 +66,20 @@ class AddUser : Fragment() {
             updateIconDisplay() // Atualiza a exibição do ícone.
         }
 
-
         // Preenche o formulário com os dados do usuário, se houver.
         args.selectedUser?.let { user ->
             binding.editNewName.setText(user.name)
             selectedIconIndex = user.iconIndex
+            // Setar a posição inicial pré selecionada
+            adapterIconList.apply {
+                val previousSelectedPosition = selectedPosition
+                selectedPosition = selectedIconIndex
+                // Notifica se houve mudanças
+                if (previousSelectedPosition != -1) {
+                    notifyItemChanged(previousSelectedPosition)
+                }
+                notifyItemChanged(selectedIconIndex)
+            }
             updateDeleteButtonVisibility(true)
             updateIconDisplay()
         } ?: run {
@@ -105,12 +114,22 @@ class AddUser : Fragment() {
 
         // Adiciona um listener para detectar mudanças no campo de nome.
         binding.editNewName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Este método é intencionalmente deixado vazio porque não precisamos
+                // realizar nenhuma ação antes que o texto mude. Ele é necessário como parte
+                // da implementação da interface TextWatcher.
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Este método pode ser utilizado para realizar ações durante a mudança do texto.
+                // Atualmente, está vazio porque não há necessidade de manipulação durante a mudança.
+            }
+
             override fun afterTextChanged(s: Editable?) {
                 hasChanges = true  // Define hasChanges como true quando o texto muda.
             }
         })
+
 
         return binding.root
     }

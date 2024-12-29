@@ -3,64 +3,70 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context="com.example.emixerapp.ui.screens.Welcome"
-    android:background="@color/light_grey">
+    android:background="@color/light_grey"
+    tools:context="com.example.emixerapp.ui.screens.Welcome">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingHorizontal="16dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp">
 
         <ImageView
             android:id="@+id/ImgWelcomeLogo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:src="@drawable/logo"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="10dp"/>
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.3" />
 
         <TextView
             android:id="@+id/txtwelcome"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/ImgWelcomeLogo"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
             android:fontFamily="@font/latolight"
-            android:layout_marginBottom="120dp"
             android:text="@string/select_profile_header_text"
-            android:textSize="40sp" />
+            android:textSize="40sp"
+            app:layout_constraintBottom_toTopOf="@id/recycler_view_user"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ImgWelcomeLogo"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_user"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/BtnManageUser"
-            android:layout_below="@+id/txtwelcome"
-            android:layout_centerVertical="true"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:textSize="20sp"
             tools:context="com.example.emixerapp.ui.screens.UserPage"
             tools:listitem="@layout/adapter_user"
-           />
+            app:layout_constraintBottom_toTopOf="@id/BtnManageUser"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtwelcome"
+            android:layout_marginBottom="32dp" />
 
         <Button
             android:id="@+id/BtnManageUser"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:backgroundTint="@color/grey"
-            android:padding="5dp"
+            android:padding="10dp"
             android:text="@string/manage_users_button_text"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="16dp" />
 
-
-    </RelativeLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
-

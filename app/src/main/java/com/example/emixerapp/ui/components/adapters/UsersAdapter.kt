@@ -2,7 +2,6 @@ package com.example.emixerapp.ui.components.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.emixerapp.IconManager
 import com.example.emixerapp.data.model.UserModel

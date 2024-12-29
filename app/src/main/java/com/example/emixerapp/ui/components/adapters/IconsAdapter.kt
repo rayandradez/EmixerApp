@@ -1,9 +1,7 @@
 package com.example.emixerapp.ui.components.adapters
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mvvmapp.R
 import com.example.mvvmapp.databinding.AdapterIconsBinding
@@ -18,7 +16,7 @@ class IconsAdapter(private val dataSet: ArrayList<Int>) :
     // Callback para notificar a activity quando um ícone for clicado.
     var onItemClick: ((Int) -> Unit)? = null
     // Variável para rastrear a posição do item atualmente selecionado.
-    private var selectedPosition = -1
+    var selectedPosition = -1
 
         /**
         * ViewHolder para cada item na RecyclerView.

@@ -131,7 +131,9 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED -> {}    // Permissão já concedida; nenhuma ação necessária
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Permissão já concedida; nenhuma ação necessária
+            }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this, Manifest.permission.READ_CONTACTS
@@ -160,9 +162,9 @@ class MainActivity : AppCompatActivity() {
         val usersRepository = UsersRepository(database.usersDao())
 
 
-        // Inicializar o ViewModel com o Factory
+        // Inicializar o ViewModel com o Factory compartilhado com a Activity
         val factory = MainViewModelFactory(usersRepository)
-        viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
 
 
 

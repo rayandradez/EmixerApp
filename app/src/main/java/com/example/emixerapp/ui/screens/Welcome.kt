@@ -38,7 +38,7 @@ class Welcome : Fragment() {
         // Infla a view do layout.
         binding = FragmentWelcomeBinding.inflate(inflater, container, false)
         // Obtém uma instância do ViewModel usando o ViewModelProvider.
-        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         // Configura a RecyclerView.
         myRecyclerUser = binding.recyclerViewUser
