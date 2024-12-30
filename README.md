@@ -3,15 +3,14 @@
 </div>
 
 <p align="center">
-  <a href="#Visão Geral">Visão Geral</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#Recursos Principais">Recursos Principais</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#visão-geral">Visão Geral</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#recursos-principais">Recursos Principais</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#Layout">Layout</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#Detalhes Técnicos">Detalhes Técnicos</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#Permissões do Aplicativo">Permissões do Aplicativo</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="detalhes-técnicos">Detalhes Técnicos</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#permissões-do-aplicativo">Permissões do Aplicativo</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#Testes">Testes</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#Melhorias Futuras">Melhorias Futuras</a>
+  <a href="#melhorias-futuras">Melhorias Futuras</a>
 </p>
-
 
 # Equalizador de Áudio para Carro - Aplicativo Android
 
@@ -68,11 +67,11 @@ Este aplicativo utiliza as seguintes tecnologias para atender aos objetivos do c
 * **Comunicação Assíncrona:** Broadcast Receivers são usados para detectar mudanças como o Modo Avião.
 * **Content Providers:** Usados para importar perfis de contatos.
 
-# Permissões do Aplicativo
+## Permissões do Aplicativo
 
 Para garantir o funcionamento completo e eficaz do aplicativo, são necessárias algumas permissões específicas. Abaixo estão listadas as permissões essenciais e suas funcionalidades:
 
-## Permissão para Acesso a Arquivos de Áudio
+### Permissão para Acesso a Arquivos de Áudio
 
 Para ajustar os parâmetros de equalização de forma eficaz, o aplicativo precisa acessar os arquivos de áudio do dispositivo.
 
@@ -85,7 +84,7 @@ Para ajustar os parâmetros de equalização de forma eficaz, o aplicativo preci
 	<img src="images/audio_permission.png" width="325px">	
 </div>
 
-## Permissão para Modificar Configurações de Áudio
+### Permissão para Modificar Configurações de Áudio
 
 O aplicativo tem a capacidade de modificar as configurações de áudio globais.
 
@@ -93,7 +92,7 @@ O aplicativo tem a capacidade de modificar as configurações de áudio globais.
 - **Função:** Permite que o aplicativo modifique as configurações de áudio globais, como o equalizador.
 - **Concessão:** Esta permissão é concedida automaticamente no momento da instalação, não requer solicitação em tempo de execução (runtime).
 
-## Permissão de Acesso à Lista de Contatos
+### Permissão de Acesso à Lista de Contatos
 
 Para permitir a importação de perfis, o aplicativo requer acesso à lista de contatos do dispositivo.
 
