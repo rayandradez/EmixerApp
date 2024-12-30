@@ -7,7 +7,7 @@
 * Alisson Freitas
 * Eduardo Perez Uanús
 * João Gabriel A. Gomes Alves
-* Rayanne da Silva Andrade
+* Rayanne Andrade
 
 ## Visão Geral
 
