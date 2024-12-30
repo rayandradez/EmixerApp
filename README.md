@@ -1,3 +1,18 @@
+<div >
+  <img src="images/EmixerBanner.png" width="1000px">
+</div>
+
+<p align="center">
+  <a href="#Visão Geral">Visão Geral</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#Recursos Principais">Recursos Principais</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#Layout">Layout</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#Detalhes Técnicos">Detalhes Técnicos</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#Permissões do Aplicativo">Permissões do Aplicativo</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#Testes">Testes</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#Melhorias Futuras">Melhorias Futuras</a>
+</p>
+
+
 # Equalizador de Áudio para Carro - Aplicativo Android
 
 **Um aplicativo Android personalizável para equalização de áudio precisa.**
