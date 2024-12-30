@@ -30,6 +30,15 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
     * **Balanceamento Estéreo (Pan):** Ajuste o balanceamento estéreo.
     * **Volume Geral (Main):** Controle do volume total de saída.
     * **Salvar/Redefinir:** Salve as configurações personalizadas do equalizador no perfil selecionado ou redefina para os valores padrão.
+ 
+## Layout 
+
+#### The original project: [Figma](https://www.figma.com/design/ahaN4lSCMNpfLZp3OSnHPf/Emixer?node-id=0-1&p=f&t=YtUwxEKy6SIWXL8c-0)
+
+<div style="display: flex; flex-direction: 'row'; align-items: 'center';">
+	<img src="images/screensapp.png.png" width="325px">	
+</div>
+
 
 ## Detalhes Técnicos
 
@@ -41,7 +50,6 @@ Este aplicativo utiliza as seguintes tecnologias:
 * **Tratamento do Modo Avião:** Broadcast Receivers
 * **Importação de perfis:** Content Provider
 * **Injeção de Dependências:** Gerenciamento manual de dependências.
-* **Link do Figma:** [Interface no Figma](https://www.figma.com/design/ahaN4lSCMNpfLZp3OSnHPf/Emixer?node-id=0-1&p=f&t=YtUwxEKy6SIWXL8c-0)
 
 # Permissões do Aplicativo
 
