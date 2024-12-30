@@ -42,14 +42,16 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
 
 ## Detalhes Técnicos
 
-Este aplicativo utiliza as seguintes tecnologias:
+Este aplicativo utiliza as seguintes tecnologias para atender aos objetivos do curso:
 
-* **Arquitetura:** Model-View-ViewModel (MVVM)
-* **Navegação:** Navigation Graph
-* **Banco de Dados:** Room Persistence Library, Firebase
-* **Tratamento do Modo Avião:** Broadcast Receivers
-* **Importação de perfis:** Content Provider
-* **Injeção de Dependências:** Gerenciamento manual de dependências.
+* **Ciclo de Vida das Activities:** O ciclo de vida das Activities é gerenciado através de uma arquitetura MVVM, garantindo que o estado do aplicativo seja preservado e otimizado.
+* **Permissões de Segurança:** Configuramos as permissões necessárias no Android Manifest para proteger os dados do usuário e garantir o funcionamento do aplicativo.
+* **Programação Orientada a Objetos:** Princípios de POO são aplicados em toda a base de código para modularidade e reutilização.
+* **Integração de Interface Gráfica:** Componentes UI são integrados utilizando o Navigation Graph e ViewModels.
+* **Configuração de Intents:** Intents são utilizados para navegação entre as Activities, proporcionando uma experiência de usuário contínua.
+* **Armazenamento de Dados:** Utilizamos Room para persistência local e Firebase para armazenamento na nuvem.
+* **Comunicação Assíncrona:** Broadcast Receivers são usados para detectar mudanças como o Modo Avião.
+* **Content Providers:** Usados para importar perfis de contatos.
 
 # Permissões do Aplicativo
 
@@ -63,6 +65,10 @@ Para ajustar os parâmetros de equalização de forma eficaz, o aplicativo preci
 - **Função:** Garante acesso somente à leitura dos arquivos de mídia de áudio, sem acessar outros dados do dispositivo.
 - **Importância:** Sem esta permissão, o aplicativo não poderá ajustar as configurações de equalização.
 - **Privacidade:** Não coleta informações pessoais.
+
+<div style="display: flex; flex-direction: 'row'; align-items: 'center';">
+	<img src="images/audio_permission.png" width="325px">	
+</div>
 
 ## Permissão para Modificar Configurações de Áudio
 
@@ -83,6 +89,9 @@ Para permitir a importação de perfis, o aplicativo requer acesso à lista de c
 
 Essas permissões são fundamentais para oferecer uma experiência de uso otimizada e personalizável aos usuários.
 
+<div style="display: flex; flex-direction: 'row'; align-items: 'center';">
+	<img src="images/contacts_permission.png" width="325px">	
+</div>
 
 ## Testes
 
