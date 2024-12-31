@@ -101,11 +101,11 @@ Para permitir a importação de perfis, o aplicativo requer acesso à lista de c
 - **Importância:** Sem esta permissão, o aplicativo não poderá importar as configurações para a criação do perfil.
 - **Privacidade:** Não coleta informações pessoais.
 
-Essas permissões são fundamentais para oferecer uma experiência de uso otimizada e personalizável aos usuários.
-
 <div style="display: flex; flex-direction: 'row'; align-items: 'center';">
 	<img src="images/contacts_permission.png" width="325px">	
 </div>
+
+Essas permissões são fundamentais para oferecer uma experiência de uso otimizada e personalizável aos usuários.
 
 ## Testes
 
