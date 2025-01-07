@@ -1,20 +1,12 @@
 package com.reaj.emixer
 
-import android.Manifest
-import android.content.ContentUris
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
@@ -24,11 +16,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.reaj.emixer.data.local.database.AppDatabase
-import com.reaj.emixer.data.model.UserModel
 import com.reaj.emixer.data.repository.UsersRepository
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
 import com.reaj.emixer.ui.components.viewModels.MainViewModelFactory
-import com.reaj.emixer.R
 import com.reaj.emixer.databinding.ActivityMainBinding
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -70,84 +60,6 @@ class MainActivity : AppCompatActivity() {
             registerReceiver(receiver, it)
         }
 
-        // Registra um launcher para solicitar permissão de leitura de contatos.
-        val requestPermissionLauncher =
-            this.registerForActivityResult(
-                ActivityResultContracts.RequestPermission()
-            ) { isGranted: Boolean ->
-                // Ação a ser tomada com base na concessão da permissão
-                if (isGranted) {
-                    // Define as colunas a serem consultadas no banco de dados de contatos
-                    val projection = arrayOf(
-                        ContactsContract.Contacts._ID,
-                        ContactsContract.Contacts.DISPLAY_NAME,
-
-                    )
-
-                    // Consulta os contatos do usuário
-                    contentResolver.query(
-                        ContactsContract.Contacts.CONTENT_URI,
-                        projection,
-                        null,
-                        null,
-                        null
-                    )?.use { cursor ->
-                        // Obtém os índices das colunas relevantes
-                        val idContactColumn = cursor.getColumnIndex(
-                            ContactsContract.Contacts._ID
-                        )
-                        val nameContactColumn = cursor.getColumnIndex(
-                            ContactsContract.Contacts.DISPLAY_NAME
-                        )
-                        val profile = mutableListOf<Profile>()  // Lista para armazenar perfis de contatos
-                        while (cursor.moveToNext()) {
-                            // Extrai os dados do contato
-                            val id = cursor.getLong(idContactColumn)
-                            val name = cursor.getString(nameContactColumn)
-                            val uri =
-                                ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id)
-
-                            profile.add(Profile(id, name, uri)) // Adiciona o perfil à lista
-
-                            // Cria um UserModel e atualiza no ViewModel
-                            val user = UserModel(name = name, iconIndex = 0)
-                            viewModel.updateUser(user)
-
-                        }
-
-                    }
-                } else {
-                    // Exibe um Toast informando que a importação do perfil falhou
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Unable to import your profile",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-
-        // Verifica o estado da permissão de leitura de contatos
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                // Permissão já concedida; nenhuma ação necessária
-            }
-
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this, Manifest.permission.READ_CONTACTS
-            ) -> {
-                // Aqui você pode mostrar uma explicação ao usuário sobre por que a permissão é necessária
-            }
-
-            else -> {
-                // Solicita a permissão ao usuário
-                requestPermissionLauncher.launch(
-                    Manifest.permission.READ_CONTACTS
-                )
-            }
-        }
 
 
         // Obtém uma instância do MainViewModel usando o delegado viewModels().  Este é um padrão

@@ -55,6 +55,19 @@
             android:layout_marginBottom="32dp" />
 
         <Button
+            android:id="@+id/BtnImportContacts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/grey"
+            android:padding="10dp"
+            android:text="@string/import_contacts_button_text"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@id/BtnManageUser"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="8dp" />
+
+        <Button
             android:id="@+id/BtnManageUser"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -66,6 +79,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginBottom="16dp" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
