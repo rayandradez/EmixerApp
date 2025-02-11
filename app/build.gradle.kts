@@ -11,6 +11,8 @@ android {
     namespace = "com.reaj.emixer"
     compileSdk = 35
 
+    buildFeatures.aidl = true;
+
     defaultConfig {
         applicationId = "com.reaj.emixer"
         minSdk = 26
