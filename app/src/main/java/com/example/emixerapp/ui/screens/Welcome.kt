@@ -40,6 +40,7 @@ class Welcome : Fragment() {
         // Obtém uma instância do ViewModel usando o ViewModelProvider.
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
+
         // Configura a RecyclerView.
         myRecyclerUser = binding.recyclerViewUser
         adapterUserList = UsersAdapter(arrayListOf())

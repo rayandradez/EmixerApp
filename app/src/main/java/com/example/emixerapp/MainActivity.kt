@@ -1,14 +1,18 @@
 package com.reaj.emixer
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.ContentUris
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.ContactsContract
 import android.util.Log
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,9 +37,28 @@ import com.reaj.emixer.databinding.ActivityMainBinding
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
+import com.reaj.emixer.ui.screens.Welcome
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
+
+    private var messageService: IMessageService? = null
+    private var isBound = false
+
+    // Create the connection to the service
+    private val serverConnected = object : ServiceConnection {
+        override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
+            messageService = IMessageService.Stub.asInterface(iBinder)
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(componentName: ComponentName) {
+            isBound = false
+            messageService = null
+        }
+    }
+
 
     private lateinit var binding: ActivityMainBinding   // Binding para acessar os componentes da UI
     private lateinit var navController: NavController   // Controlador de navegação para gerenciar as transições entre fragments
@@ -55,6 +78,31 @@ class MainActivity : AppCompatActivity() {
         // Infla o layout para a activity.
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Configurar o listener para o botão no FragmentWelcome
+        navController = findNavController(R.id.navHostFragmentContainerView)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.navHostFragmentContainerView) {
+                val fragment = supportFragmentManager
+                    .findFragmentById(R.id.navHostFragmentContainerView)
+                    ?.childFragmentManager
+                    ?.fragments
+                    ?.firstOrNull() as? Welcome
+
+                fragment?.let {
+                    it.view?.findViewById<Button>(R.id.teste)?.setOnClickListener {
+                        try {
+                            val message =
+                                "Your message here" // substitua por qualquer texto que você queira enviar
+                            messageService?.sendMessage(message)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            }
+        }
+
 
         // Define um listener para lidar com as áreas de inserção da janela (barras do sistema, como status e navegação).
         // Isso garante que o conteúdo seja desenhado corretamente, evitando sobreposição com elementos da UI do sistema.

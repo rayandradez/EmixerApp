@@ -41,6 +41,18 @@
             android:layout_marginBottom="24dp"
             app:layout_constraintVertical_chainStyle="packed" />
 
+        <Button
+            android:id="@+id/teste"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/grey"
+            android:padding="10dp"
+            android:text="teste"
+            android:textSize="25sp"
+            tools:layout_editor_absoluteX="236dp"
+            tools:layout_editor_absoluteY="26dp"
+            tools:ignore="MissingConstraints" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_user"
             android:layout_width="0dp"
