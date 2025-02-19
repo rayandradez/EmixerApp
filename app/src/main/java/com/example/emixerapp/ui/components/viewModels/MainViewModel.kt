@@ -58,19 +58,6 @@ class MainViewModel(private val usersRepository: UsersRepository) : ViewModel() 
         }
     }
 
-    // Remove um usuário
-    fun deleteUser(user: UsersEntity) {
-        viewModelScope.launch {
-            usersRepository.deleteUser(user)
-        }
-    }
-
-    // Define o usuário atual
-    fun setCurrentUser(user: UsersEntity?) {
-        _uiState.update { currentState ->
-            currentState.copy(user = user?.toUserModel())
-        }
-    }
 
     /**
      * Adiciona um novo usuário à lista de usuários.
@@ -140,22 +127,30 @@ class MainViewModel(private val usersRepository: UsersRepository) : ViewModel() 
     }
 
     fun deleteUser(user: UserModel?) {
-        // Atualiza o estado da UI para remover um usuário
-        _uiState.update { currentState ->
-            val updatedList = currentState.usersList.toMutableList()
-
-            // Verifica se o user não é nulo e se o ID do user é encontrado na lista
-            if (user != null) {
+        if (user != null) {
+            viewModelScope.launch {
+                usersRepository.deleteUser(UsersEntity(
+                    user.id,
+                    user.name,
+                    user.iconIndex,
+                    user.bass,
+                    user.middle,
+                    user.high,
+                    user.mainVolume,
+                    user.pan
+                ))
+            }
+            _uiState.update { currentState ->
+                val updatedList = currentState.usersList.toMutableList()
                 val index = updatedList.indexOfFirst { it.id == user.id }
                 if (index != -1) {
-                    updatedList.removeAt(index) // Remove o usuário pelo índice
+                    updatedList.removeAt(index)
                 }
+                currentState.copy(usersList = updatedList)
             }
-
-            // Copia o estado atual, atualizando a lista de usuários.
-            currentState.copy(usersList = updatedList)
         }
     }
+
 
 
 }

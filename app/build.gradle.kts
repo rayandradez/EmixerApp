@@ -10,7 +10,6 @@ plugins {
 android {
     namespace = "com.reaj.emixer"
     compileSdk = 35
-
     buildFeatures.aidl = true;
 
     defaultConfig {
