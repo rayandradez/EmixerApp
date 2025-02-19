@@ -11,6 +11,17 @@
     <string name="manage_profile_header_text">Select the profile you want to edit</string>
     <string name="edit_profile_header_text">Give a name and icon to your profile</string>
 
+
+    <!--  Welcome Screen  -->
+
+    <string name="select_or_manage_profiles">Select or manage your profiles</string>
+    <string name="no_profiles_message">No profiles found. Add a new profile or import from contacts.</string>
+    <string name="add_profile_button_text_">Add Profile</string>
+    <string name="import_contacts_button_text">Import Contacts</string>
+
+
+
+
     <!--  Buttons  -->
     <string name="manage_users_button_text">Manage Profiles</string>
     <string name="add_profile_button_text">+</string>
