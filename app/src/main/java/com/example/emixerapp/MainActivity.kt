@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     private var messageService: IMessageService? = null
     private var isBound = false
 
-    private val connection = object : ServiceConnection {
+    private val connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             messageService = IMessageService.Stub.asInterface(service)
             isBound = true

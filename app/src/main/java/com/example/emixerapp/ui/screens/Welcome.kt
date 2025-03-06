@@ -5,6 +5,7 @@ import android.content.ContentUris
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -88,9 +89,6 @@ class Welcome : Fragment() {
             }
         }
 
-
-
-
         // Define o listener para o botão "Gerenciar Usuário".
         binding.BtnManageUser.setOnClickListener {
             // Navega para a tela de gerenciamento de usuários.
@@ -129,6 +127,26 @@ class Welcome : Fragment() {
                     }
                 }
             }
+        }
+
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.showSettings.collect { data ->
+                binding.BtnImportContacts.visibility = if (data) View.VISIBLE else View.GONE
+                binding.BtnSendMessage.visibility = if (data) View.VISIBLE else View.GONE
+                val layoutParams = binding.recyclerViewUser.layoutParams
+                layoutParams.height = if (!data) {
+                    dpToPx(450) // Ajusta ao conteúdo
+                } else {
+                    dpToPx(325) // 250dp em pixels
+                }
+                binding.recyclerViewUser.layoutParams = layoutParams
+            }
+        }
+
+
+        binding.btnShowHideSettings.setOnClickListener {
+            viewModel.setShowSettings()
         }
 
         // Retorna a view raiz.
@@ -208,6 +226,12 @@ class Welcome : Fragment() {
                 viewModel.updateUser(user)
             }
         }
+    }
+
+    // Função para converter dp para pixels
+    private fun dpToPx(dp: Int): Int {
+        val density = resources.displayMetrics.density
+        return (dp * density).toInt()
     }
 
 }

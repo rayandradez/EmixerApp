@@ -44,4 +44,5 @@
     <string name="reset">Reset</string>
     <string name="logo_of_the_app">Logo of the APP</string>
     <string name="save_settings">Save Settings</string>
+    <string name="send_message">Send Message</string>
 </resources>

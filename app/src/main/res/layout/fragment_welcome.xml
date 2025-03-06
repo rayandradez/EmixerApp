@@ -1,99 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:background="@color/light_grey"
+    android:orientation="vertical"
     tools:context="com.reaj.emixer.ui.screens.Welcome">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:paddingHorizontal="16dp"
         android:paddingVertical="16dp">
 
         <ImageView
             android:id="@+id/ImgWelcomeLogo"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/logo"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.3" />
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/logo" />
+
+        <ImageButton
+            android:id="@+id/btnShowHideSettings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:backgroundTint="@color/grey"
+            android:scaleType="fitCenter"
+            android:padding="10dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/baseline_settings_24"
+            android:fontFamily="@font/latolight"
+            android:src="@drawable/checkw"
+            android:contentDescription="@string/save_settings"
+            />
 
         <TextView
             android:id="@+id/txtwelcome"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/ImgWelcomeLogo"
+            android:layout_marginBottom="24dp"
             android:fontFamily="@font/latolight"
             android:text="@string/select_profile_header_text"
             android:textSize="40sp"
-            app:layout_constraintBottom_toTopOf="@id/recycler_view_user"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ImgWelcomeLogo"
-            android:layout_marginBottom="24dp"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_user"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_below="@+id/txtwelcome"
+            android:layout_marginBottom="32dp"
             android:textSize="20sp"
             tools:context="com.reaj.emixer.ui.screens.UserPage"
             tools:listitem="@layout/adapter_user"
-            app:layout_constraintBottom_toTopOf="@id/BtnManageUser"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtwelcome"
-            android:layout_marginBottom="32dp" />
+            />
 
-        <Button
-            android:id="@+id/BtnSendMessage"
-            android:layout_width="0dp"
+
+        <RelativeLayout
+            android:id="@+id/rltSettings"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/grey"
-            android:padding="10dp"
-            android:text="Send Message"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toTopOf="@id/BtnImportContacts"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="8dp" />
+            android:background="@color/light_grey"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/recycler_view_user"
+            >
 
-        <Button
-            android:id="@+id/BtnImportContacts"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/grey"
-            android:padding="10dp"
-            android:text="@string/import_contacts_button_text"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toTopOf="@id/BtnManageUser"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="8dp" />
+            <Button
+                android:id="@+id/BtnSendMessage"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_above="@+id/BtnImportContacts"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/grey"
+                android:padding="10dp"
+                android:text="@string/send_message"
+                android:textSize="25sp" />
 
-        <Button
-            android:id="@+id/BtnManageUser"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/grey"
-            android:padding="10dp"
-            android:text="@string/manage_users_button_text"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="16dp" />
+            <Button
+                android:id="@+id/BtnImportContacts"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_above="@+id/BtnManageUser"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/grey"
+                android:padding="10dp"
+                android:text="@string/import_contacts_button_text"
+                android:textSize="25sp" />
+
+            <Button
+                android:id="@+id/BtnManageUser"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="0dp"
+                android:backgroundTint="@color/grey"
+                android:padding="10dp"
+                android:text="@string/manage_users_button_text"
+                android:textSize="25sp" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
 
-</LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>
