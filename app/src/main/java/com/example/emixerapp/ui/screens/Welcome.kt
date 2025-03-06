@@ -25,6 +25,7 @@ import com.reaj.emixer.ui.components.adapters.UsersAdapter
 import com.reaj.emixer.R
 import com.reaj.emixer.databinding.FragmentWelcomeBinding
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.reaj.emixer.MainActivity
 import com.reaj.emixer.Profile
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
 import kotlinx.coroutines.launch
@@ -69,6 +70,26 @@ class Welcome : Fragment() {
         myRecyclerUser.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         myRecyclerUser.setHasFixedSize(true) // Otimização de performance.
+
+
+        binding.BtnSendMessage.setOnClickListener {
+            val mainActivity = activity as? MainActivity
+            val messageService = mainActivity?.getMessageService()
+
+            if (messageService != null) {
+                try {
+                    messageService.sendMessage("Hello from Welcome Fragment!")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(context, "Error sending message", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "Service not bound", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+
 
         // Define o listener para o botão "Gerenciar Usuário".
         binding.BtnManageUser.setOnClickListener {

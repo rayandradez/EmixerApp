@@ -47,6 +47,13 @@
         android:theme="@style/Theme.MVVMApp"
         tools:targetApi="31">
 
+        <service android:name="com.example.emixerapp.MessageService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.reaj.emixer.IMessageService" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name="com.reaj.emixer.MainActivity"
             android:exported="true">
