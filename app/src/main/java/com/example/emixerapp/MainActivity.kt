@@ -1,9 +1,13 @@
 package com.reaj.emixer
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.ServiceConnection
 import android.net.Uri
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import com.example.emixerapp.MessageService
 import com.reaj.emixer.data.local.database.AppDatabase
 import com.reaj.emixer.data.repository.UsersRepository
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
@@ -33,6 +38,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var receiver: AirplaneModeBroadcastReceiver    // Receptor para escutar mudanças no modo avião
     private lateinit var analytics: FirebaseAnalytics // Firebase para rastrear eventos do usuário
 
+
+    private var messageService: IMessageService? = null
+    private var isBound = false
+
+    private val connection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            messageService = IMessageService.Stub.asInterface(service)
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(className: ComponentName) {
+            messageService = null
+            isBound = false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,6 +67,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val intent = Intent(this, MessageService::class.java)
+        bindService(intent, connection, Context.BIND_AUTO_CREATE)
+
         // Define um listener para lidar com as áreas de inserção da janela (barras do sistema, como status e navegação).
         // Isso garante que o conteúdo seja desenhado corretamente, evitando sobreposição com elementos da UI do sistema.
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
@@ -53,6 +77,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
 
         // Inicializa o receptor para mudanças no modo avião e registra para receber esses eventos.
         receiver = AirplaneModeBroadcastReceiver()
@@ -112,6 +137,18 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         // Desregistra o receptor para evitar vazamentos de memória
         unregisterReceiver(receiver)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isBound) {
+            unbindService(connection)
+            isBound = false
+        }
+    }
+
+    fun getMessageService(): IMessageService? {
+        return messageService
     }
 }
 

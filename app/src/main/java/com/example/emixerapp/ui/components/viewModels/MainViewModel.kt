@@ -35,6 +35,13 @@ class MainViewModel(private val usersRepository: UsersRepository) : ViewModel() 
     // StateFlow imutável para acesso externo ao estado da UI.
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
+
+    // Estado da UI, usando MutableStateFlow para emitir mudanças reativamente.
+    private val _showSettings = MutableStateFlow(false) // Inicialize com um valor padrão (false)
+
+    // StateFlow imutável para acesso externo ao estado da UI.
+    var showSettings: StateFlow<Boolean> = _showSettings.asStateFlow()
+
     // Inicializa o estado com a lista de usuários do banco de dados
     init {
         usersRepository.getAllUsers().onEach { usersList: List<UsersEntity> ->
@@ -42,6 +49,7 @@ class MainViewModel(private val usersRepository: UsersRepository) : ViewModel() 
                 currentState.copy(usersList = usersList.map { it.toUserModel() })
             }
         }.launchIn(viewModelScope)
+        _showSettings.value = false
     }
 
     // Adiciona um novo usuário
@@ -56,6 +64,12 @@ class MainViewModel(private val usersRepository: UsersRepository) : ViewModel() 
         viewModelScope.launch {
             usersRepository.updateUser(user)
         }
+    }
+
+
+    // Alterna o valor de showSettings
+    fun setShowSettings() {
+        _showSettings.update { !it } // Inverte o valor atual
     }
 
 

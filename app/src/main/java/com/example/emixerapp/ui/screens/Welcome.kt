@@ -5,6 +5,7 @@ import android.content.ContentUris
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +26,7 @@ import com.reaj.emixer.ui.components.adapters.UsersAdapter
 import com.reaj.emixer.R
 import com.reaj.emixer.databinding.FragmentWelcomeBinding
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.reaj.emixer.MainActivity
 import com.reaj.emixer.Profile
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
 import kotlinx.coroutines.launch
@@ -70,6 +72,23 @@ class Welcome : Fragment() {
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         myRecyclerUser.setHasFixedSize(true) // Otimização de performance.
 
+
+        binding.BtnSendMessage.setOnClickListener {
+            val mainActivity = activity as? MainActivity
+            val messageService = mainActivity?.getMessageService()
+
+            if (messageService != null) {
+                try {
+                    messageService.sendMessage("Hello from Welcome Fragment!")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(context, "Error sending message", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "Service not bound", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         // Define o listener para o botão "Gerenciar Usuário".
         binding.BtnManageUser.setOnClickListener {
             // Navega para a tela de gerenciamento de usuários.
@@ -108,6 +127,26 @@ class Welcome : Fragment() {
                     }
                 }
             }
+        }
+
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.showSettings.collect { data ->
+                binding.BtnImportContacts.visibility = if (data) View.VISIBLE else View.GONE
+                binding.BtnSendMessage.visibility = if (data) View.VISIBLE else View.GONE
+                val layoutParams = binding.recyclerViewUser.layoutParams
+                layoutParams.height = if (!data) {
+                    dpToPx(450) // Ajusta ao conteúdo
+                } else {
+                    dpToPx(325) // 250dp em pixels
+                }
+                binding.recyclerViewUser.layoutParams = layoutParams
+            }
+        }
+
+
+        binding.btnShowHideSettings.setOnClickListener {
+            viewModel.setShowSettings()
         }
 
         // Retorna a view raiz.
@@ -187,6 +226,12 @@ class Welcome : Fragment() {
                 viewModel.updateUser(user)
             }
         }
+    }
+
+    // Função para converter dp para pixels
+    private fun dpToPx(dp: Int): Int {
+        val density = resources.displayMetrics.density
+        return (dp * density).toInt()
     }
 
 }
