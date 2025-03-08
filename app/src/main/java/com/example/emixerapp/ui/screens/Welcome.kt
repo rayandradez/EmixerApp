@@ -5,7 +5,6 @@ import android.content.ContentUris
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -74,19 +73,7 @@ class Welcome : Fragment() {
 
 
         binding.BtnSendMessage.setOnClickListener {
-            val mainActivity = activity as? MainActivity
-            val messageService = mainActivity?.getMessageService()
-
-            if (messageService != null) {
-                try {
-                    messageService.sendMessage("Hello from Welcome Fragment!")
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Toast.makeText(context, "Error sending message", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(context, "Service not bound", Toast.LENGTH_SHORT).show()
-            }
+            sendAIDLMessage() // Chama métrodo que envia uma mensagem usando AIDL.
         }
 
         // Define o listener para o botão "Gerenciar Usuário".
@@ -167,6 +154,22 @@ class Welcome : Fragment() {
                 return oldList[oldItemPosition] == newList[newItemPosition]
             }
         }
+
+    private fun sendAIDLMessage(){
+        val mainActivity = activity as? MainActivity
+        val messageService = mainActivity?.getMessageService()
+
+        if (messageService != null) {
+            try {
+                messageService.sendMessage("Hello from EMIXER AIDL!")
+            } catch (e: Exception) {
+                e.printStackTrace() // Se ocorrer uma exceção, exibe stack trace no Logcat.
+                Toast.makeText(context, "Error sending message", Toast.LENGTH_SHORT).show() // Exibe um Toast informando que ocorreu um erro ao enviar a mensagem pelo AIDL.
+            }
+        } else {
+            Toast.makeText(context, "Service not bound", Toast.LENGTH_SHORT).show() // Se o serviço (messageService) for nulo, exibe um Toast informando que o serviço não está vinculado.
+        }
+    }
 
     private fun handleImportContactsClick() {
         when {

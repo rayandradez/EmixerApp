@@ -13,7 +13,7 @@ public class MessageService extends Service {
     private final IMessageService.Stub binder = new IMessageService.Stub() {
         @Override
         public void sendMessage(String message) throws RemoteException {
-            Log.d("MessageService", "Message received: " + message);
+            Log.d("AIDL_DEMO", "Message received: " + message);
             // Handle the message, e.g., show a notification
         }
     };
