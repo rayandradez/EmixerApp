@@ -42,13 +42,18 @@ class MainActivity : AppCompatActivity() {
     private var messageService: IMessageService? = null
     private var isBound = false
 
+    // Declara uma variável para a conexão com o serviço
     private val connection: ServiceConnection = object : ServiceConnection {
+        // Chamado quando a conexão com o serviço é estabelecida
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            // Obtém a interface do serviço a partir do IBinder
             messageService = IMessageService.Stub.asInterface(service)
             isBound = true
         }
 
+        // Chamado quando a conexão com o serviço é desconectada
         override fun onServiceDisconnected(className: ComponentName) {
+            // Define que o serviço não está mais disponível
             messageService = null
             isBound = false
         }
@@ -86,7 +91,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
         // Obtém uma instância do MainViewModel usando o delegado viewModels().  Este é um padrão
         // do AndroidX que simplifica a criação e gerenciamento de ViewModels.  O uso de
         // viewModels() garante que:
@@ -102,7 +106,6 @@ class MainActivity : AppCompatActivity() {
         // Inicializar o ViewModel com o Factory compartilhado com a Activity
         val factory = MainViewModelFactory(usersRepository)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
-
 
 
         // Inicia uma corrotina dentro do escopo do ciclo de vida da activity.
@@ -122,7 +125,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
 
     // Lidar com a ação de navegação para cima, tipicamente usada para navegação para trás em uma configuração de componente de navegação.
