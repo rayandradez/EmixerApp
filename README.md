@@ -66,6 +66,19 @@ Este aplicativo utiliza as seguintes tecnologias para atender aos objetivos do c
 * **Armazenamento de Dados:** Utilizamos Room para persistência local e Firebase para armazenamento na nuvem.
 * **Comunicação Assíncrona:** Broadcast Receivers são usados para detectar mudanças como o Modo Avião.
 * **Content Providers:** Usados para importar perfis de contatos.
+* **Implementação AIDL:** Integração do Android Interface Definition Language para facilitar a comunicação interprocessual.
+
+### AIDL no EmixerApp
+
+No EmixerApp, o AIDL foi implementado para demonstrar a comunicação interprocessual, adicionando um botão para servir como interface para a funcionalidade do AIDL. Os arquivos editados para suportar essa implementação foram:
+
+- `MessageService.java`: Implementação do serviço para gerenciar as requisições AIDL.
+- `Welcome.kt`: Integração inicial do AIDL.
+- `AndroidManifest.kt`: Declaração e configuração do serviço.
+- `MainActivity.kt`: Configuração do bind ao serviço.
+- `MainViewModel.kt`: Lógica de manipulação de dados e interação com o AIDL.
+
+Esta implementação adicional amplia a funcionalidade do aplicativo, permitindo que diferentes componentes se comuniquem de maneira eficiente.
 
 ## Permissões do Aplicativo
 
