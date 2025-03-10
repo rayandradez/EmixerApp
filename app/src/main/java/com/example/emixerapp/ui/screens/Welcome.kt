@@ -118,15 +118,18 @@ class Welcome : Fragment() {
 
 
         viewLifecycleOwner.lifecycleScope.launch {
+            // dependendo do valor ele redefini o tamanho do relative para mostrar mais opções de buttons
             viewModel.showSettings.collect { data ->
+                // torna visível ou invísivel o button
                 binding.BtnImportContacts.visibility = if (data) View.VISIBLE else View.GONE
                 binding.BtnSendMessage.visibility = if (data) View.VISIBLE else View.GONE
                 val layoutParams = binding.recyclerViewUser.layoutParams
                 layoutParams.height = if (!data) {
-                    dpToPx(450) // Ajusta ao conteúdo
+                    dpToPx(450) // 450dp em pixels
                 } else {
-                    dpToPx(325) // 250dp em pixels
+                    dpToPx(325) // 325dp em pixels
                 }
+                // redefini o tamanho do height do recyclerview
                 binding.recyclerViewUser.layoutParams = layoutParams
             }
         }
@@ -155,18 +158,25 @@ class Welcome : Fragment() {
             }
         }
 
+    // Função para enviar uma mensagem através de AIDL
     private fun sendAIDLMessage(){
+        // Tenta obter uma referência à MainActivity
         val mainActivity = activity as? MainActivity
+        // Obtém o serviço de mensagens da MainActivity
         val messageService = mainActivity?.getMessageService()
 
+        // Verifica se o serviço de mensagens foi obtido com sucesso
         if (messageService != null) {
             try {
+                // Tenta enviar a mensagem para o serviço
                 messageService.sendMessage("Hello from EMIXER AIDL!")
             } catch (e: Exception) {
+                // Captura qualquer exceção que ocorra durante o envio da mensagem
                 e.printStackTrace() // Se ocorrer uma exceção, exibe stack trace no Logcat.
                 Toast.makeText(context, "Error sending message", Toast.LENGTH_SHORT).show() // Exibe um Toast informando que ocorreu um erro ao enviar a mensagem pelo AIDL.
             }
         } else {
+            // Se o serviço de mensagens for nulo ele retorna um Toast avisando
             Toast.makeText(context, "Service not bound", Toast.LENGTH_SHORT).show() // Se o serviço (messageService) for nulo, exibe um Toast informando que o serviço não está vinculado.
         }
     }
