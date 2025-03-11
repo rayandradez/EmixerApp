@@ -68,7 +68,8 @@ Este aplicativo utiliza as seguintes tecnologias para atender aos objetivos do c
 * **Content Providers:** Usados para importar perfis de contatos.
 * **Implementação AIDL:** Integração do Android Interface Definition Language para facilitar a comunicação interprocessual.
 
-### AIDL no EmixerApp
+
+### AIDL no EmixerApp - Botão de Teste no Welcome Screen
 
 No EmixerApp, o AIDL foi implementado para demonstrar a comunicação interprocessual, adicionando um botão para servir como interface para a funcionalidade do AIDL. Os arquivos editados para suportar essa implementação foram:
 
@@ -79,6 +80,74 @@ No EmixerApp, o AIDL foi implementado para demonstrar a comunicação interproce
 - `MainViewModel.kt`: Lógica de manipulação de dados e interação com o AIDL.
 
 Esta implementação adicional amplia a funcionalidade do aplicativo, permitindo que diferentes componentes se comuniquem de maneira eficiente.
+
+### AIDL no EmixerApp - UserPage
+
+No EmixerApp, o AIDL é utilizado dentro do fragmento `UserPage` para facilitar a comunicação com um serviço em segundo plano responsável pelos ajustes de equalização de áudio. Essa abordagem permite uma separação clara de responsabilidades, permitindo que a interface do usuário permaneça responsiva enquanto o serviço lida com o processamento de áudio.
+
+- `UserPage.kt`: Implementa a interface do usuário para configurações de áudio e se conecta ao `MessageService` usando AIDL.
+- `MessageService.java`: Implementação do serviço para gerenciar as requisições AIDL e aplicar as configurações de áudio.
+- `IMessageService.aidl`: Definição da interface AIDL usada para comunicação entre `UserPage` e `MessageService`.
+
+#### Controle da Equalização via AIDL: Métodos Dedicados
+
+O `UserPage` utiliza AIDL para interagir com um serviço que controla a equalização de áudio através de métodos dedicados para cada parâmetro. Isso permite um controle mais preciso e validado das configurações de áudio.
+
+A interface `IMessageService.aidl` define os seguintes métodos:
+
+*   `boolean setBass(int value)`: Define o nível de graves.
+*   `boolean setMid(int value)`: Define o nível de médios.
+*   `boolean setTreble(int value)`: Define o nível de agudos.
+*   `boolean setMainVolume(int value)`: Define o volume principal.
+*   `boolean setPan(int value)`: Define o balanço estéreo (pan).
+
+Cada método retorna um valor booleano (`true` ou `false`) para indicar se a configuração foi aplicada com sucesso.
+
+#### Validação de Valores
+
+O serviço (`MessageService.java`) implementa a validação dos valores recebidos para garantir que estejam dentro de um intervalo aceitável. Por exemplo, os valores de `Bass`, `Mid` e `Treble` podem ser validados para estarem entre -15 e +15 dB, conforme definido no equalizador. O valor de `Pan` pode variar de -100 a 100, representando o balanço para a esquerda ou direita, e o `MainVolume` de 0 a 100.
+
+Exemplo de Validação (MessageService.java):
+
+```java
+@Override
+public boolean setMid(int value) throws RemoteException {
+    if (value >= -15 && value <= 15) {
+        Log.d("AIDL_DEMO", "Setting Mid to: " + value + " dB");
+        // Aqui você aplicaria a configuração de médios usando sua API de áudio
+        return true;
+    } else {
+        Log.w("AIDL_DEMO", "Valor inválido para Mid: " + value + " dB. Deve estar entre -15 e +15.");
+        return false;
+    }
+}
+```
+
+#### Implementação no User Page
+
+No UserPage.kt, cada SeekBar está associada ao seu respectivo método AIDL. Quando o usuário ajusta um SeekBar, o método correspondente é chamado no serviço, e o valor é validado antes de ser aplicado. O valor de retorno booleano é usado para verificar se a configuração foi aplicada com sucesso e registrar logs apropriados.
+
+Exemplo de Uso (UserPage.kt):
+
+```kotlin
+private fun setMid(value: Int) {
+    if (isServiceBound) {
+        try {
+            val success = messageService?.setMid(value) ?: false
+            if (success) {
+                Log.d("UserPage", "Configurando Mid para $value: Sucesso")
+            } else {
+                Log.w("UserPage", "Falha ao configurar Mid para $value (valor inválido?)")
+            }
+        } catch (e: RemoteException) {
+            Log.e("UserPage", "RemoteException: ${e.message}")
+        }
+    } else {
+        Log.w("UserPage", "Serviço não está vinculado")
+    }
+}
+```
+Essa implementação garante que o controle de áudio seja modular, validado e capaz de fornecer feedback sobre o sucesso ou falha das operações.
 
 ## Permissões do Aplicativo
 
