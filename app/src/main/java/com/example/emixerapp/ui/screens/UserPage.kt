@@ -2,9 +2,16 @@ package your_package_name.ui.screens
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
+import android.os.RemoteException
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.emixerapp.MessageService
 import com.reaj.emixer.data.local.database.AppDatabase
 import com.reaj.emixer.data.model.UserModel
 import com.reaj.emixer.data.repository.UsersRepository
@@ -31,6 +39,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
+import com.reaj.emixer.IMessageService
 import kotlinx.coroutines.launch
 
 
@@ -44,6 +53,25 @@ class UserPage : Fragment() {
     private var hasChanges = false  // Indica se há mudanças não salvas.
     private lateinit var analytics: FirebaseAnalytics
 
+    // AIDL related variables
+    private var messageService: IMessageService? = null
+    private var isServiceBound = false
+
+    // Service Connection
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            messageService = IMessageService.Stub.asInterface(service)
+            isServiceBound = true
+            Log.d("UserPage", "Service connected")
+            // Now you can call methods on messageService
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            messageService = null
+            isServiceBound = false
+            Log.d("UserPage", "Service disconnected")
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -105,6 +133,8 @@ class UserPage : Fragment() {
         binding.bassSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true   // Marca que houve mudanças.
+                setBass(p1) // Call the AIDL method
+
             }
             override fun onStartTrackingTouch(p0: SeekBar?) {
                 // Este método é intencionalmente deixado vazio porque não precisamos
@@ -119,6 +149,8 @@ class UserPage : Fragment() {
         binding.midSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true   // Marca que houve mudanças.
+                setMid(p1) // Call the AIDL method
+
             }
             override fun onStartTrackingTouch(p0: SeekBar?) {
                 // Este método é intencionalmente deixado vazio porque não precisamos
@@ -133,6 +165,8 @@ class UserPage : Fragment() {
         binding.highSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true   // Marca que houve mudanças.
+                setTreble(p1) // Call the AIDL method
+
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -149,6 +183,8 @@ class UserPage : Fragment() {
         binding.mainVolumeSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true   // Marca que houve mudanças.
+                setMainVolume(p1) // Call the AIDL method
+
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -165,6 +201,7 @@ class UserPage : Fragment() {
         binding.panSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 hasChanges = true   // Marca que houve mudanças.
+                setPan(p1) // Call the AIDL method
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -203,6 +240,72 @@ class UserPage : Fragment() {
             }
         }
 
+    }
+
+    // AIDL Methods
+    private fun setBass(value: Int) {
+        if (isServiceBound) {
+            try {
+                messageService?.sendMessage("Bass: $value")
+                Log.d("UserPage", "Setting Bass to $value")
+            } catch (e: RemoteException) {
+                Log.e("UserPage", "RemoteException: ${e.message}")
+            }
+        } else {
+            Log.w("UserPage", "Service not bound")
+        }
+    }
+
+    private fun setMid(value: Int) {
+        if (isServiceBound) {
+            try {
+                messageService?.sendMessage("Mid: $value")
+                Log.d("UserPage", "Setting Mid to $value")
+            } catch (e: RemoteException) {
+                Log.e("UserPage", "RemoteException: ${e.message}")
+            }
+        } else {
+            Log.w("UserPage", "Service not bound")
+        }
+    }
+
+    private fun setTreble(value: Int) {
+        if (isServiceBound) {
+            try {
+                messageService?.sendMessage("Treble: $value")
+                Log.d("UserPage", "Setting Treble to $value")
+            } catch (e: RemoteException) {
+                Log.e("UserPage", "RemoteException: ${e.message}")
+            }
+        } else {
+            Log.w("UserPage", "Service not bound")
+        }
+    }
+
+    private fun setMainVolume(value: Int) {
+        if (isServiceBound) {
+            try {
+                messageService?.sendMessage("MainVolume: $value")
+                Log.d("UserPage", "Setting MainVolume to $value")
+            } catch (e: RemoteException) {
+                Log.e("UserPage", "RemoteException: ${e.message}")
+            }
+        } else {
+            Log.w("UserPage", "Service not bound")
+        }
+    }
+
+    private fun setPan(value: Int) {
+        if (isServiceBound) {
+            try {
+                messageService?.sendMessage("Pan: $value")
+                Log.d("UserPage", "Setting Pan to $value")
+            } catch (e: RemoteException) {
+                Log.e("UserPage", "RemoteException: ${e.message}")
+            }
+        } else {
+            Log.w("UserPage", "Service not bound")
+        }
     }
 
     private fun saveAudioSettings() {
@@ -299,6 +402,24 @@ class UserPage : Fragment() {
         }
         builder.show()
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Bind to the service
+        Intent(requireContext(), MessageService::class.java).also { intent ->
+            requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Unbind from the service
+        if (isServiceBound) {
+            requireContext().unbindService(serviceConnection)
+            isServiceBound = false
+            messageService = null
+        }
     }
 
 }
