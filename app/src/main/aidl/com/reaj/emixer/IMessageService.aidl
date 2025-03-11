@@ -5,5 +5,9 @@ package com.reaj.emixer;
 
 interface IMessageService {
    void sendMessage(String message);
-
+     boolean setBass(int value);
+     boolean setMid(int value);
+     boolean setTreble(int value);
+     boolean setMainVolume(int value);
+     boolean setPan(int value);
 }
