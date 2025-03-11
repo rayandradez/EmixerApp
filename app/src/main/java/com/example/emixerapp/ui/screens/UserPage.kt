@@ -246,8 +246,13 @@ class UserPage : Fragment() {
     private fun setBass(value: Int) {
         if (isServiceBound) {
             try {
-                messageService?.sendMessage("Bass: $value")
-                Log.d("UserPage", "Setting Bass to $value")
+                val success = messageService?.setBass(value) ?: false // Call the AIDL method
+                if (success) {
+                    Log.d("UserPage", "Setting Bass to $value: Success")
+                } else {
+                    Log.w("UserPage", "Setting Bass to $value: Failed (invalid value?)")
+                }
+
             } catch (e: RemoteException) {
                 Log.e("UserPage", "RemoteException: ${e.message}")
             }
@@ -259,8 +264,12 @@ class UserPage : Fragment() {
     private fun setMid(value: Int) {
         if (isServiceBound) {
             try {
-                messageService?.sendMessage("Mid: $value")
-                Log.d("UserPage", "Setting Mid to $value")
+                val success = messageService?.setMid(value) ?: false
+                if (success) {
+                    Log.d("UserPage", "Setting Mid to $value: Success")
+                } else {
+                    Log.w("UserPage", "Setting Mid to $value: Failed (invalid value?)")
+                }
             } catch (e: RemoteException) {
                 Log.e("UserPage", "RemoteException: ${e.message}")
             }
@@ -272,8 +281,12 @@ class UserPage : Fragment() {
     private fun setTreble(value: Int) {
         if (isServiceBound) {
             try {
-                messageService?.sendMessage("Treble: $value")
-                Log.d("UserPage", "Setting Treble to $value")
+                val success = messageService?.setTreble(value) ?: false
+                if (success) {
+                    Log.d("UserPage", "Setting Treble to $value: Success")
+                } else {
+                    Log.w("UserPage", "Setting Treble to $value: Failed (invalid value?)")
+                }
             } catch (e: RemoteException) {
                 Log.e("UserPage", "RemoteException: ${e.message}")
             }
@@ -285,8 +298,12 @@ class UserPage : Fragment() {
     private fun setMainVolume(value: Int) {
         if (isServiceBound) {
             try {
-                messageService?.sendMessage("MainVolume: $value")
-                Log.d("UserPage", "Setting MainVolume to $value")
+                val success = messageService?.setMainVolume(value) ?: false
+                if (success) {
+                    Log.d("UserPage", "Setting MainVolume to $value: Success")
+                } else {
+                    Log.w("UserPage", "Setting MainVolume to $value: Failed (invalid value?)")
+                }
             } catch (e: RemoteException) {
                 Log.e("UserPage", "RemoteException: ${e.message}")
             }
@@ -298,8 +315,12 @@ class UserPage : Fragment() {
     private fun setPan(value: Int) {
         if (isServiceBound) {
             try {
-                messageService?.sendMessage("Pan: $value")
-                Log.d("UserPage", "Setting Pan to $value")
+                val success = messageService?.setPan(value) ?: false
+                if (success) {
+                    Log.d("UserPage", "Setting Pan to $value: Success")
+                } else {
+                    Log.w("UserPage", "Setting Pan to $value: Failed (invalid value?)")
+                }
             } catch (e: RemoteException) {
                 Log.e("UserPage", "RemoteException: ${e.message}")
             }
