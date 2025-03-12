@@ -244,88 +244,93 @@ class UserPage : Fragment() {
 
     // AIDL Methods
     private fun setBass(value: Int) {
+        // Configura o valor do Mid usando o serviço AIDL
         if (isServiceBound) {
             try {
-                val success = messageService?.setBass(value) ?: false // Call the AIDL method
+                val success = messageService?.setBass(value) ?: false // Chama o método AIDL e obtém o resultado
                 if (success) {
-                    Log.d("UserPage", "Setting Bass to $value: Success")
+                    Log.d("UserPage", "Setting Bass to $value: Success") // Log de sucesso
                 } else {
-                    Log.w("UserPage", "Setting Bass to $value: Failed (invalid value?)")
+                    Log.w("UserPage", "Setting Bass to $value: Failed (invalid value?)") // Log de falha
                 }
 
             } catch (e: RemoteException) {
-                Log.e("UserPage", "RemoteException: ${e.message}")
+                Log.e("UserPage", "RemoteException: ${e.message}")  // Log de exceção remota
             }
         } else {
-            Log.w("UserPage", "Service not bound")
+            Log.w("UserPage", "Service not bound") // Log se o serviço não estiver vinculado
         }
     }
 
     private fun setMid(value: Int) {
-        if (isServiceBound) {
+        // Configura o valor do Mid usando o serviço AIDL
+        if (isServiceBound) { // Verifica se o serviço está vinculado
             try {
                 val success = messageService?.setMid(value) ?: false
                 if (success) {
-                    Log.d("UserPage", "Setting Mid to $value: Success")
+                    Log.d("UserPage", "Setting Mid to $value: Success") // Log de sucesso
                 } else {
-                    Log.w("UserPage", "Setting Mid to $value: Failed (invalid value?)")
+                    Log.w("UserPage", "Setting Mid to $value: Failed (invalid value?)") // Log de falha
                 }
             } catch (e: RemoteException) {
-                Log.e("UserPage", "RemoteException: ${e.message}")
+                Log.e("UserPage", "RemoteException: ${e.message}") // Log de exceção remota
             }
         } else {
-            Log.w("UserPage", "Service not bound")
+            Log.w("UserPage", "Service not bound") // Log se o serviço não estiver vinculado
         }
     }
 
     private fun setTreble(value: Int) {
+        // Configura o valor do Mid usando o serviço AIDL
         if (isServiceBound) {
             try {
-                val success = messageService?.setTreble(value) ?: false
+                val success = messageService?.setTreble(value) ?: false // Chama o método AIDL e obtém o resultado
                 if (success) {
-                    Log.d("UserPage", "Setting Treble to $value: Success")
+                    Log.d("UserPage", "Setting Treble to $value: Success")  // Log de sucesso
                 } else {
-                    Log.w("UserPage", "Setting Treble to $value: Failed (invalid value?)")
+                    Log.w("UserPage", "Setting Treble to $value: Failed (invalid value?)") // Log de falha
                 }
             } catch (e: RemoteException) {
-                Log.e("UserPage", "RemoteException: ${e.message}")
+                Log.e("UserPage", "RemoteException: ${e.message}") // Log de exceção remota
             }
         } else {
-            Log.w("UserPage", "Service not bound")
+            Log.w("UserPage", "Service not bound") // Log se o serviço não estiver vinculado
         }
     }
 
     private fun setMainVolume(value: Int) {
+        // Configura o valor do Mid usando o serviço AIDL
         if (isServiceBound) {
             try {
-                val success = messageService?.setMainVolume(value) ?: false
+                val success = messageService?.setMainVolume(value) ?: false // Chama o método AIDL e obtém o resultado
                 if (success) {
-                    Log.d("UserPage", "Setting MainVolume to $value: Success")
+                    Log.d("UserPage", "Setting MainVolume to $value: Success") // Log de sucesso
                 } else {
-                    Log.w("UserPage", "Setting MainVolume to $value: Failed (invalid value?)")
+                    Log.w("UserPage", "Setting MainVolume to $value: Failed (invalid value?)") // Log de falha
                 }
             } catch (e: RemoteException) {
-                Log.e("UserPage", "RemoteException: ${e.message}")
+                Log.e("UserPage", "RemoteException: ${e.message}") // Log de exceção remota
             }
         } else {
-            Log.w("UserPage", "Service not bound")
+            Log.w("UserPage", "Service not bound") // Log se o serviço não estiver vinculado
         }
     }
 
     private fun setPan(value: Int) {
-        if (isServiceBound) {
+        // Configura o valor do Pan usando o serviço AIDL
+        if (isServiceBound) { // Verifica se o serviço está vinculado
             try {
-                val success = messageService?.setPan(value) ?: false
+                val success = messageService?.setPan(value) ?: false  // Chama o método AIDL e obtém o resultado
                 if (success) {
-                    Log.d("UserPage", "Setting Pan to $value: Success")
+                    Log.d("UserPage", "Setting Pan to $value: Success") // Log de sucesso
                 } else {
-                    Log.w("UserPage", "Setting Pan to $value: Failed (invalid value?)")
+                    Log.w("UserPage", "Setting Pan to $value: Failed (invalid value?)") // Log de falha
                 }
             } catch (e: RemoteException) {
-                Log.e("UserPage", "RemoteException: ${e.message}")
+                Log.e("UserPage", "RemoteException: ${e.message}") // Log de exceção remota
             }
         } else {
-            Log.w("UserPage", "Service not bound")
+            Log.w("UserPage", "Service not bound") // Log se o serviço não estiver vinculado
         }
     }
 
@@ -427,7 +432,7 @@ class UserPage : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        // Bind to the service
+        // Vincula ao serviço
         Intent(requireContext(), MessageService::class.java).also { intent ->
             requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
@@ -435,11 +440,11 @@ class UserPage : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        // Unbind from the service
-        if (isServiceBound) {
-            requireContext().unbindService(serviceConnection)
-            isServiceBound = false
-            messageService = null
+        // Desvincula do serviço
+        if (isServiceBound) { // Verifica se o serviço está vinculado
+            requireContext().unbindService(serviceConnection) // Desvincula
+            isServiceBound = false  // Atualiza o estado da vinculação
+            messageService = null // Limpa a referência ao serviço
         }
     }
 
