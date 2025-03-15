@@ -1,10 +1,12 @@
 package com.reaj.emixer
 
+import android.app.ActivityManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
@@ -42,6 +44,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var analytics: FirebaseAnalytics // Firebase para rastrear eventos do usuário
 
 
+
+
     private var messageService: IMessageService? = null
     private var isBound = false
 
@@ -59,6 +63,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("MainActivity", "onCreate")
+
+
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val appTasks = activityManager.appTasks
+        for (appTask in appTasks) {
+            val taskInfo = appTask.taskInfo
+            Log.d("MainActivity", "Task: ${taskInfo.baseActivity?.className}")
+        }
+
+        val packageManager = packageManager
+        val installedApps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+        for (appInfo in installedApps) {
+            val appName = packageManager.getApplicationLabel(appInfo).toString()
+            Log.d("MainActivity", "App: $appName")
+        }
 
         // Obrir a instância do Firebase Analytics.
         analytics = Firebase.analytics
@@ -80,6 +100,12 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Adjust screen brightness
+        val layoutParams = window.attributes
+        layoutParams.screenBrightness = 0.5f // Example brightness level
+        window.attributes = layoutParams
+        Log.d("MainActivity", "Screen brightness set to: ${layoutParams.screenBrightness}")
 
 
         // Inicializa o receptor para mudanças no modo avião e registra para receber esses eventos.
@@ -169,14 +195,32 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d("MainActivity", "onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("MainActivity", "onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("MainActivity", "onPause")
+    }
+
+
     override fun onStop() {
         super.onStop()
+        Log.d("MainActivity", "onStop")
         // Desregistra o receptor para evitar vazamentos de memória
         unregisterReceiver(receiver)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("MainActivity", "onDestroy")
         if (isBound) {
             unbindService(connection)
             isBound = false

@@ -66,7 +66,11 @@ class SettingsFragment : Fragment() {
         binding.BtnManageUser.setOnClickListener {
             it.findNavController().navigate(R.id.action_settings_to_manageUser)
         }
+        binding.btnTestTasks.setOnClickListener {
+            findNavController().navigate(R.id.action_settings_to_infoFragment)
+        }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
