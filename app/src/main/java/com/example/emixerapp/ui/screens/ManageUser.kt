@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.reaj.emixer.R
 import com.reaj.emixer.data.model.UserModel
 import com.reaj.emixer.ui.components.adapters.UsersAdapter
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
@@ -63,11 +67,20 @@ class ManageUser : Fragment() {
                         adapter.dataSet.clear()
                         adapter.dataSet.addAll(newList)
                         diffResult.dispatchUpdatesTo(adapter)
+
+                        // Show RecyclerView and "Back" button, hide message
+                        binding.recyclerViewUser.isVisible = true
+                        binding.backButton.isVisible = true
+                        binding.noProfilesMessage.isVisible = false
                     } else {
-                        // Lidar com a lista vazia (exibir uma mensagem, etc.)  - Implementação a ser adicionada conforme necessário.
+                        // Hide RecyclerView and "Back" button, show message
+                        binding.recyclerViewUser.isVisible = false
+                        binding.backButton.isVisible = false
+                        binding.noProfilesMessage.isVisible = true
+                        binding.noProfilesMessage.text = getString(R.string.no_profiles_message_manage)
+
                     }
-                }
-            }
+            } }
         }
 
 
@@ -82,6 +95,19 @@ class ManageUser : Fragment() {
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()  // Navega para a tela anterior.
         }
+
+        // Apply window insets to the button layout
+        ViewCompat.setOnApplyWindowInsetsListener(binding.buttonLayout) { view, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            view.setPadding(
+                view.paddingLeft,
+                view.paddingTop,
+                view.paddingRight,
+                bottomInset
+            )
+            insets
+        }
+
         return binding.root
     }
 }

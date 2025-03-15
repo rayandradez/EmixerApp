@@ -45,4 +45,7 @@
     <string name="logo_of_the_app">Logo of the APP</string>
     <string name="save_settings">Save Settings</string>
     <string name="send_message">Send Message</string>
+    <string name="home">Home</string>
+    <string name="settings">Settings</string>
+    <string name="no_profiles_message_manage">There are no profiles, add a new one.</string>
 </resources>

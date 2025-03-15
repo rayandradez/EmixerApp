@@ -1,112 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_grey"
-    android:orientation="vertical"
-    tools:context="com.reaj.emixer.ui.screens.Welcome">
+    tools:context="com.example.emixerapp.ui.screens.Welcome">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/ImgWelcomeLogo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtwelcome"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="16dp">
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/latolight"
+        android:text="@string/select_profile_header_text"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ImgWelcomeLogo" />
 
-        <ImageView
-            android:id="@+id/ImgWelcomeLogo"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/logo" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_user"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtwelcome"
+        tools:context="com.reaj.emixer.ui.screens.UserPage"
+        tools:listitem="@layout/adapter_user" />
 
-        <ImageButton
-            android:id="@+id/btnShowHideSettings"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:backgroundTint="@color/grey"
-            android:scaleType="fitCenter"
-            android:padding="10dp"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/baseline_settings_24"
-            android:fontFamily="@font/latolight"
-            android:src="@drawable/checkw"
-            android:contentDescription="@string/save_settings"
-            />
+    <Button
+        android:id="@+id/addNewUserButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="312dp"
+        android:background="@drawable/circleborderbutton"
+        android:fontFamily="@font/latolight"
+        android:text="@string/add_profile_button_text"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.913" />
 
-        <TextView
-            android:id="@+id/txtwelcome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ImgWelcomeLogo"
-            android:layout_marginBottom="24dp"
-            android:fontFamily="@font/latolight"
-            android:text="@string/select_profile_header_text"
-            android:textSize="40sp"
-            app:layout_constraintVertical_chainStyle="packed" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_user"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_below="@+id/txtwelcome"
-            android:layout_marginBottom="32dp"
-            android:textSize="20sp"
-            tools:context="com.reaj.emixer.ui.screens.UserPage"
-            tools:listitem="@layout/adapter_user"
-            />
-
-
-        <RelativeLayout
-            android:id="@+id/rltSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/light_grey"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/recycler_view_user"
-            >
-
-            <Button
-                android:id="@+id/BtnSendMessage"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_above="@+id/BtnImportContacts"
-                android:layout_marginBottom="8dp"
-                android:backgroundTint="@color/grey"
-                android:padding="10dp"
-                android:text="@string/send_message"
-                android:textSize="25sp" />
-
-            <Button
-                android:id="@+id/BtnImportContacts"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_above="@+id/BtnManageUser"
-                android:layout_marginBottom="8dp"
-                android:backgroundTint="@color/grey"
-                android:padding="10dp"
-                android:text="@string/import_contacts_button_text"
-                android:textSize="25sp" />
-
-            <Button
-                android:id="@+id/BtnManageUser"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="0dp"
-                android:backgroundTint="@color/grey"
-                android:padding="10dp"
-                android:text="@string/manage_users_button_text"
-                android:textSize="25sp" />
-
-
-        </RelativeLayout>
-
-
-    </RelativeLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
