@@ -1,4 +1,4 @@
-package your_package_name.ui.screens
+package com.example.emixerapp.ui.screens
 
 import android.Manifest
 import android.app.AlertDialog

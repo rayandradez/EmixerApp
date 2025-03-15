@@ -12,7 +12,10 @@
         <!-- Personaliza a cor da barra -->
         <item name="android:progressDrawable">@drawable/seekbar_progress</item>
 
-
-
     </style>
+
+    <style name="BottomNavigationView.ActiveItem" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

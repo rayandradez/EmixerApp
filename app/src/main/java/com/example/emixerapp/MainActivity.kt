@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -19,6 +20,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.emixerapp.MessageService
 import com.reaj.emixer.data.local.database.AppDatabase
 import com.reaj.emixer.data.repository.UsersRepository
@@ -103,6 +106,39 @@ class MainActivity : AppCompatActivity() {
         val factory = MainViewModelFactory(usersRepository)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
 
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragmentContainerView) as NavHostFragment
+        navController = navHostFragment.navController
+        binding.bottomNavigation.setupWithNavController(navController)
+
+        // Setup bottom navigation
+        binding.bottomNavigation.setupWithNavController(navController)
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.welcome -> {
+                    navController.popBackStack(R.id.welcome, false)
+                    navController.navigate(R.id.welcome)
+                    binding.bottomNavigation.menu.findItem(R.id.welcome).isChecked = true
+                    binding.bottomNavigation.menu.findItem(R.id.settings).isChecked = false
+                    true
+                }
+                R.id.settings -> {
+                    navController.navigate(R.id.settings)
+                    binding.bottomNavigation.menu.findItem(R.id.welcome).isChecked = false
+                    binding.bottomNavigation.menu.findItem(R.id.settings).isChecked = true
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Ensure the correct item is checked on initial load
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.welcome -> binding.bottomNavigation.menu.findItem(R.id.welcome).isChecked = true
+                R.id.settings -> binding.bottomNavigation.menu.findItem(R.id.settings).isChecked = true
+            }
+        }
 
 
         // Inicia uma corrotina dentro do escopo do ciclo de vida da activity.
