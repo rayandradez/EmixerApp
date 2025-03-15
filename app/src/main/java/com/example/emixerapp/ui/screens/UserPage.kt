@@ -1,351 +1,212 @@
+// UserPage.kt
 package com.example.emixerapp.ui.screens
 
-import android.Manifest
 import android.app.AlertDialog
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
-import android.os.RemoteException
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.emixerapp.MessageService
-import com.reaj.emixer.data.local.database.AppDatabase
-import com.reaj.emixer.data.model.UserModel
-import com.reaj.emixer.data.repository.UsersRepository
-import com.reaj.emixer.ui.components.viewModels.MainViewModel
-import com.reaj.emixer.ui.components.viewModels.MainViewModelFactory
-import com.reaj.emixer.R
-import com.reaj.emixer.databinding.FragmentUserPageBinding
+import com.example.emixerapp.manager.AidlServiceManager
+import com.example.emixerapp.manager.AudioManager
+import com.example.emixerapp.manager.AudioSettingsManager
+import com.example.emixerapp.manager.PermissionManager
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
-import com.reaj.emixer.IMessageService
+import com.reaj.emixer.R
+import com.reaj.emixer.data.local.database.AppDatabase
+import com.reaj.emixer.data.model.UserModel
+import com.reaj.emixer.data.repository.UsersRepository
+import com.reaj.emixer.databinding.FragmentUserPageBinding
+import com.reaj.emixer.ui.components.viewModels.MainViewModel
+import com.reaj.emixer.ui.components.viewModels.MainViewModelFactory
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 
-
+/**
+ * Fragmento responsável por exibir e permitir a edição das configurações de áudio do usuário.
+ */
 class UserPage : Fragment() {
+
     private var _binding: FragmentUserPageBinding? = null
-    // Define uma propriedade somente leitura para acessar a binding, evitando o uso direto de _binding.
+    // Garante que a binding só seja acessada quando não for nula
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
-    // Constante para o código de solicitação de permissão de áudio.
-    private val AUDIO_PERMISSION_REQUEST = 100
-    private var hasChanges = false  // Indica se há mudanças não salvas.
     private lateinit var analytics: FirebaseAnalytics
 
-    // AIDL related variables
-    private var messageService: IMessageService? = null
-    private var isServiceBound = false
+    private val AUDIO_PERMISSION_REQUEST = 100 // Código para a requisição de permissão de áudio
+    private var hasChanges = false // Flag para indicar se houve alterações não salvas
 
-    // Service Connection
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            messageService = IMessageService.Stub.asInterface(service)
-            isServiceBound = true
-            Log.d("UserPage", "Service connected")
-            // Now you can call methods on messageService
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            messageService = null
-            isServiceBound = false
-            Log.d("UserPage", "Service disconnected")
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private lateinit var permissionManager: PermissionManager
+    private lateinit var aidlServiceManager: AidlServiceManager
+    private lateinit var audioManager: AudioManager
+    private lateinit var audioSettingsManager: AudioSettingsManager
 
 
-        // Infla o layout usando view binding.
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        // Infla o layout do fragmento usando ViewBinding
         _binding = FragmentUserPageBinding.inflate(inflater, container, false)
-        return binding.root // Retorna a raiz do layout inflado.
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        analytics = Firebase.analytics
+        analytics = Firebase.analytics // Inicializa o Firebase Analytics
 
-        // Adiciona um callback para o botão de voltar do sistema.
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                // Mostra um diálogo para confirmar o descarte das alterações, se houver.
-                if (hasChanges) {
-                    showDiscardChangesDialog()
-                } else {
-                    findNavController().navigateUp()  // Navega para a tela anterior.
-                }
-            }
-        })
+        // Inicializa os Managers
+        aidlServiceManager = AidlServiceManager(requireContext())
+        permissionManager = PermissionManager(requireContext(), requireActivity())
 
-        // Inicializar o banco de dados e o repositório
+        // Inicializa o ViewModel
         val database = AppDatabase.getDatabase(requireContext().applicationContext)
         val usersRepository = UsersRepository(database.usersDao())
-
-        // Inicializar o ViewModel com o Factory compartilhado com a Activity
         val factory = MainViewModelFactory(usersRepository)
         viewModel = ViewModelProvider(requireActivity(), factory)[MainViewModel::class.java]
 
-        // Verifica e solicita as permissões de áudio necessárias com base no nível da API.
+        // Configura o tratamento do botão de voltar
+        setupBackPressedDispatcher()
+
+        // Verifica e solicita as permissões de áudio
         checkAudioPermissions()
 
-        // Define o listener de clique para o botão "Salvar Configurações de Áudio".
-        binding.saveAudioSettingsButton.setOnClickListener {
-            // Salva as configurações de áudio e navega para a tela inicial.
-            hasChanges = false  // Reseta a flag de mudanças.
-            saveAudioSettings()
-            findNavController().navigate(R.id.action_userPage_to_welcome)   // Navega para a tela de boas-vindas.
-        }
+        // Vincula ao serviço AIDL e configura as definições de áudio
+        bindAidlService()
 
-        binding.txtUserPageMessage.setOnClickListener {
-            // Verifica se há mudanças antes de navegar para a tela anterior.
-            if (hasChanges) {
-                showDiscardChangesDialog()
-            } else {
-                findNavController().navigateUp()  // Navega para a tela anterior.
-            }
-        }
+        // Configura os listeners de clique
+        binding.saveAudioSettingsButton.setOnClickListener { saveAudioSettingsAndNavigate() }
+        binding.txtUserPageMessage.setOnClickListener { navigateBack() }
+        binding.resetAudioSettingsButton.setOnClickListener { resetAudioSettings() }
+    }
 
-        // Define listeners para as seek bars de ajuste de áudio.
-        binding.bassSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                hasChanges = true   // Marca que houve mudanças.
-                setBass(p1) // Call the AIDL method
+    /**
+     * Vincula ao serviço AIDL e configura as definições de áudio
+     */
+    private fun bindAidlService() {
+        aidlServiceManager.bindService(
+            onServiceConnected = { service ->
+                // Inicializa o AudioManager
+                audioManager = AudioManager(aidlServiceManager)
+                // Inicializa o AudioSettingsManager quando o serviço é conectado
+                audioSettingsManager = AudioSettingsManager(
+                    WeakReference(this), // Referência fraca para evitar vazamento de memória
+                    service, // Interface AIDL para comunicação
+                    aidlServiceManager.isServiceBound(), // Indica se o serviço está vinculado
+                    onSettingsChanged = { hasChanges = true }, // Callback para quando as configurações mudam
+                    onBassChanged = { value -> audioManager.setBass(value) }, // Callback para mudança no Bass
+                    onMidChanged = { value -> audioManager.setMid(value) }, // Callback para mudança no Mid
+                    onTrebleChanged = { value -> audioManager.setTreble(value) }, // Callback para mudança no Treble
+                    onMainVolumeChanged = { value -> audioManager.setMainVolume(value) }, // Callback para mudança no Volume Principal
+                    onPanChanged = { value -> audioManager.setPan(value) }  // Callback para mudança no Pan
+                )
 
-            }
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
-            }
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação quando o usuário termina a interação com o SeekBar.
-            }
-        })
+                // Configura os listeners para as SeekBars
+                audioSettingsManager.setupSeekBarListeners(
+                    binding.bassSeekBar,
+                    binding.midSeekBar,
+                    binding.highSeekBar,
+                    binding.mainVolumeSeekBar,
+                    binding.panSeekBar
+                )
 
-        binding.midSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                hasChanges = true   // Marca que houve mudanças.
-                setMid(p1) // Call the AIDL method
-
+                // Observa o estado da UI e atualiza os componentes
+                observeUiState()
+            },
+            onServiceDisconnected = {
+                Log.w("UserPage", "AIDL Service disconnected") // Log de desconexão
             }
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
-            }
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
-            }
-        })
+        )
+    }
 
-        binding.highSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                hasChanges = true   // Marca que houve mudanças.
-                setTreble(p1) // Call the AIDL method
-
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação quando o usuário termina a interação com o SeekBar.
+    /**
+     * Configura o tratamento do botão de voltar para confirmar o descarte de alterações.
+     */
+    private fun setupBackPressedDispatcher() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (hasChanges) {
+                    showDiscardChangesDialog() // Mostra o diálogo de confirmação
+                } else {
+                    findNavController().navigateUp() // Navega para trás
+                }
             }
         })
+    }
 
-        binding.mainVolumeSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                hasChanges = true   // Marca que houve mudanças.
-                setMainVolume(p1) // Call the AIDL method
+    /**
+     * Verifica e solicita as permissões de áudio necessárias.
+     */
+    private fun checkAudioPermissions() {
+        permissionManager.checkAudioPermissions(AUDIO_PERMISSION_REQUEST)
+    }
 
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação quando o usuário termina a interação com o SeekBar.
-            }
-        })
-
-        binding.panSeekBar.setOnSeekBarChangeListener(object: OnSeekBarChangeListener{
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                hasChanges = true   // Marca que houve mudanças.
-                setPan(p1) // Call the AIDL method
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação quando o usuário começa a interagir com o SeekBar.
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação quando o usuário termina a interação com o SeekBar.
-            }
-        })
-
-        // Define o listener de clique para o botão "Redefinir Configurações de Áudio".
-        binding.resetAudioSettingsButton.setOnClickListener {
-            // Redefine as configurações de áudio para os valores padrão.
-            hasChanges = true // Define hasChanges como true quando o ícone muda.
-            resetToDefaults()   // Chama a função que redefine as configurações.
-        }
-
-        // Observa o estado da UI e atualiza os componentes da UI.
+    /**
+     * Observa o estado da UI (UiState) do ViewModel e atualiza os componentes da tela.
+     */
+    private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            // Repete este bloco de código sempre que o ciclo de vida estiver no estado STARTED.
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Coleta dados do fluxo de estado da UI do ViewModel.
                 viewModel.uiState.collect { data ->
-                    // Atualiza os componentes da UI com os dados do usuário.
+                    // Atualiza os elementos da UI com os dados do usuário
                     binding.txtUserName.text = data.user?.name?.substringBefore(" ")
-                    binding.bassSeekBar.progress = data.user?.bass!!
-                    binding.midSeekBar.progress = data.user!!.middle
-                    binding.highSeekBar.progress = data.user!!.high
-                    binding.mainVolumeSeekBar.progress = data.user!!.mainVolume
-                    binding.panSeekBar.progress = data.user!!.pan
-                    hasChanges = false // Define hasChanges como false no primeiro carregamento da tela.
+                    binding.bassSeekBar.progress = data.user?.bass ?: 0 // Define o progresso do Bass
+                    binding.midSeekBar.progress = data.user?.middle ?: 0 // Define o progresso do Mid
+                    binding.highSeekBar.progress = data.user?.high ?: 0 // Define o progresso do Treble
+                    binding.mainVolumeSeekBar.progress = data.user?.mainVolume ?: 50 // Define o progresso do Volume Principal
+                    binding.panSeekBar.progress = data.user?.pan ?: 50 // Define o progresso do Pan
+                    hasChanges = false // Reseta a flag de alterações
                 }
             }
         }
-
     }
 
-    // AIDL Methods
-    private fun setBass(value: Int) {
-        // Configura o valor do Mid usando o serviço AIDL
-        if (isServiceBound) {
-            try {
-                val success = messageService?.setBass(value) ?: false // Chama o método AIDL e obtém o resultado
-                if (success) {
-                    Log.d("UserPage", "Setting Bass to $value: Success") // Log de sucesso
-                } else {
-                    Log.w("UserPage", "Setting Bass to $value: Failed (invalid value?)") // Log de falha
-                }
+    /**
+     * Salva as configurações de áudio e navega para a tela de boas-vindas.
+     */
+    private fun saveAudioSettingsAndNavigate() {
+        hasChanges = false // Reseta a flag de alterações
+        saveAudioSettings() // Salva as configurações
+        findNavController().navigate(R.id.action_userPage_to_welcome) // Navega para a tela de boas-vindas
+    }
 
-            } catch (e: RemoteException) {
-                Log.e("UserPage", "RemoteException: ${e.message}")  // Log de exceção remota
-            }
+    /**
+     * Navega para a tela anterior, mostrando um diálogo de confirmação se houver alterações não salvas.
+     */
+    private fun navigateBack() {
+        if (hasChanges) {
+            showDiscardChangesDialog() // Mostra o diálogo de confirmação
         } else {
-            Log.w("UserPage", "Service not bound") // Log se o serviço não estiver vinculado
+            findNavController().navigateUp() // Navega para trás
         }
     }
 
-    private fun setMid(value: Int) {
-        // Configura o valor do Mid usando o serviço AIDL
-        if (isServiceBound) { // Verifica se o serviço está vinculado
-            try {
-                val success = messageService?.setMid(value) ?: false
-                if (success) {
-                    Log.d("UserPage", "Setting Mid to $value: Success") // Log de sucesso
-                } else {
-                    Log.w("UserPage", "Setting Mid to $value: Failed (invalid value?)") // Log de falha
-                }
-            } catch (e: RemoteException) {
-                Log.e("UserPage", "RemoteException: ${e.message}") // Log de exceção remota
-            }
-        } else {
-            Log.w("UserPage", "Service not bound") // Log se o serviço não estiver vinculado
-        }
-    }
-
-    private fun setTreble(value: Int) {
-        // Configura o valor do Mid usando o serviço AIDL
-        if (isServiceBound) {
-            try {
-                val success = messageService?.setTreble(value) ?: false // Chama o método AIDL e obtém o resultado
-                if (success) {
-                    Log.d("UserPage", "Setting Treble to $value: Success")  // Log de sucesso
-                } else {
-                    Log.w("UserPage", "Setting Treble to $value: Failed (invalid value?)") // Log de falha
-                }
-            } catch (e: RemoteException) {
-                Log.e("UserPage", "RemoteException: ${e.message}") // Log de exceção remota
-            }
-        } else {
-            Log.w("UserPage", "Service not bound") // Log se o serviço não estiver vinculado
-        }
-    }
-
-    private fun setMainVolume(value: Int) {
-        // Configura o valor do Mid usando o serviço AIDL
-        if (isServiceBound) {
-            try {
-                val success = messageService?.setMainVolume(value) ?: false // Chama o método AIDL e obtém o resultado
-                if (success) {
-                    Log.d("UserPage", "Setting MainVolume to $value: Success") // Log de sucesso
-                } else {
-                    Log.w("UserPage", "Setting MainVolume to $value: Failed (invalid value?)") // Log de falha
-                }
-            } catch (e: RemoteException) {
-                Log.e("UserPage", "RemoteException: ${e.message}") // Log de exceção remota
-            }
-        } else {
-            Log.w("UserPage", "Service not bound") // Log se o serviço não estiver vinculado
-        }
-    }
-
-    private fun setPan(value: Int) {
-        // Configura o valor do Pan usando o serviço AIDL
-        if (isServiceBound) { // Verifica se o serviço está vinculado
-            try {
-                val success = messageService?.setPan(value) ?: false  // Chama o método AIDL e obtém o resultado
-                if (success) {
-                    Log.d("UserPage", "Setting Pan to $value: Success") // Log de sucesso
-                } else {
-                    Log.w("UserPage", "Setting Pan to $value: Failed (invalid value?)") // Log de falha
-                }
-            } catch (e: RemoteException) {
-                Log.e("UserPage", "RemoteException: ${e.message}") // Log de exceção remota
-            }
-        } else {
-            Log.w("UserPage", "Service not bound") // Log se o serviço não estiver vinculado
-        }
-    }
-
+    /**
+     * Salva as configurações de áudio do usuário.
+     */
     private fun saveAudioSettings() {
-        // Atualiza e salva as configurações de áudio do usuário no ViewModel.
         viewModel.updateUser(viewModel.uiState.value.user?.let {
-            analytics.logEvent("eqSave", ) {
-                param("profileid", it.id)
-                param("profilename", it.name)
-                param("bass", binding.bassSeekBar.progress.toLong())
-                param("mid", binding.midSeekBar.progress.toLong())
-                param("high", binding.highSeekBar.progress.toLong())
-                param("main", binding.mainVolumeSeekBar.progress.toLong())
-                param("pan", binding.panSeekBar.progress.toLong())
+            // Registra um evento no Firebase Analytics
+            analytics.logEvent("eqSave") {
+                param("profileid", it.id) // ID do perfil
+                param("profilename", it.name) // Nome do perfil
+                param("bass", binding.bassSeekBar.progress.toLong()) // Valor do Bass
+                param("mid", binding.midSeekBar.progress.toLong()) // Valor do Mid
+                param("high", binding.highSeekBar.progress.toLong()) // Valor do Treble
+                param("main", binding.mainVolumeSeekBar.progress.toLong()) // Valor do Volume Principal
+                param("pan", binding.panSeekBar.progress.toLong()) // Valor do Pan
             }
+            // Cria um novo UserModel com as configurações atuais
             UserModel(
                 it.id,
                 it.name,
@@ -358,94 +219,47 @@ class UserPage : Fragment() {
             )
         })
 
-        // Informa ao usuário que as configurações foram salvas.
-        hasChanges = false
-        Toast.makeText(requireContext(), "Audio settings saved (simulated)", Toast.LENGTH_SHORT)
-            .show()
+        hasChanges = false // Reseta a flag de alterações
+        Toast.makeText(requireContext(), "Audio settings saved (simulated)", Toast.LENGTH_SHORT).show() // Exibe uma mensagem
     }
 
-    private fun resetToDefaults() {
-        // Redefine todas as configurações de áudio para os valores padrão.
-        binding.bassSeekBar.progress = 0
-        binding.midSeekBar.progress = 0
-        binding.highSeekBar.progress = 0
-        binding.mainVolumeSeekBar.progress = 50
-        binding.panSeekBar.progress = 50
+    /**
+     * Redefine as configurações de áudio para os valores padrão.
+     */
+    private fun resetAudioSettings() {
+        hasChanges = true // Define a flag de alterações como true
+        audioSettingsManager.resetToDefaults(
+            binding.bassSeekBar,
+            binding.midSeekBar,
+            binding.highSeekBar,
+            binding.mainVolumeSeekBar,
+            binding.panSeekBar
+        )
     }
 
-    private fun checkAudioPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Para API nível 33 e superior, use READ_MEDIA_AUDIO
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_MEDIA_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // Solicita a permissão READ_MEDIA_AUDIO
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(
-                        Manifest.permission.READ_MEDIA_AUDIO
-                    ),
-                    AUDIO_PERMISSION_REQUEST
-                )
-            }
-        } else {
-            // Para níveis de API abaixo de 33, considere usar permissões mais antigas, como RECORD_AUDIO, se aplicável.
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.RECORD_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // Solicita a permissão RECORD_AUDIO
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(
-                        Manifest.permission.RECORD_AUDIO
-                    ),
-                    AUDIO_PERMISSION_REQUEST
-                )
-            }
-        }
+    /**
+     * Exibe um diálogo de confirmação para descartar as alterações não salvas.
+     */
+    private fun showDiscardChangesDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Discard Changes?") // Título do diálogo
+            .setMessage("You have unsaved changes. Do you want to discard them?") // Mensagem do diálogo
+            .setPositiveButton("Discard") { _, _ -> findNavController().navigateUp() } // Ação para descartar
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() } // Ação para cancelar
+            .show() // Exibe o diálogo
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // Limpa a referência de vinculação para evitar vazamentos de memória
-    }
-
-    // Mostra um diálogo para confirmar o descarte das alterações.
-    private fun showDiscardChangesDialog() {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Discard Changes?")
-        builder.setMessage("You have unsaved changes. Do you want to discard them?")
-        builder.setPositiveButton("Discard") { _, _ ->
-            findNavController().navigateUp()
-        }
-        builder.setNegativeButton("Cancel") { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.show()
-
+        _binding = null // Limpa a referência da binding para evitar vazamentos de memória
     }
 
     override fun onStart() {
         super.onStart()
-        // Vincula ao serviço
-        Intent(requireContext(), MessageService::class.java).also { intent ->
-            requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        }
     }
 
     override fun onStop() {
         super.onStop()
-        // Desvincula do serviço
-        if (isServiceBound) { // Verifica se o serviço está vinculado
-            requireContext().unbindService(serviceConnection) // Desvincula
-            isServiceBound = false  // Atualiza o estado da vinculação
-            messageService = null // Limpa a referência ao serviço
-        }
+        aidlServiceManager.unbindService() // Desvincula do serviço AIDL
     }
-
 }
