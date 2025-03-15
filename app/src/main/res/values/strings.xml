@@ -6,7 +6,7 @@
     <string name="name">Name</string>
 
     <!--  Headers  -->
-    <string name="select_profile_header_text">Select or manage your profiles</string>
+    <string name="select_profile_header_text">Select your profile</string>
     <string name="give_a_name_and_icon_to_your_profile">Give a name and icon to your profile</string>
     <string name="manage_profile_header_text">Select the profile you want to edit</string>
     <string name="edit_profile_header_text">Give a name and icon to your profile</string>
@@ -14,8 +14,8 @@
 
     <!--  Welcome Screen  -->
 
-    <string name="select_or_manage_profiles">Select or manage your profiles</string>
-    <string name="no_profiles_message">No profiles found. Add a new profile or import from contacts.</string>
+    <string name="select_or_manage_profiles">Select your profiles</string>
+    <string name="no_profiles_message">No profiles found. Add a new profile or import from contacts in Settings.</string>
     <string name="add_profile_button_text_">Add Profile</string>
     <string name="import_contacts_button_text">Import Contacts</string>
 
@@ -44,7 +44,7 @@
     <string name="reset">Reset</string>
     <string name="logo_of_the_app">Logo of the APP</string>
     <string name="save_settings">Save Settings</string>
-    <string name="send_message">Send Message</string>
+    <string name="send_message">Send Message (AIDL Testing) </string>
     <string name="home">Home</string>
     <string name="settings">Settings</string>
     <string name="no_profiles_message_manage">There are no profiles, add a new one.</string>

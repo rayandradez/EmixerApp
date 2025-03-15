@@ -45,19 +45,21 @@
             android:id="@+id/BtnImportContacts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Import Contacts" />
-
-        <Button
-            android:id="@+id/BtnSendMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Send Message" />
+            android:text="@string/import_contacts_button_text" />
 
         <Button
             android:id="@+id/BtnManageUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Manage Profiles" />
+            android:text="@string/manage_users_button_text" />
+
+        <Button
+            android:id="@+id/BtnSendMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/send_message" />
+
+
 
     </LinearLayout>
 

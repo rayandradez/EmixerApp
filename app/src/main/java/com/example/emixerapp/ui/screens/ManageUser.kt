@@ -70,12 +70,10 @@ class ManageUser : Fragment() {
 
                         // Show RecyclerView and "Back" button, hide message
                         binding.recyclerViewUser.isVisible = true
-                        binding.backButton.isVisible = true
                         binding.noProfilesMessage.isVisible = false
                     } else {
                         // Hide RecyclerView and "Back" button, show message
                         binding.recyclerViewUser.isVisible = false
-                        binding.backButton.isVisible = false
                         binding.noProfilesMessage.isVisible = true
                         binding.noProfilesMessage.text = getString(R.string.no_profiles_message_manage)
 
@@ -89,11 +87,6 @@ class ManageUser : Fragment() {
         binding.addNewUserButton.setOnClickListener {
             // Navega para a tela de adicionar usuário, passando null como argumento para indicar um novo usuário.
             findNavController().navigate(ManageUserDirections.actionManageUserToAddUser(null)) // Explicitly pass null for new user
-        }
-
-        // Define o listener de clique para o botão "Voltar".
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()  // Navega para a tela anterior.
         }
 
         // Apply window insets to the button layout

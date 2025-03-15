@@ -24,6 +24,8 @@
             android:id="@+id/action_welcome_to_addUser"
             app:destination="@id/addUser" />
     </fragment>
+
+
     <fragment
         android:id="@+id/manageUser"
         android:name="com.reaj.emixer.ui.screens.ManageUser"
@@ -46,7 +48,8 @@
         <argument
             android:name="selectedUser"
             app:argType="com.reaj.emixer.data.model.UserModel"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="@null"/>
     </fragment>
     <fragment
         android:id="@+id/userPage"
