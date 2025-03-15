@@ -1,6 +1,10 @@
 package com.example.emixerapp.ui.screens
 
+import android.app.ActivityManager
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -38,6 +42,7 @@ class Welcome : Fragment() {
         binding = FragmentWelcomeBinding.inflate(inflater, container, false)
         // Obtém uma instância do ViewModel usando o ViewModelProvider.
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+
 
         // Configura a RecyclerView.
         myRecyclerUser = binding.recyclerViewUser

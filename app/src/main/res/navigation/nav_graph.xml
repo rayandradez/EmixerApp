@@ -68,6 +68,14 @@
         <action
             android:id="@+id/action_settings_to_manageUser"
             app:destination="@id/manageUser" />
+        <action
+            android:id="@+id/action_settings_to_infoFragment"
+            app:destination="@id/infoFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.example.emixerapp.ui.screens.InfoFragment"
+        android:label="InfoFragment"
+        tools:layout="@layout/fragment_info"/>
 
 </navigation>
