@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, MessageService::class.java)
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
 
-        // Define um listener para lidar com as áreas de inserção da janela (barras do sistema, como status e navegação).
+        // Define um listener para lidar com assetSmallIcon áreas de inserção da janela (barras do sistema, como status e navegação).
         // Isso garante que o conteúdo seja desenhado corretamente, evitando sobreposição com elementos da UI do sistema.
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
