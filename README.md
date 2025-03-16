@@ -50,6 +50,7 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
 
 *   **Página de Configurações:**
     *   **Testes e Monitoramento do Serviço AIDL:** A funcionalidade de testes e monitoramento do serviço AIDL foi movida para uma página dedicada, acessível através do botão "Teste de Serviço AIDL" na página de configurações. Nesta página, é possível testar a comunicação com o serviço, visualizar o uso de memória em tempo real e enviar mensagens de teste.
+    	*  **Uso de Memória:** Exibe a quantidade de memória RAM que o serviço está utilizando. Um valor alto não é necessariamente um problema, mas pode indicar que o serviço está consumindo muitos recursos e pode ser otimizado.
     *   **Visão Geral do Sistema (InfoFragment):** O aplicativo inclui um `InfoFragment` que fornece uma visão geral do sistema, listando as tarefas em execução e os aplicativos instalados. Este fragmento é útil para depuração, monitoramento e verificação de compatibilidade.
         *   **Informações de Tarefas:** Exibe as atividades em execução no aplicativo, úteis para monitorar o estado atual do app.
         *   **Informações de Aplicativos:** Lista todos os aplicativos instalados, útil para verificar compatibilidade e integração.
