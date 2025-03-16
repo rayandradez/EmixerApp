@@ -48,4 +48,8 @@
     <string name="home">Home</string>
     <string name="settings">Settings</string>
     <string name="no_profiles_message_manage">There are no profiles, add a new one.</string>
+    <string name="esta_se_o_permite_testar_a_comunica_o_com_o_servi_o_aidl_em_segundo_plano_coloque_no_logcat_setvalue">Esta seção permite testar a comunicação com o serviço AIDL em segundo plano. Coloque no LogCat setValue()</string>
+    <string name="teste_de_servi_o_aidl">Teste de Serviço AIDL</string>
+    <string name="atualizar_valor">Atualizar Valor</string>
+    <string name="valor_do_servi_o_n_a">Valor do Serviço: N/A</string>
 </resources>

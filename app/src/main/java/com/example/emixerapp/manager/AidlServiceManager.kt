@@ -9,10 +9,10 @@ import android.os.IBinder
 import android.util.Log
 import com.reaj.emixer.IMessageService
 import com.example.emixerapp.MessageService
+import androidx.core.content.ContextCompat
 import java.util.concurrent.atomic.AtomicBoolean
 
 class AidlServiceManager(private val context: Context) {
-
 
     private var messageService: IMessageService? = null
     private var isServiceBound = AtomicBoolean(false)
@@ -46,7 +46,7 @@ class AidlServiceManager(private val context: Context) {
 
         // Cria uma Intent com a ação correta
         val intent = Intent(context, MessageService::class.java)
-
+        intent.action = MessageService.ACTION_FOREGROUND_SERVICE; // Use a ação personalizada
 
         try {
             // Vincula ao serviço
