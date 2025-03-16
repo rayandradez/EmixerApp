@@ -50,7 +50,13 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
     * Adicionamos uma seção no `SettingsFragment` para testar a comunicação com o serviço AIDL em segundo plano.
     * É possível atualizar o valor do serviço e verificar se o valor é mantido mesmo quando o aplicativo é minimizado.
 
- 
+### Visão Geral do Sistema (InfoFragment)
+
+O aplicativo inclui um `InfoFragment` que fornece uma visão geral do sistema, listando as tarefas em execução e os aplicativos instalados. Este fragmento é útil para depuração, monitoramento e verificação de compatibilidade.
+
+*   **Informações de Tarefas:** Exibe as atividades em execução no aplicativo, úteis para monitorar o estado atual do app.
+*   **Informações de Aplicativos:** Lista todos os aplicativos instalados, útil para verificar compatibilidade e integração.
+
 ## Layout 
 
 #### The original project: [Figma](https://www.figma.com/design/ahaN4lSCMNpfLZp3OSnHPf/Emixer?node-id=0-1&p=f&t=YtUwxEKy6SIWXL8c-0)
