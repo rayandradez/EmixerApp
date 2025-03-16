@@ -5,7 +5,7 @@
 <p align="center">
   <a href="#visão-geral">Visão Geral</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#recursos-principais">Recursos Principais</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#Layout">Layout</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#layout">Layout</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#detalhes-técnicos">Detalhes Técnicos</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#permissões-do-aplicativo">Permissões do Aplicativo</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#Testes">Testes</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
@@ -61,6 +61,15 @@ O aplicativo inclui um `InfoFragment` que fornece uma visão geral do sistema, l
 *   **Informações de Aplicativos:** Lista todos os aplicativos instalados, útil para verificar compatibilidade e integração.
 *  **Ajuste do Brilho da Tela:** O aplicativo agora ajusta o brilho da tela usando o `WindowManager`. Isso pode ser útil para otimizar a experiência do usuário em diferentes condições de iluminação.
 
+### **Implementação da Lógica de Equalização:**
+
+* **Objetivo:** Permitir que o usuário ajuste os parâmetros de equalização de áudio (Bass, Mid, Treble, Pan e Volume) e aplicar essas configurações em tempo real.
+    *   **Passos:**
+        *   Escolha da API `android.media.audiofx.Equalizer` para manipular o áudio.
+        *   Implementação dos métodos `setBass()`, `setMid()`, `setTreble()`, `setMainVolume()` e `setPan()` na classe `MessageService` para receber os valores ajustados da interface AIDL.
+        *   Criação dos métodos `setupEqualizerBands()` e `applyEqualizerSettings()` para aplicar as configurações de equalização ao áudio.
+        *   Implementação da lógica para reproduzir um arquivo de áudio de teste (test_audio.mp3) em loop para demonstrar a funcionalidade.
+    *   **Resultado:** O aplicativo agora permite que o usuário ajuste os parâmetros de equalização de áudio em tempo real e ouça as mudanças no som.
 
 ## Layout 
 
