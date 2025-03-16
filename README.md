@@ -8,7 +8,7 @@
   <a href="#layout">Layout</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#detalhes-técnicos">Detalhes Técnicos</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#permissões-do-aplicativo">Permissões do Aplicativo</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#Testes">Testes</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#testes">Testes</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#melhorias-futuras">Melhorias Futuras</a>
 </p>
 
@@ -56,16 +56,6 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
     *   **Ajuste do Brilho da Tela:** O aplicativo agora ajusta o brilho da tela usando o `WindowManager`. Isso pode ser útil para otimizar a experiência do usuário em diferentes condições de iluminação.
     *   **Serviço de Primeiro Plano:** O aplicativo utiliza um serviço de primeiro plano para garantir que as funcionalidades essenciais, como a equalização de áudio, continuem funcionando mesmo quando o aplicativo não está em primeiro plano. Uma notificação persistente é exibida para informar ao usuário que o serviço está ativo.
 
-### **Implementação da Lógica de Equalização:**
-
-* **Objetivo:** Permitir que o usuário ajuste os parâmetros de equalização de áudio (Bass, Mid, Treble, Pan e Volume) e aplicar essas configurações em tempo real.
-    *   **Passos:**
-        *   Escolha da API `android.media.audiofx.Equalizer` para manipular o áudio.
-        *   Implementação dos métodos `setBass()`, `setMid()`, `setTreble()`, `setMainVolume()` e `setPan()` na classe `MessageService` para receber os valores ajustados da interface AIDL.
-        *   Criação dos métodos `setupEqualizerBands()` e `applyEqualizerSettings()` para aplicar as configurações de equalização ao áudio.
-        *   Implementação da lógica para reproduzir um arquivo de áudio de teste (test_audio.mp3) em loop para demonstrar a funcionalidade.
-    *   **Resultado:** O aplicativo agora permite que o usuário ajuste os parâmetros de equalização de áudio em tempo real e ouça as mudanças no som.
-
 ## Layout 
 
 #### The original project: [Figma](https://www.figma.com/design/ahaN4lSCMNpfLZp3OSnHPf/Emixer?node-id=0-1&p=f&t=YtUwxEKy6SIWXL8c-0)
@@ -88,17 +78,19 @@ Este aplicativo utiliza as seguintes tecnologias para atender aos objetivos do c
 * **Comunicação Assíncrona:** Broadcast Receivers são usados para detectar mudanças como o Modo Avião.
 * **Content Providers:** Usados para importar perfis de contatos.
 * **Implementação AIDL:** Integração do Android Interface Definition Language para facilitar a comunicação interprocessual.
+* **Serviço de Primeiro Plano:** O aplicativo agora utiliza um serviço de primeiro plano para garantir que as funcionalidades essenciais, como a comunicação AIDL, continuem funcionando mesmo quando o aplicativo não está em primeiro plano. Uma notificação persistente é exibida para informar ao usuário que o serviço está ativo.
 
-### **Serviço de Primeiro Plano:**
-O aplicativo agora utiliza um serviço de primeiro plano para garantir que as funcionalidades essenciais, como a comunicação AIDL, continuem funcionando mesmo quando o aplicativo não está em primeiro plano. Uma notificação persistente é exibida para informar ao usuário que o serviço está ativo.
+### Implementação da Lógica de Equalização
 
-### AIDL no EmixerApp - UserPage
-
-No EmixerApp, o AIDL é utilizado dentro do fragmento `UserPage` para facilitar a comunicação com um serviço em segundo plano responsável pelos ajustes de equalização de áudio. Essa abordagem permite uma separação clara de responsabilidades, permitindo que a interface do usuário permaneça responsiva enquanto o serviço lida com o processamento de áudio.
-
-- `UserPage.kt`: Implementa a interface do usuário para configurações de áudio e se conecta ao `MessageService` usando AIDL.
-- `MessageService.java`: Implementação do serviço para gerenciar as requisições AIDL e aplicar as configurações de áudio.
-- `IMessageService.aidl`: Definição da interface AIDL usada para comunicação entre `UserPage` e `MessageService`.
+*   **Objetivo:** Permitir que o usuário ajuste os parâmetros de equalização de áudio (Bass, Mid, Treble, Pan e Volume) e aplicar essas configurações em tempo real.
+*   **Tecnologias:**
+    *   `android.media.audiofx.Equalizer`: API do Android para manipulação do equalizador.
+    *   AIDL: Utilizado para comunicação entre a interface do usuário (`UserPage`) e o serviço em segundo plano (`MessageService`).
+*   **Implementação:**
+    *   A interface AIDL (`IMessageService.aidl`) define métodos para ajustar cada parâmetro do equalizador (`setBass()`, `setMid()`, `setTreble()`, `setMainVolume()` e `setPan()`).
+    *   O `MessageService` implementa esses métodos, aplicando as configurações ao `android.media.audiofx.Equalizer`.
+    *   A validação de valores é realizada no `MessageService` para garantir que os parâmetros estejam dentro de um intervalo aceitável.
+    *   O `UserPage` utiliza SeekBars para permitir que o usuário ajuste os parâmetros do equalizador, enviando os valores para o `MessageService` através da interface AIDL.
 
 #### Controle da Equalização via AIDL: Métodos Dedicados
 
