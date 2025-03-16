@@ -84,7 +84,10 @@ Este aplicativo utiliza as seguintes tecnologias para atender aos objetivos do c
 * **Comunicação Assíncrona:** Broadcast Receivers são usados para detectar mudanças como o Modo Avião.
 * **Content Providers:** Usados para importar perfis de contatos.
 * **Implementação AIDL:** Integração do Android Interface Definition Language para facilitar a comunicação interprocessual.
-* * **Serviço de Primeiro Plano:** Implementação de um serviço de primeiro plano para garantir que o aplicativo continue funcionando em segundo plano. **(Ainda em desenvolvimento: a notificação do serviço de primeiro plano pode não ser exibida corretamente)**
+
+### **Serviço de Primeiro Plano:**
+O aplicativo agora utiliza um serviço de primeiro plano para garantir que as funcionalidades essenciais, como a comunicação AIDL, continuem funcionando mesmo quando o aplicativo não está em primeiro plano. Uma notificação persistente é exibida para informar ao usuário que o serviço está ativo.
+
 
 
 
