@@ -44,6 +44,12 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
     * **Balanceamento Estéreo (Pan):** Ajuste o balanceamento estéreo.
     * **Volume Geral (Main):** Controle do volume total de saída.
     * **Salvar/Redefinir:** Salve as configurações personalizadas do equalizador no perfil selecionado ou redefina para os valores padrão.
+    *  **Serviço em Segundo Plano:**
+    * O aplicativo agora funciona em segundo plano, permitindo que os usuários alternem entre aplicativos sem interromper a reprodução de áudio ou perder as configurações do equalizador. **(Ainda em desenvolvimento: a notificação do serviço de primeiro plano pode não ser exibida corretamente)**
+* **Teste de Serviço AIDL:**
+    * Adicionamos uma seção no `SettingsFragment` para testar a comunicação com o serviço AIDL em segundo plano.
+    * É possível atualizar o valor do serviço e verificar se o valor é mantido mesmo quando o aplicativo é minimizado.
+
  
 ## Layout 
 
@@ -67,6 +73,8 @@ Este aplicativo utiliza as seguintes tecnologias para atender aos objetivos do c
 * **Comunicação Assíncrona:** Broadcast Receivers são usados para detectar mudanças como o Modo Avião.
 * **Content Providers:** Usados para importar perfis de contatos.
 * **Implementação AIDL:** Integração do Android Interface Definition Language para facilitar a comunicação interprocessual.
+* * **Serviço de Primeiro Plano:** Implementação de um serviço de primeiro plano para garantir que o aplicativo continue funcionando em segundo plano. **(Ainda em desenvolvimento: a notificação do serviço de primeiro plano pode não ser exibida corretamente)**
+
 
 
 ### AIDL no EmixerApp - Botão de Teste no Welcome Screen
@@ -187,6 +195,12 @@ Para permitir a importação de perfis, o aplicativo requer acesso à lista de c
 	<img src="images/contacts_permission.png" width="325px">	
 </div>
 
+### Permissões para Serviço de Primeiro Plano
+O aplicativo utiliza um serviço de primeiro plano para garantir a execução contínua de funcionalidades essenciais, como a equalização de áudio, mesmo quando o aplicativo está em segundo plano. Para isso, são necessárias as seguintes permissões:
+
+- **`android.permission.FOREGROUND_SERVICE`**: Permissão genérica para serviços de primeiro plano.
+- **`android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK`**: Permissão específica para serviços de primeiro plano que utilizam `foregroundServiceType="mediaPlayback"`.
+
 Essas permissões são fundamentais para oferecer uma experiência de uso otimizada e personalizável aos usuários.
 
 ## Testes
@@ -237,4 +251,7 @@ O desenvolvimento futuro se concentrará em:
 * **Integração com Sistemas Automotivos:** Conectar o aplicativo ao sistema de áudio de um veículo para controle direto.
 * **Recursos Avançados de Equalização:** Explorar algoritmos e opções de equalização mais sofisticados.
 * **Recursos Adicionais:** Implementar recursos como predefinições, visualizações, sincronização entre dispositivos, tela para escolha de quais contatos importar, modo escuro, controle de acesso e recursos de interação social.
+* **Serviço de Primeiro Plano:** Corrigir a exibição da notificação do serviço de primeiro plano.
+
+
 
