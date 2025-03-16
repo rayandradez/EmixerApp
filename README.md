@@ -31,39 +31,30 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
 
 ## Recursos Principais
 
-* **Gerenciamento de Usuários:**
-    * **Seleção de Perfil:** Alterne facilmente entre perfis de usuário existentes;
-    * **Criação/Edição de Usuário:** Adicione, edite (incluindo nome e ícone do perfil) e exclua perfis de usuário;
-    * **Importação de Perfis:** Importe os perfis dos seus contatos salvos para dentro do app;
-    * **Aviso de Modo Avião:** Avisamos quando o Modo Avião está ativo ou inativo. Pois a sincronização entre os dispositivos não é possível se eles estiverem em Modo Avião.
-* **Equalizador Intuitivo:** 
-    * **Controle Preciso:** Ajuste os parâmetros de áudio com um mixer amigável.
-    * **Graves (Low):** Controle de frequências baixas (aprox. 100Hz e abaixo, faixa de ajuste de -15dB a +15dB).
-    * **Médias (Mid):** Ajuste de frequências médias (aprox. 1kHz a 4kHz, faixa de ajuste de -15dB a +15dB).
-    * **Agudos (High):** Controle de frequências altas (acima de 4kHz, faixa de ajuste de -15dB a +15dB).
-    * **Balanceamento Estéreo (Pan):** Ajuste o balanceamento estéreo.
-    * **Volume Geral (Main):** Controle do volume total de saída.
-    * **Salvar/Redefinir:** Salve as configurações personalizadas do equalizador no perfil selecionado ou redefina para os valores padrão.
-  
-###   **Testes e Monitoramento do Serviço AIDL (ServiceAIDL):**
-A funcionalidade de testes e monitoramento do serviço AIDL foi movida para uma página dedicada, acessível através do botão "Teste de Serviço AIDL" na página de configurações. Nesta página, é possível testar a comunicação com o serviço e visualizar o uso de memória em tempo real.
+## Recursos Principais
 
-* Funcionalidades:
-    * Comunicação AIDL: Permite testar a comunicação com o serviço AIDL em segundo plano, alterando o valor do serviço e observando as mudanças.
-    * Monitoramento do Serviço: Exibe informações sobre o uso de recursos do serviço AIDL em tempo real, como o uso de memória.
-    * Envio de Mensagens: Permite enviar mensagens de teste para o serviço AIDL.
+*   **Gerenciamento de Usuários:**
+    *   **Seleção de Perfil:** Alterne facilmente entre perfis de usuário existentes.
+    *   **Criação/Edição de Usuário:** Adicione, edite (incluindo nome e ícone do perfil) e exclua perfis de usuário.
+    *   **Importação de Perfis:** Importe os perfis dos seus contatos salvos para dentro do app.
+    *   **Aviso de Modo Avião:** Avisamos quando o Modo Avião está ativo ou inativo, pois a sincronização entre os dispositivos não é possível se eles estiverem em Modo Avião.
 
-### Serviço em Segundo Plano:
+*   **Equalizador Intuitivo:**
+    *   **Controle Preciso:** Ajuste os parâmetros de áudio com um mixer amigável.
+    *   **Graves (Low):** Controle de frequências baixas (aprox. 100Hz e abaixo, faixa de ajuste de -15dB a +15dB).
+    *   **Médias (Mid):** Ajuste de frequências médias (aprox. 1kHz a 4kHz, faixa de ajuste de -15dB a +15dB).
+    *   **Agudos (High):** Controle de frequências altas (acima de 4kHz, faixa de ajuste de -15dB a +15dB).
+    *   **Balanceamento Estéreo (Pan):** Ajuste o balanceamento estéreo.
+    *   **Volume Geral (Main):** Controle do volume total de saída.
+    *   **Salvar/Redefinir:** Salve as configurações personalizadas do equalizador no perfil selecionado ou redefina para os valores padrão.
 
-O aplicativo agora funciona em segundo plano, permitindo que os usuários alternem entre aplicativos sem interromper a reprodução de áudio ou perder as configurações do equalizador. **(Ainda em desenvolvimento: a notificação do serviço de primeiro plano pode não ser exibida corretamente)**
-
-### Visão Geral do Sistema (InfoFragment)
-
-O aplicativo inclui um `InfoFragment` que fornece uma visão geral do sistema, listando as tarefas em execução e os aplicativos instalados. Este fragmento é útil para depuração, monitoramento e verificação de compatibilidade.
-
-*   **Informações de Tarefas:** Exibe as atividades em execução no aplicativo, úteis para monitorar o estado atual do app.
-*   **Informações de Aplicativos:** Lista todos os aplicativos instalados, útil para verificar compatibilidade e integração.
-*  **Ajuste do Brilho da Tela:** O aplicativo agora ajusta o brilho da tela usando o `WindowManager`. Isso pode ser útil para otimizar a experiência do usuário em diferentes condições de iluminação.
+*   **Página de Configurações:**
+    *   **Testes e Monitoramento do Serviço AIDL:** A funcionalidade de testes e monitoramento do serviço AIDL foi movida para uma página dedicada, acessível através do botão "Teste de Serviço AIDL" na página de configurações. Nesta página, é possível testar a comunicação com o serviço, visualizar o uso de memória em tempo real e enviar mensagens de teste.
+    *   **Visão Geral do Sistema (InfoFragment):** O aplicativo inclui um `InfoFragment` que fornece uma visão geral do sistema, listando as tarefas em execução e os aplicativos instalados. Este fragmento é útil para depuração, monitoramento e verificação de compatibilidade.
+        *   **Informações de Tarefas:** Exibe as atividades em execução no aplicativo, úteis para monitorar o estado atual do app.
+        *   **Informações de Aplicativos:** Lista todos os aplicativos instalados, útil para verificar compatibilidade e integração.
+    *   **Ajuste do Brilho da Tela:** O aplicativo agora ajusta o brilho da tela usando o `WindowManager`. Isso pode ser útil para otimizar a experiência do usuário em diferentes condições de iluminação.
+    *   **Serviço de Primeiro Plano:** O aplicativo utiliza um serviço de primeiro plano para garantir que as funcionalidades essenciais, como a equalização de áudio, continuem funcionando mesmo quando o aplicativo não está em primeiro plano. Uma notificação persistente é exibida para informar ao usuário que o serviço está ativo.
 
 ### **Implementação da Lógica de Equalização:**
 
