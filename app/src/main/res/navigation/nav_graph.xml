@@ -71,11 +71,20 @@
         <action
             android:id="@+id/action_settings_to_infoFragment"
             app:destination="@id/infoFragment" />
+        <action
+            android:id="@+id/action_settings_to_ServiceAIDLTest"
+            app:destination="@id/ServiceAIDLTest" />
     </fragment>
     <fragment
         android:id="@+id/infoFragment"
         android:name="com.example.emixerapp.ui.screens.InfoFragment"
         android:label="InfoFragment"
         tools:layout="@layout/fragment_info"/>
+
+    <fragment
+        android:id="@+id/ServiceAIDLTest"
+        android:name="com.example.emixerapp.ui.screens.ServiceAIDLTest"
+        android:label="InfoFragment"
+        tools:layout="@layout/service_aidl"/>
 
 </navigation>

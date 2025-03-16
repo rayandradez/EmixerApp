@@ -3,11 +3,9 @@ package com.example.emixerapp.ui.screens
 
 import android.Manifest
 import android.content.ContentUris
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,9 +61,6 @@ class SettingsFragment : Fragment() {
             handleImportContactsClick()
         }
 
-        binding.BtnSendMessage.setOnClickListener {
-            sendAIDLMessage()
-        }
 
         binding.BtnManageUser.setOnClickListener {
             it.findNavController().navigate(R.id.action_settings_to_manageUser)
@@ -74,11 +69,11 @@ class SettingsFragment : Fragment() {
             findNavController().navigate(R.id.action_settings_to_infoFragment)
         }
 
-        binding.buttonUpdateValue.setOnClickListener {
-            updateValue()
+        binding.BtnServiceAIDL.setOnClickListener {
+            findNavController().navigate(R.id.action_settings_to_ServiceAIDLTest)
+
         }
 
-        bindAidlService() // Bind to the service
     }
 
     override fun onDestroyView() {
@@ -88,68 +83,12 @@ class SettingsFragment : Fragment() {
     }
 
 
-    private fun bindAidlService() {
-        aidlServiceManager.bindService(
-            onServiceConnected = { aidlInterface ->
-                Log.d("SettingsFragment", "Serviço AIDL conectado")
-                // Agora você pode usar a interface AIDL
-                updateValueOnScreen(aidlInterface.getValue())
-            },
-            onServiceDisconnected = {
-                Log.d("SettingsFragment", "Serviço AIDL desconectado")
-                binding.textViewValue.text = "Serviço Desconectado"
-            }
-        )
-    }
 
     private fun unbindAidlService() {
         aidlServiceManager.unbindService()
     }
 
-    private fun updateValue() {
-        if (aidlServiceManager.isServiceBound()) {
-            try {
-                val aidlInterface = aidlServiceManager.getMessageService()
-                if (aidlInterface != null) {
-                    val newValue = (0..100).random() // Gera um valor aleatório
-                    aidlInterface.setValue(newValue) // Define o novo valor no serviço
-                    updateValueOnScreen(newValue) // Atualiza a tela
-                } else {
-                    Log.w("SettingsFragment", "Interface AIDL nula")
-                    binding.textViewValue.text = "Interface AIDL nula"
-                }
-            } catch (e: Exception) {
-                Log.e("SettingsFragment", "Erro ao chamar o serviço: ${e.message}")
-                binding.textViewValue.text = "Erro: ${e.message}"
-            }
-        } else {
-            Log.w("SettingsFragment", "Serviço não vinculado")
-            binding.textViewValue.text = "Serviço não vinculado"
-        }
-    }
 
-    private fun updateValueOnScreen(value: Int) {
-        binding.textViewValue.text = "Valor do Serviço: $value"
-    }
-
-    private fun sendAIDLMessage() {
-        if (aidlServiceManager.isServiceBound()) {
-            try {
-                val aidlInterface = aidlServiceManager.getMessageService()
-                if (aidlInterface != null) {
-                    aidlInterface.sendMessage("Hello from EMIXER AIDL!")
-                } else {
-                    Log.w("SettingsFragment", "Interface AIDL nula")
-                    binding.textViewValue.text = "Interface AIDL nula"
-                }
-            } catch (e: Exception) {
-                Log.e("SettingsFragment", "Erro ao chamar o serviço: ${e.message}")
-                binding.textViewValue.text = "Erro: ${e.message}"
-            }
-        } else {
-            Toast.makeText(context, "Service not bound", Toast.LENGTH_SHORT).show()
-        }
-    }
 
     private fun handleImportContactsClick() {
         if (ContextCompat.checkSelfPermission(

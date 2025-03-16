@@ -1,20 +1,23 @@
 package com.example.emixerapp;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.audiofx.Equalizer;
 import android.os.Build;
+import android.os.Debug;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
+import android.os.Process;
 import com.reaj.emixer.IMessageService;
 import com.reaj.emixer.R;
 
@@ -138,6 +141,10 @@ public class MessageService extends Service {
             myValue = value; // Atualiza o valor interno
         }
 
+        @Override
+        public long getMemoryUsage() throws RemoteException {
+            return getAudioServiceMemoryUsage();
+        }
     };
 
     @Override
@@ -285,6 +292,20 @@ public class MessageService extends Service {
             mediaPlayer.setVolume(panLeft, panRight);
         }
     }
+
+    private long getAudioServiceMemoryUsage() {
+        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (am != null) {
+            int pid = Process.myPid(); // Obtém o PID do seu serviço
+            Debug.MemoryInfo[] memInfo = am.getProcessMemoryInfo(new int[]{pid});
+            if (memInfo != null && memInfo.length > 0) {
+                return memInfo[0].getTotalPss(); // PSS em KB
+            }
+        }
+        return 0;
+    }
+
+
 
 
 }
