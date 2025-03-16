@@ -45,12 +45,13 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
     * **Volume Geral (Main):** Controle do volume total de saída.
     * **Salvar/Redefinir:** Salve as configurações personalizadas do equalizador no perfil selecionado ou redefina para os valores padrão.
   
-###   **Testes e Monitoramento do Serviço AIDL:**
+###   **Testes e Monitoramento do Serviço AIDL (ServiceAIDL):**
 A funcionalidade de testes e monitoramento do serviço AIDL foi movida para uma página dedicada, acessível através do botão "Teste de Serviço AIDL" na página de configurações. Nesta página, é possível testar a comunicação com o serviço e visualizar o uso de memória em tempo real.
 
-* **Teste de Serviço AIDL:**
-    * Adicionamos uma seção no `SettingsFragment` para testar a comunicação com o serviço AIDL em segundo plano.
-    * É possível atualizar o valor do serviço e verificar se o valor é mantido mesmo quando o aplicativo é minimizado.
+* Funcionalidades:
+    * Comunicação AIDL: Permite testar a comunicação com o serviço AIDL em segundo plano, alterando o valor do serviço e observando as mudanças.
+    * Monitoramento do Serviço: Exibe informações sobre o uso de recursos do serviço AIDL em tempo real, como o uso de memória.
+    * Envio de Mensagens: Permite enviar mensagens de teste para o serviço AIDL.
 
 ### Serviço em Segundo Plano:
 
@@ -99,21 +100,6 @@ Este aplicativo utiliza as seguintes tecnologias para atender aos objetivos do c
 
 ### **Serviço de Primeiro Plano:**
 O aplicativo agora utiliza um serviço de primeiro plano para garantir que as funcionalidades essenciais, como a comunicação AIDL, continuem funcionando mesmo quando o aplicativo não está em primeiro plano. Uma notificação persistente é exibida para informar ao usuário que o serviço está ativo.
-
-
-
-
-### AIDL no EmixerApp - Botão de Teste no Welcome Screen
-
-No EmixerApp, o AIDL foi implementado para demonstrar a comunicação interprocessual, adicionando um botão para servir como interface para a funcionalidade do AIDL. Os arquivos editados para suportar essa implementação foram:
-
-- `MessageService.java`: Implementação do serviço para gerenciar as requisições AIDL.
-- `Welcome.kt`: Integração inicial do AIDL.
-- `AndroidManifest.kt`: Declaração e configuração do serviço.
-- `MainActivity.kt`: Configuração do bind ao serviço.
-- `MainViewModel.kt`: Lógica de manipulação de dados e interação com o AIDL.
-
-Esta implementação adicional amplia a funcionalidade do aplicativo, permitindo que diferentes componentes se comuniquem de maneira eficiente.
 
 ### AIDL no EmixerApp - UserPage
 
