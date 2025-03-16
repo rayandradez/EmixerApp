@@ -1,3 +1,4 @@
+// MainActivity.kt
 package com.reaj.emixer
 
 import android.app.ActivityManager
@@ -14,6 +15,7 @@ import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
@@ -43,19 +45,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var receiver: AirplaneModeBroadcastReceiver    // Receptor para escutar mudanças no modo avião
     private lateinit var analytics: FirebaseAnalytics // Firebase para rastrear eventos do usuário
 
-
-
-
     private var messageService: IMessageService? = null
     private var isBound = false
 
     private val connection: ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+        override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
             messageService = IMessageService.Stub.asInterface(service)
             isBound = true
         }
 
-        override fun onServiceDisconnected(className: ComponentName) {
+        override fun onServiceDisconnected(className: ComponentName?) {
             messageService = null
             isBound = false
         }
@@ -65,6 +64,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.d("MainActivity", "onCreate")
 
+        // Inicia o serviço explicitamente se ele ainda não estiver rodando
+        if (!isServiceRunning(MessageService::class.java)) {
+            val serviceIntent = Intent(this, MessageService::class.java)
+            ContextCompat.startForegroundService(this, serviceIntent)
+            Log.d("MainActivity", "Serviço iniciado explicitamente")
+        }
 
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val appTasks = activityManager.appTasks
@@ -185,8 +190,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-
     // Lidar com a ação de navegação para cima, tipicamente usada para navegação para trás em uma configuração de componente de navegação.
     override fun onSupportNavigateUp(): Boolean {
         // Obtém o NavController associado ao fragmento de host de navegação.
@@ -229,6 +232,19 @@ class MainActivity : AppCompatActivity() {
 
     fun getMessageService(): IMessageService? {
         return messageService
+    }
+
+    // Método para verificar se o serviço está rodando
+    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                Log.d("MainActivity", "Serviço já está rodando")
+                return true
+            }
+        }
+        Log.d("MainActivity", "Serviço não está rodando")
+        return false
     }
 }
 

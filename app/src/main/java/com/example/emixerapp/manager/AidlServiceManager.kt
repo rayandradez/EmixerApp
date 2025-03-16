@@ -37,7 +37,7 @@ class AidlServiceManager(private val context: Context) {
 
                 override fun onServiceDisconnected(name: ComponentName?) {
                     messageService = null
-                    isServiceBound.set(false)
+                    isServiceBound = AtomicBoolean(false)
                     Log.d("AidlServiceManager", "Service disconnected")
                     onServiceDisconnected()
                 }
@@ -46,7 +46,7 @@ class AidlServiceManager(private val context: Context) {
 
         // Cria uma Intent com a ação correta
         val intent = Intent(context, MessageService::class.java)
-        intent.action = MessageService.ACTION_FOREGROUND_SERVICE; // Use a ação personalizada
+        intent.action = MessageService.ACTION_FOREGROUND_SERVICE // Use a string literal
 
         try {
             // Vincula ao serviço

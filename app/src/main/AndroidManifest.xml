@@ -37,6 +37,13 @@
          Necessária para acessar contatos e importa-los como perfil. -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
+    <uses-permission android:name="com.example.emixerapp.permission.MESSAGE_SERVICE" />
+
+    <permission
+        android:name="com.example.emixerapp.permission.MESSAGE_SERVICE"
+        android:label="Access Message Service"
+        android:description="@string/message_service_description"
+        android:protectionLevel="normal" />
 
     <!-- O elemento <application> contém atributos que definem as configurações da aplicação -->
     <application
@@ -50,14 +57,17 @@
         android:theme="@style/Theme.MVVMApp"
         tools:targetApi="31">
 
-        <service android:name="com.example.emixerapp.MessageService"
+        <service
+            android:name="com.example.emixerapp.MessageService"
             android:exported="true"
-            android:foregroundServiceType="mediaPlayback"
-            android:permission="TODO">
+            android:permission="com.example.emixerapp.permission.MESSAGE_SERVICE"
+            android:foregroundServiceType="mediaPlayback">
             <intent-filter>
-                <action android:name="com.example.emixerapp.ACTION_FOREGROUND_SERVICE" />
+                <action android:name="com.example.emixerapp.action.FOREGROUND_SERVICE" />
             </intent-filter>
         </service>
+
+
 
         <activity
             android:name="com.reaj.emixer.MainActivity"

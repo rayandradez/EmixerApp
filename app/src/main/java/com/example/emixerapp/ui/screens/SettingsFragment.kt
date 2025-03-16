@@ -1,5 +1,5 @@
+// SettingsFragment.kt
 package com.example.emixerapp.ui.screens
-
 
 import android.Manifest
 import android.content.ContentUris
@@ -18,23 +18,19 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.example.emixerapp.MessageService
 import com.example.emixerapp.manager.AidlServiceManager
-import com.reaj.emixer.MainActivity
 import com.reaj.emixer.Profile
 import com.reaj.emixer.R
 import com.reaj.emixer.data.model.UserModel
-import com.reaj.emixer.databinding.FragmentSettingsBinding
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
+import com.reaj.emixer.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
-    private lateinit var aidlServiceManager: AidlServiceManager  // Add AidlServiceManager
-
-
+    private lateinit var aidlServiceManager: AidlServiceManager
 
     // Registra um launcher para solicitar permissão de leitura de contatos.
     private val requestPermissionLauncher =
@@ -83,9 +79,7 @@ class SettingsFragment : Fragment() {
         }
 
         bindAidlService() // Bind to the service
-
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -100,11 +94,6 @@ class SettingsFragment : Fragment() {
                 Log.d("SettingsFragment", "Serviço AIDL conectado")
                 // Agora você pode usar a interface AIDL
                 updateValueOnScreen(aidlInterface.getValue())
-
-                // Inicia o serviço explicitamente
-                val serviceIntent = Intent(context, MessageService::class.java)
-                ContextCompat.startForegroundService(requireContext(), serviceIntent)
-                Log.d("SettingsFragment", "Serviço iniciado explicitamente")
             },
             onServiceDisconnected = {
                 Log.d("SettingsFragment", "Serviço AIDL desconectado")
@@ -144,15 +133,18 @@ class SettingsFragment : Fragment() {
     }
 
     private fun sendAIDLMessage() {
-        val mainActivity = activity as? MainActivity
-        val messageService = mainActivity?.getMessageService()
-
-        if (messageService != null) {
+        if (aidlServiceManager.isServiceBound()) {
             try {
-                messageService.sendMessage("Hello from EMIXER AIDL!")
+                val aidlInterface = aidlServiceManager.getMessageService()
+                if (aidlInterface != null) {
+                    aidlInterface.sendMessage("Hello from EMIXER AIDL!")
+                } else {
+                    Log.w("SettingsFragment", "Interface AIDL nula")
+                    binding.textViewValue.text = "Interface AIDL nula"
+                }
             } catch (e: Exception) {
-                e.printStackTrace()
-                Toast.makeText(context, "Error sending message", Toast.LENGTH_SHORT).show()
+                Log.e("SettingsFragment", "Erro ao chamar o serviço: ${e.message}")
+                binding.textViewValue.text = "Erro: ${e.message}"
             }
         } else {
             Toast.makeText(context, "Service not bound", Toast.LENGTH_SHORT).show()
