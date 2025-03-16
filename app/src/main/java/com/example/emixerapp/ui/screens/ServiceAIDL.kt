@@ -13,7 +13,7 @@ import com.example.emixerapp.manager.AidlServiceManager
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
 import com.reaj.emixer.databinding.ServiceAidlBinding
 
-class ServiceAIDLTest : Fragment() {
+class ServiceAIDL : Fragment() {
 
     private var _binding: ServiceAidlBinding? = null
     private val binding get() = _binding!!

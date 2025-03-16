@@ -83,7 +83,7 @@
 
     <fragment
         android:id="@+id/ServiceAIDLTest"
-        android:name="com.example.emixerapp.ui.screens.ServiceAIDLTest"
+        android:name="com.example.emixerapp.ui.screens.ServiceAIDL"
         android:label="InfoFragment"
         tools:layout="@layout/service_aidl"/>
 
