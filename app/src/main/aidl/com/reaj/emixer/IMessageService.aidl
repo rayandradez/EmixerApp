@@ -12,5 +12,5 @@ interface IMessageService {
      boolean setPan(int value);
      int getValue();
     void setValue(int value); // Adicione este método
-
+   long getMemoryUsage();
 }

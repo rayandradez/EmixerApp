@@ -1,4 +1,3 @@
-<!-- fragment_settings.xml -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,98 +25,155 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/latolight"
-        android:text="Settings"
+        android:text="Configurações"
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ImgWelcomeLogo" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@+id/txtSettingsTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="32dp">
 
-        <Button
-            android:id="@+id/BtnImportContacts"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/import_contacts_button_text"
-            android:layout_marginBottom="16dp"/>
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <Button
-            android:id="@+id/BtnManageUser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/manage_users_button_text"
-            android:layout_marginBottom="16dp"/>
-
-        <Button
-            android:id="@+id/BtnSendMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/send_message"
-            android:layout_marginBottom="16dp"/>
-
-        <Button
-            android:id="@+id/btnTestTasks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Test Tasks" />
-
-        <!-- Seção do Valor do Serviço -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
+            <!-- Seção de Gerenciamento de Usuários -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/teste_de_servi_o_aidl"
-                    android:textSize="20sp"
-                    android:fontFamily="@font/latobold"
-                    android:layout_marginBottom="8dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/esta_se_o_permite_testar_a_comunica_o_com_o_servi_o_aidl_em_segundo_plano_coloque_no_logcat_setvalue"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="16dp"/>
-
-                <TextView
-                    android:id="@+id/textViewValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/valor_do_servi_o_n_a"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="16dp"/>
-
-                <Button
-                    android:id="@+id/buttonUpdateValue"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/atualizar_valor"
-                    android:layout_marginBottom="8dp"/>
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gerenciamento de Usuários"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/latobold"
+                        android:layout_marginBottom="8dp"/>
 
-        </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gerencie os perfis de usuário e importe contatos para criar novos perfis."
+                        android:textSize="14sp"
+                        android:layout_marginBottom="16dp"/>
 
-    </LinearLayout>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/BtnImportContacts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/import_contacts_button_text"
+                        android:layout_marginBottom="8dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/BtnManageUser"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/manage_users_button_text"
+                        android:layout_marginBottom="8dp"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Seção de Testes do Serviço -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Testes e Monitoramento do Serviço"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/latobold"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Realize testes de comunicação com o serviço AIDL e monitore o uso de recursos."
+                        android:textSize="14sp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/BtnServiceAIDL"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_page_AIDL"
+                        android:layout_marginBottom="8dp"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Seção de Informações do Sistema -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Informações do Sistema"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/latobold"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Visualize informações sobre o sistema e as tarefas em execução."
+                        android:textSize="14sp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnTestTasks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Visão Geral do Sistema"
+                        android:layout_marginBottom="8dp"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

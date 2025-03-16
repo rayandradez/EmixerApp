@@ -11,6 +11,19 @@
     <string name="manage_profile_header_text">Select the profile you want to edit</string>
     <string name="edit_profile_header_text">Give a name and icon to your profile</string>
 
+    <!--  Teste de Serviço AIDL  -->
+
+    <string name="title_page_AIDL">Teste de Serviço AIDL</string>
+    <string name="comunicacao_aidl">Comunicação AIDL</string>
+    <string name="decricao_aidl">Teste a comunicação com o serviço AIDL em segundo plano alterando o valor e observando as mudanças.</string>
+    <string name="valor_servico">Valor do Serviço: N/A</string>
+    <string name="update_value_service">Atualizar Valor</string>
+
+    <string name="monitorar_servico_card_title">Monitoramento do Serviço</string>
+    <string name="monitorar_servico_card_description">Visualize as informações de uso de recursos do serviço AIDL em tempo real.</string>
+    <string name="monitorar_servico_card_value">Uso de Memória: N/A</string>
+
+
 
     <!--  Android Manifest  -->
     <string name="message_service_description">Allow access to the Message Service.</string>
