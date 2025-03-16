@@ -44,7 +44,8 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
     * **Balanceamento Estéreo (Pan):** Ajuste o balanceamento estéreo.
     * **Volume Geral (Main):** Controle do volume total de saída.
     * **Salvar/Redefinir:** Salve as configurações personalizadas do equalizador no perfil selecionado ou redefina para os valores padrão.
-    *  **Serviço em Segundo Plano:**
+      
+### Serviço em Segundo Plano:
     * O aplicativo agora funciona em segundo plano, permitindo que os usuários alternem entre aplicativos sem interromper a reprodução de áudio ou perder as configurações do equalizador. **(Ainda em desenvolvimento: a notificação do serviço de primeiro plano pode não ser exibida corretamente)**
 * **Teste de Serviço AIDL:**
     * Adicionamos uma seção no `SettingsFragment` para testar a comunicação com o serviço AIDL em segundo plano.
