@@ -22,7 +22,7 @@ public class MessageService extends Service {
     private static final String TAG = "MessageService";
     private static final String CHANNEL_ID = "emixer_channel";
     private static final int NOTIFICATION_ID = 1; // ID único para a notificação
-    public static final String ACTION_FOREGROUND_SERVICE = "com.reaj.emixer.action.FOREGROUND_SERVICE"; // Defina a ação aqui
+    public static final String ACTION_FOREGROUND_SERVICE = "com.example.emixerapp.action.FOREGROUND_SERVICE"; // Defina a ação aqui
     private int myValue = 0; // Adicione esta variável para armazenar o valor
 
 
@@ -30,62 +30,62 @@ public class MessageService extends Service {
     private final IMessageService.Stub binder = new IMessageService.Stub() {
         @Override
         public void sendMessage(String message) throws RemoteException {
-            Log.d("AIDL_DEMO", "Message received: " + message);
+            Log.d(TAG, "sendMessage() chamado, message: " + message);
             // Lógica para lidar com a mensagem, por exemplo, exibir uma notificação
         }
 
         @Override
         public boolean setBass(int value) throws RemoteException {
-            Log.d("AIDL_DEMO", "setBass() chamado, value: " + value);
+            Log.d(TAG, "setBass() chamado, value: " + value);
             // Validação de exemplo: verifica se o valor está dentro do intervalo aceitável
             if (value >= 0 && value <= 10) {
-                Log.d("AIDL_DEMO", "Setting Bass to: " + value);
+                Log.d(TAG, "Setting Bass to: " + value);
                 // Aqui você aplicaria a configuração de graves (Bass) usando a API de áudio
                 return true; // Indica sucesso
             } else {
-                Log.w("AIDL_DEMO", "Invalid Bass value: " + value);
+                Log.w(TAG, "Invalid Bass value: " + value);
                 return false; // Indica falha
             }
         }
 
         @Override
         public boolean setMid(int value) throws RemoteException {
-            Log.d("AIDL_DEMO", "setMid() chamado, value: " + value);
+            Log.d(TAG, "setMid() chamado, value: " + value);
             // Validação de exemplo: verifica se o valor está dentro do intervalo aceitável
             if (value >= 0 && value <= 10) {
-                Log.d("AIDL_DEMO", "Setting Mid to: " + value);
+                Log.d(TAG, "Setting Mid to: " + value);
                 // Aqui você aplicaria a configuração de médios (Mid) usando a API de áudio
                 return true; // Indica sucesso
             } else {
-                Log.w("AIDL_DEMO", "Invalid Mid value: " + value);
+                Log.w(TAG, "Invalid Mid value: " + value);
                 return false; // Indica falha
             }
         }
 
         @Override
         public boolean setTreble(int value) throws RemoteException {
-            Log.d("AIDL_DEMO", "setTreble() chamado, value: " + value);
+            Log.d(TAG, "setTreble() chamado, value: " + value);
             // Validação de exemplo: verifica se o valor está dentro do intervalo aceitável
             if (value >= 0 && value <= 10) {
-                Log.d("AIDL_DEMO", "Setting Treble to: " + value);
+                Log.d(TAG, "Setting Treble to: " + value);
                 // Aqui você aplicaria a configuração de agudos (Treble) usando a API de áudio
                 return true; // Indica sucesso
             } else {
-                Log.w("AIDL_DEMO", "Invalid Treble value: " + value);
+                Log.w(TAG, "Invalid Treble value: " + value);
                 return false; // Indica falha
             }
         }
 
         @Override
         public boolean setMainVolume(int value) throws RemoteException {
-            Log.d("AIDL_DEMO", "setMainVolume() chamado, value: " + value);
+            Log.d(TAG, "setMainVolume() chamado, value: " + value);
             // Validação de exemplo: verifica se o valor está dentro do intervalo aceitável
             if (value >= 0 && value <= 100) {
-                Log.d("AIDL_DEMO", "Setting Main Volume to: " + value);
+                Log.d(TAG, "Setting Main Volume to: " + value);
                 // Aqui você aplicaria a configuração de volume principal (MainVolume) usando a API de áudio
                 return true; // Indica sucesso
             } else {
-                Log.w("AIDL_DEMO", "Invalid Main Volume value: " + value);
+                Log.w(TAG, "Invalid Main Volume value: " + value);
                 return false; // Indica falha
             }
         }
@@ -99,7 +99,7 @@ public class MessageService extends Service {
                 // Aqui você aplicaria a configuração de balanço estéreo (Pan) usando a API de áudio
                 return true; // Indica sucesso
             } else {
-                Log.w("AIDL_DEMO", "Invalid Pan value: " + value);
+                Log.w(TAG, "Invalid Pan value: " + value);
                 return false; // Indica falha
             }
         }
@@ -148,7 +148,6 @@ public class MessageService extends Service {
 
         // Inicia o serviço de primeiro plano
         startForeground(NOTIFICATION_ID, notification);
-        ContextCompat.startForegroundService(this, intent);
 
         return START_STICKY; // Garante que o serviço seja reiniciado se for interrompido
     }

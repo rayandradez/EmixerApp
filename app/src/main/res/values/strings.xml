@@ -12,6 +12,9 @@
     <string name="edit_profile_header_text">Give a name and icon to your profile</string>
 
 
+    <!--  Android Manifest  -->
+    <string name="message_service_description">Allow access to the Message Service.</string>
+
     <!--  Welcome Screen  -->
 
     <string name="select_or_manage_profiles">Select your profiles</string>
