@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -228,10 +227,6 @@ class MainActivity : AppCompatActivity() {
             unbindService(connection)
             isBound = false
         }
-    }
-
-    fun getMessageService(): IMessageService? {
-        return messageService
     }
 
     // Método para verificar se o serviço está rodando
