@@ -22,13 +22,16 @@ import com.reaj.emixer.IMessageService;
 import com.reaj.emixer.R;
 
 
+/**
+ * Serviço para gerenciar a reprodução de áudio e a equalização.
+ */
 public class MessageService extends Service {
 
     private static final String TAG = "MessageService";
     private static final String CHANNEL_ID = "emixer_channel";
     private static final int NOTIFICATION_ID = 1; // ID único para a notificação
-    public static final String ACTION_FOREGROUND_SERVICE = "com.example.emixerapp.action.FOREGROUND_SERVICE"; // Defina a ação aqui
-    private int myValue = 0; // Adicione esta variável para armazenar o valor
+    public static final String ACTION_FOREGROUND_SERVICE = "com.example.emixerapp.action.FOREGROUND_SERVICE"; // Ação para iniciar o serviço em primeiro plano
+    private int myValue = 0; // Adicione esta variável para armazenar o valor - Valor interno para demonstração
 
     private MediaPlayer mediaPlayer; // MediaPlayer para reproduzir áudio
     private Equalizer equalizer; // Equalizador para ajustar o áudio
@@ -47,6 +50,12 @@ public class MessageService extends Service {
             // Lógica para lidar com a mensagem, por exemplo, exibir uma notificação
         }
 
+        /**
+         * Define o nível de graves.
+         *
+         * @param value O nível de graves a ser definido (0-10).
+         * @return true se o valor for válido, false caso contrário.
+         */
         @Override
         public boolean setBass(int value) throws RemoteException {
             Log.d(TAG, "setBass() chamado, value: " + value);
@@ -63,6 +72,12 @@ public class MessageService extends Service {
             }
         }
 
+        /**
+         * Define o nível de médios.
+         *
+         * @param value O nível de médios a ser definido (0-10).
+         * @return true se o valor for válido, false caso contrário.
+         */
         @Override
         public boolean setMid(int value) throws RemoteException {
             Log.d(TAG, "setMid() chamado, value: " + value);
@@ -79,6 +94,12 @@ public class MessageService extends Service {
             }
         }
 
+        /**
+         * Define o nível de agudos.
+         *
+         * @param value O nível de agudos a ser definido (0-10).
+         * @return true se o valor for válido, false caso contrário.
+         */
         @Override
         public boolean setTreble(int value) throws RemoteException {
             Log.d(TAG, "setTreble() chamado, value: " + value);
@@ -95,6 +116,12 @@ public class MessageService extends Service {
             }
         }
 
+        /**
+         * Define o volume principal.
+         *
+         * @param value O volume principal a ser definido (0-100).
+         * @return true se o valor for válido, false caso contrário.
+         */
         @Override
         public boolean setMainVolume(int value) throws RemoteException {
             Log.d(TAG, "setMainVolume() chamado, value: " + value);
@@ -113,6 +140,12 @@ public class MessageService extends Service {
             }
         }
 
+        /**
+         * Define o balanço estéreo (Pan).
+         *
+         * @param value O balanço estéreo a ser definido (-100 a 100).
+         * @return true se o valor for válido, false caso contrário.
+         */
         @Override
         public boolean setPan(int value) throws RemoteException {
             Log.d(TAG, "setPan() chamado, value: " + value);
@@ -129,18 +162,33 @@ public class MessageService extends Service {
             }
         }
 
+        /**
+         * Retorna um valor (para fins de demonstração).
+         *
+         * @return O valor interno.
+         */
         @Override
         public int getValue() throws RemoteException {
             Log.d(TAG, "getValue() chamado, retornando: " + myValue);
             return myValue;
         }
 
+        /**
+         * Define um valor (para fins de demonstração).
+         *
+         * @param value O valor a ser definido.
+         */
         @Override
         public void setValue(int value) throws RemoteException { // Modifique este método
             Log.d(TAG, "setValue() chamado, definindo valor para: " + value);
             myValue = value; // Atualiza o valor interno
         }
 
+        /**
+         * Obtém o uso de memória do serviço.
+         *
+         * @return O uso de memória em KB.
+         */
         @Override
         public long getMemoryUsage() throws RemoteException {
             return getAudioServiceMemoryUsage();
@@ -154,7 +202,7 @@ public class MessageService extends Service {
         createNotificationChannel(); // Cria o canal de notificação
 
         // Inicializa o MediaPlayer
-        mediaPlayer = MediaPlayer.create(this, R.raw.test_audio); // Substitua pelo seu áudio
+        mediaPlayer = MediaPlayer.create(this, R.raw.test_audio); // Audio para teste
         mediaPlayer.setLooping(true); // Define para repetir a música
         mediaPlayer.start(); // Inicia a reprodução
 
@@ -212,7 +260,9 @@ public class MessageService extends Service {
         }
     }
 
-
+    /**
+     * Cria o canal de notificação (necessário para Android 8.0+).
+     */
     private void createNotificationChannel() {
         // Cria um canal de notificação (necessário para Android 8.0+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -231,6 +281,9 @@ public class MessageService extends Service {
         }
     }
 
+    /**
+     * Define as frequências centrais para cada banda do equalizador.
+     */
     private void setupEqualizerBands() {
         // Obtém o número de bandas do equalizador
         short numberOfBands = equalizer.getNumberOfBands();
@@ -254,6 +307,9 @@ public class MessageService extends Service {
         }
     }
 
+    /**
+     * Aplica as configurações de equalização para cada banda.
+     */
     private void applyEqualizerSettings() {
         short numberOfBands = equalizer.getNumberOfBands();
         final short minEQLevel = equalizer.getBandLevelRange()[0];
@@ -276,6 +332,9 @@ public class MessageService extends Service {
         }
     }
 
+    /**
+     * Aplica as configurações de balanço estéreo (Pan).
+     */
     private void applyPanSettings() {
         if (mediaPlayer != null) {
             float panLeft = 1f;
@@ -293,6 +352,11 @@ public class MessageService extends Service {
         }
     }
 
+    /**
+     * Obtém o uso de memória do serviço.
+     *
+     * @return O uso de memória em KB.
+     */
     private long getAudioServiceMemoryUsage() {
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         if (am != null) {
@@ -304,8 +368,6 @@ public class MessageService extends Service {
         }
         return 0;
     }
-
-
 
 
 }

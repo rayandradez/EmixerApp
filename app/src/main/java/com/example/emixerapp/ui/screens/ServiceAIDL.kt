@@ -13,69 +13,89 @@ import com.example.emixerapp.manager.AidlServiceManager
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
 import com.reaj.emixer.databinding.ServiceAidlBinding
 
+/**
+ * Fragmento para testar e monitorar o serviço AIDL.
+ */
 class ServiceAIDL : Fragment() {
 
-    private var _binding: ServiceAidlBinding? = null
-    private val binding get() = _binding!!
-    private lateinit var viewModel: MainViewModel
-    private lateinit var aidlServiceManager: AidlServiceManager
-    private lateinit var textViewMemoryUsage: TextView
-    private lateinit var textViewCpuUsage: TextView
+    private var _binding: ServiceAidlBinding? = null // Variável para armazenar a instância do ViewBinding
+    private val binding get() = _binding!! // Obtém a instância do ViewBinding, garantindo que não seja nula
+    private lateinit var viewModel: MainViewModel // ViewModel para gerenciar os dados da UI
+    private lateinit var aidlServiceManager: AidlServiceManager // Gerenciador para a comunicação com o serviço AIDL
+    private lateinit var textViewMemoryUsage: TextView // TextView para exibir o uso de memória
 
+    /**
+     * Infla o layout do fragmento.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ServiceAidlBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        _binding = ServiceAidlBinding.inflate(inflater, container, false) // Infla o layout usando ViewBinding
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java] // Obtém uma instância do ViewModel
         aidlServiceManager = AidlServiceManager(requireContext()) // Initialize AidlServiceManager
-        return binding.root
+        return binding.root // Retorna a view raiz do layout
     }
 
+    /**
+     * Configura a UI e define os listeners dos botões.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textViewMemoryUsage = binding.textViewMemoryUsage
+        textViewMemoryUsage = binding.textViewMemoryUsage // Obtém a referência para o TextView de uso de memória
 
+        // Define o listener para o botão de atualizar valor
         binding.buttonUpdateValue.setOnClickListener {
-            updateValue()
+            updateValue() // Chama o metodo para atualizar o valor
         }
 
+        // Define o listener para o botão de enviar mensagem
         binding.BtnSendMessage.setOnClickListener {
-            sendAIDLMessage()
+            sendAIDLMessage() // Chama o método para enviar uma mensagem
         }
 
-        bindAidlService() // Bind to the service
+        bindAidlService() // Vincula ao serviço AIDL
     }
 
+    /**
+     * Limpa a referência do ViewBinding e desvincula do serviço AIDL para evitar vazamentos de memória.
+     */
     override fun onDestroyView() {
         super.onDestroyView()
-        unbindAidlService() // Unbind from the service
-        _binding = null
+        unbindAidlService() // Desvincula do serviço AIDL
+        _binding = null // Define a variável _binding como nula
     }
 
 
+    /**
+     * Vincula ao serviço AIDL.
+     */
     private fun bindAidlService() {
         aidlServiceManager.bindService(
             onServiceConnected = { aidlInterface ->
                 Log.d("SettingsFragment", "Serviço AIDL conectado")
-                // Agora você pode usar a interface AIDL
-                updateValueOnScreen(aidlInterface.getValue())
-                updateUsageInfo()
+                updateValueOnScreen(aidlInterface.getValue())  // Atualiza o valor na tela
+                updateUsageInfo()  // Atualiza as informações de uso
             },
             onServiceDisconnected = {
                 Log.d("SettingsFragment", "Serviço AIDL desconectado")
-                binding.textViewValue.text = "Serviço Desconectado"
-                textViewMemoryUsage.text = "Uso de Memória: N/A"
-                textViewCpuUsage.text = "Uso de CPU: N/A"
+                binding.textViewValue.text = "Serviço Desconectado"  // Atualiza o texto na tela
+                textViewMemoryUsage.text = "Uso de Memória: N/A" // Atualiza o texto na tela
             }
         )
     }
 
+    /**
+     * Desvincula do serviço AIDL.
+     */
     private fun unbindAidlService() {
-        aidlServiceManager.unbindService()
+        aidlServiceManager.unbindService() // Desvincula do serviço AIDL
     }
 
+    /**
+     * Atualiza o valor do serviço.
+     */
     private fun updateValue() {
         if (aidlServiceManager.isServiceBound()) {
             try {
@@ -90,56 +110,66 @@ class ServiceAIDL : Fragment() {
                 }
             } catch (e: Exception) {
                 Log.e("SettingsFragment", "Erro ao chamar o serviço: ${e.message}")
-                binding.textViewValue.text = "Erro: ${e.message}"
+                binding.textViewValue.text = "Erro: ${e.message}"  // Atualiza o texto na tela
             }
         } else {
             Log.w("SettingsFragment", "Serviço não vinculado")
-            binding.textViewValue.text = "Serviço não vinculado"
+            binding.textViewValue.text = "Serviço não vinculado" // Atualiza o texto na tela
         }
     }
 
+    /**
+     * Atualiza o valor do serviço na tela.
+     *
+     * @param value O valor do serviço a ser exibido.
+     */
     private fun updateValueOnScreen(value: Int) {
-        binding.textViewValue.text = "Valor do Serviço: $value"
+        binding.textViewValue.text = "Valor do Serviço: $value" // Atualiza o texto na tela
     }
 
+    /**
+     * Atualiza as informações de uso do serviço na tela.
+     */
     private fun updateUsageInfo() {
         if (aidlServiceManager.isServiceBound()) {
             try {
                 val aidlInterface = aidlServiceManager.getMessageService()
                 if (aidlInterface != null) {
-                    val memoryUsage = aidlInterface.memoryUsage
+                    val memoryUsage = aidlInterface.memoryUsage  // Obtém o uso de memória do serviço
 
-                    textViewMemoryUsage.text = "Uso de Memória: $memoryUsage KB"
+                    textViewMemoryUsage.text = "Uso de Memória: $memoryUsage KB" // Atualiza o texto na tela
                 } else {
                     Log.w("SettingsFragment", "Interface AIDL nula")
-                    textViewMemoryUsage.text = "Interface AIDL nula"
+                    textViewMemoryUsage.text = "Interface AIDL nula" // Atualiza o texto na tela
                 }
             } catch (e: Exception) {
                 Log.e("SettingsFragment", "Erro ao chamar o serviço: ${e.message}")
-                textViewMemoryUsage.text = "Erro: ${e.message}"
+                textViewMemoryUsage.text = "Erro: ${e.message}" // Atualiza o texto na tela
             }
         } else {
             Log.w("SettingsFragment", "Serviço não vinculado")
-            textViewMemoryUsage.text = "Serviço não vinculado"
+            textViewMemoryUsage.text = "Serviço não vinculado" // Atualiza o texto na tela
         }
 
 
     }
-
+    /**
+     * Envia uma mensagem para o serviço AIDL.
+     */
     private fun sendAIDLMessage() {
         if (aidlServiceManager.isServiceBound()) {
             try {
                 val aidlInterface = aidlServiceManager.getMessageService()
                 if (aidlInterface != null) {
-                    aidlInterface.sendMessage("Hello from EMIXER AIDL!")
+                    aidlInterface.sendMessage("Hello from EMIXER AIDL!") // Envia a mensagem
                 } else {
                     Log.w("SettingsFragment", "Interface AIDL nula")
                 }
             } catch (e: Exception) {
-                Log.e("SettingsFragment", "Erro ao chamar o serviço: ${e.message}")
+                Log.e("SettingsFragment", "Erro ao chamar o serviço: ${e.message}") // Exibe uma mensagem
             }
         } else {
-            Toast.makeText(context, "Service not bound", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Service not bound", Toast.LENGTH_SHORT).show() // Exibe uma mensagem
         }
     }
 
