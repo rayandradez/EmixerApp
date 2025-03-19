@@ -247,7 +247,6 @@ O desenvolvimento futuro se concentrará em:
 * **Integração com Sistemas Automotivos:** Conectar o aplicativo ao sistema de áudio de um veículo para controle direto.
 * **Recursos Avançados de Equalização:** Explorar algoritmos e opções de equalização mais sofisticados.
 * **Recursos Adicionais:** Implementar recursos como predefinições, visualizações, sincronização entre dispositivos, tela para escolha de quais contatos importar, modo escuro, controle de acesso e recursos de interação social.
-* **Serviço de Primeiro Plano:** Corrigir a exibição da notificação do serviço de primeiro plano.
 
 
 
