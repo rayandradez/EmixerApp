@@ -80,6 +80,8 @@ Este aplicativo utiliza as seguintes tecnologias para atender aos objetivos do c
 * **Content Providers:** Usados para importar perfis de contatos.
 * **Implementação AIDL:** Integração do Android Interface Definition Language para facilitar a comunicação interprocessual.
 * **Serviço de Primeiro Plano:** O aplicativo agora utiliza um serviço de primeiro plano para garantir que as funcionalidades essenciais, como a comunicação AIDL, continuem funcionando mesmo quando o aplicativo não está em primeiro plano. Uma notificação persistente é exibida para informar ao usuário que o serviço está ativo.
+* API android.media.audiofx.Equalizer
+
 
 ### Implementação da Lógica de Equalização
 
@@ -213,6 +215,13 @@ Os testes unitários validam a funcionalidade individual de componentes menores 
 * **`addUser_shouldAddUserToList()`:** Verifica se um novo usuário é adicionado corretamente à lista.
 * **`addMultipleUsers_shouldContainAllUsers()`:** Verifica se múltiplos usuários são adicionados e mantidos na lista.
 * **`addAndRemoveUser_shouldHandleCorrectly()`:** Verifica se a adição e remoção de usuários são executadas corretamente.
+
+* **Casos de Teste dos `Managers`:**
+
+*   **AidlServiceManagerTest:** Valida a vinculação e desvinculação do serviço AIDL.
+*   **AudioManagerTest:** Valida a configuração dos parâmetros de áudio (Bass, Mid, Treble, MainVolume e Pan).
+*   **AudioSettingsManagerTest:** Valida o comportamento dos listeners das SeekBars.
+*   **PermissionManagerTest:** Valida a verificação e solicitação de permissões.
 
 
 ### Testes Instrumentais (UI)
