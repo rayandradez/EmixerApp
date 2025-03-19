@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -37,6 +36,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import kotlinx.coroutines.launch
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding   // Binding para acessar os componentes da UI
@@ -45,18 +45,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var receiver: AirplaneModeBroadcastReceiver    // Receptor para escutar mudanças no modo avião
     private lateinit var analytics: FirebaseAnalytics // Firebase para rastrear eventos do usuário
 
-    private var messageService: IMessageService? = null
-    private var isBound = false
+    private var messageService: IMessageService? = null  // Interface AIDL para comunicação com o serviço
+    private var isBound = false // Variável para rastrear se o serviço está vinculado
 
+    // Objeto que gerencia a conexão com o serviço
     private val connection: ServiceConnection = object : ServiceConnection {
+        // Chamado quando a conexão com o serviço é estabelecida
         override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
-            messageService = IMessageService.Stub.asInterface(service)
-            isBound = true
+            messageService = IMessageService.Stub.asInterface(service)  // Obtém a interface AIDL do serviço
+            isBound = true // Define a variável isBound como true
         }
 
+        // Chamado quando a conexão com o serviço é perdida
         override fun onServiceDisconnected(className: ComponentName?) {
-            messageService = null
-            isBound = false
+            messageService = null  // Limpa a interface AIDL
+            isBound = false // Define a variável isBound como false
         }
     }
 
@@ -71,6 +74,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", "Serviço iniciado explicitamente")
         }
 
+        // Recupera informações sobre as tarefas em execução
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val appTasks = activityManager.appTasks
         for (appTask in appTasks) {
@@ -78,6 +82,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", "Task: ${taskInfo.baseActivity?.className}")
         }
 
+        // Recupera informações sobre os aplicativos instalados
         val packageManager = packageManager
         val installedApps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
         for (appInfo in installedApps) {
@@ -95,6 +100,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Cria uma Intent para o serviço
         val intent = Intent(this, MessageService::class.java)
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
 
@@ -115,6 +121,7 @@ class MainActivity : AppCompatActivity() {
 
         // Inicializa o receptor para mudanças no modo avião e registra para receber esses eventos.
         receiver = AirplaneModeBroadcastReceiver()
+
         IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
             registerReceiver(receiver, it)
         }
@@ -230,23 +237,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun getMessageService(): IMessageService? {
-        return messageService
-    }
 
     // Método para verificar se o serviço está rodando
     private fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
-            if (serviceClass.name == service.service.className) {
+        // Obtém a lista de processos em execução e a torna imutável
+        val runningProcesses = manager.runningAppProcesses.toList()
+        for (processInfo in runningProcesses) {
+            // Verifica se o serviço está rodando
+            if (processInfo.processName == packageName) {
                 Log.d("MainActivity", "Serviço já está rodando")
-                return true
+                return true // Se o serviço já estiver rodando, retorna true
             }
         }
         Log.d("MainActivity", "Serviço não está rodando")
-        return false
+        return false // Se o serviço não estiver rodando, retorna false
     }
 }
+
 
 // Classe de dados para representar um perfil de contato
 data class Profile(

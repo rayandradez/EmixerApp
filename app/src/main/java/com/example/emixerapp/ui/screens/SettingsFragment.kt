@@ -23,59 +23,76 @@ import com.reaj.emixer.data.model.UserModel
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
 import com.reaj.emixer.databinding.FragmentSettingsBinding
 
+/**
+ * Fragmento para exibir as configurações do aplicativo.
+ */
 class SettingsFragment : Fragment() {
 
-    private var _binding: FragmentSettingsBinding? = null
-    private val binding get() = _binding!!
-    private lateinit var viewModel: MainViewModel
-    private lateinit var aidlServiceManager: AidlServiceManager
+    private var _binding: FragmentSettingsBinding? = null // Variável para armazenar a instância do ViewBinding
+    private val binding get() = _binding!! // Obtém a instância do ViewBinding, garantindo que não seja nula
+    private lateinit var viewModel: MainViewModel // ViewModel para gerenciar os dados da UI
+    private lateinit var aidlServiceManager: AidlServiceManager // Gerenciador para a comunicação com o serviço AIDL
 
     // Registra um launcher para solicitar permissão de leitura de contatos.
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                importContacts()
+                importContacts() // Se a permissão for concedida, importa os contatos
             } else {
                 Toast.makeText(
                     context,
                     "Unable to import your profile",
                     Toast.LENGTH_LONG
-                ).show()
+                ).show() // Se a permissão for negada, exibe uma mensagem
             }
         }
 
+    /**
+     * Infla o layout do fragmento.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)  // Infla o layout usando ViewBinding
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]  // Obtém uma instância do ViewModel
         aidlServiceManager = AidlServiceManager(requireContext()) // Initialize AidlServiceManager
-        return binding.root
+        return binding.root  // Retorna a view raiz do layout
     }
 
+
+    /**
+     * Configura a UI e define os listeners dos botões.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Define o listener para o botão de importar contatos
         binding.BtnImportContacts.setOnClickListener {
-            handleImportContactsClick()
+            handleImportContactsClick() // Lida com o clique no botão de importar contatos
         }
 
-
+        // Define o listener para o botão de gerenciar usuários
         binding.BtnManageUser.setOnClickListener {
-            it.findNavController().navigate(R.id.action_settings_to_manageUser)
-        }
-        binding.btnTestTasks.setOnClickListener {
-            findNavController().navigate(R.id.action_settings_to_infoFragment)
+            it.findNavController().navigate(R.id.action_settings_to_manageUser)  // Navega para a tela de gerenciamento de usuários
         }
 
+        // Define o listener para o botão de visão geral do sistema
+        binding.btnTestTasks.setOnClickListener {
+            findNavController().navigate(R.id.action_settings_to_infoFragment) // Navega para a tela de visão geral do sistema
+        }
+
+        // Define o listener para o botão de teste do serviço AIDL
         binding.BtnServiceAIDL.setOnClickListener {
-            findNavController().navigate(R.id.action_settings_to_ServiceAIDLTest)
+            findNavController().navigate(R.id.action_settings_to_ServiceAIDLTest)  // Navega para a tela de teste do serviço AIDL
 
         }
 
     }
 
+    /**
+     * Limpa a referência do ViewBinding e desvincula do serviço AIDL para evitar vazamentos de memória.
+     */
     override fun onDestroyView() {
         super.onDestroyView()
         unbindAidlService() // Unbind from the service
@@ -83,14 +100,20 @@ class SettingsFragment : Fragment() {
     }
 
 
-
+    /**
+     * Desvincula do serviço AIDL.
+     */
     private fun unbindAidlService() {
-        aidlServiceManager.unbindService()
+        aidlServiceManager.unbindService() // Desvincula do serviço AIDL
     }
 
 
 
+    /**
+     * Lida com o clique no botão de importar contatos.
+     */
     private fun handleImportContactsClick() {
+        // Verifica se a permissão de leitura de contatos já foi concedida
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.READ_CONTACTS
@@ -105,13 +128,15 @@ class SettingsFragment : Fragment() {
                 "Contacts permission is required to import contacts.",
                 Toast.LENGTH_SHORT
             ).show()
-            // Optionally, you can launch the requestPermissionLauncher here as well, if you want to immediately request the permission after showing the rationale.
-            requestPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
+            requestPermissionLauncher.launch(Manifest.permission.READ_CONTACTS) // Solicita a permissão ao usuário
         } else {
-            // Solicita a permissão ao usuário
-            requestPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
+            requestPermissionLauncher.launch(Manifest.permission.READ_CONTACTS) // Solicita a permissão ao usuário
         }
     }
+
+    /**
+     * Importa os contatos do usuário.
+     */
 
     private fun importContacts() {
         // Define as colunas a serem consultadas no banco de dados de contatos

@@ -23,8 +23,10 @@
          Necessária para capturar entrada de áudio do microfone em dispositivos com nível de API menor que 33. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- Permissão genérica para foreground service -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" /> <!-- Permissão específica para mediaPlayback -->
+    <!-- Permissões para executar um serviço em primeiro plano (foreground service). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Permissão específica para execução de um serviço em primeiro plano relacionado à reprodução de mídia. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <!-- Permissão para modificar as configurações de áudio.
          Concedida automaticamente no momento da instalação, não requer solicitação em tempo de execução (runtime).
@@ -37,8 +39,11 @@
          Necessária para acessar contatos e importa-los como perfil. -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
+    <!-- Permissão personalizada para o serviço de mensagens do aplicativo. -->
     <uses-permission android:name="com.example.emixerapp.permission.MESSAGE_SERVICE" />
 
+
+    <!-- Definição da permissão personalizada para o serviço de mensagens. -->
     <permission
         android:name="com.example.emixerapp.permission.MESSAGE_SERVICE"
         android:label="Access Message Service"
@@ -57,18 +62,19 @@
         android:theme="@style/Theme.MVVMApp"
         tools:targetApi="31">
 
+        <!-- Declaração do serviço de mensagens. -->
         <service
             android:name="com.example.emixerapp.MessageService"
             android:exported="true"
             android:permission="com.example.emixerapp.permission.MESSAGE_SERVICE"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
+                <!-- Ação que o serviço pode realizar. -->
                 <action android:name="com.example.emixerapp.action.FOREGROUND_SERVICE" />
             </intent-filter>
         </service>
 
-
-
+        <!-- Declaração da atividade principal do aplicativo. -->
         <activity
             android:name="com.reaj.emixer.MainActivity"
             android:exported="true">
