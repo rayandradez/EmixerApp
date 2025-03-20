@@ -4,7 +4,9 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     id("kotlin-kapt")
     alias(libs.plugins.google.gms.google.services)
+    jacoco
 }
+
 
 
 android {
@@ -102,7 +104,7 @@ dependencies {
     implementation("androidx.room:room-paging:$room_version")
 
     // MockK for mocking
-    testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation("io.mockk:mockk:1.13.10")
 
         // Unit testing framework
         testImplementation("junit:junit:4.13.2")
@@ -110,16 +112,48 @@ dependencies {
         // Mockito for mocking
         testImplementation("org.mockito:mockito-core:3.11.2")
 
+        testImplementation ("org.mockito:mockito-inline:3.11.2")
+
         // Mockito Kotlin extension to make mocking easier in Kotlin
         testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
-        // Kotlin Coroutines Test library for testing coroutines
+        testImplementation("org.robolectric:robolectric:4.10.3")
+
+    // Kotlin Coroutines Test library for testing coroutines
         testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
 
         androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.4.0")
 
+}
 
+jacoco {
+    toolVersion = "0.8.7" // Certifique-se de usar a versão correta
+}
 
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    val fileFilter = listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
+        "**/*Test*.*", "android/**/*.*")
+
+    val javaClasses = fileTree("$buildDir/tmp/kotlin-classes/debug") {
+        exclude(fileFilter)
+    }
+
+    val kotlinClasses = fileTree("$buildDir/intermediates/classes/debug") {
+        exclude(fileFilter)
+    }
+
+    classDirectories.setFrom(files(javaClasses, kotlinClasses))
+    sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
+    executionData.setFrom(fileTree("$buildDir") {
+        include("jacoco/testDebugUnitTest.exec")
+    })
 }
 
 // Task to replace the API key placeholder in google-services.json
