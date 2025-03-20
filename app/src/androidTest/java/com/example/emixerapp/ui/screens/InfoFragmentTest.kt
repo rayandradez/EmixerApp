@@ -24,7 +24,7 @@ import org.junit.Rule
  *
  * Este teste verifica o nome do pacote do aplicativo para garantir que o contexto
  * do aplicativo esteja configurado corretamente. É um teste básico para verificar
- * a configuração do ambiente de teste.
+ * a configuração do ambiente de teste
  *
  * Veja a [documentação de testes](http://d.android.com/tools/testing).
  */
