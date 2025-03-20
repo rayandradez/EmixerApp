@@ -124,8 +124,6 @@ dependencies {
 
         androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.4.0")
 
-
-
 }
 
 jacoco {
