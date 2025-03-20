@@ -62,7 +62,7 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
 #### The original project: [Figma](https://www.figma.com/design/ahaN4lSCMNpfLZp3OSnHPf/Emixer?node-id=0-1&p=f&t=YtUwxEKy6SIWXL8c-0)
 
 <div style="display: flex; flex-direction: 'row'; align-items: 'center';">
-	<img src="images/screensapp.png.png" width="325px">	
+	<img src="images/EmixerApp.png" width="325px">	
 </div>
 
 
