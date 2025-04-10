@@ -10,6 +10,9 @@ interface IMessageService {
      boolean setTreble(int value);
      boolean setMainVolume(int value);
      boolean setPan(int value);
+     boolean playAudio();
+     boolean pauseAudio();
+     boolean stopAudio();
      int getValue();
     void setValue(int value); // Adicione este método
    long getMemoryUsage();

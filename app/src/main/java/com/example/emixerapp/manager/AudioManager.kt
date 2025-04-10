@@ -120,4 +120,55 @@ class AudioManager(private val aidlServiceManager: AidlServiceManager) {
             Log.w("AudioManager", "Service not bound")
         }
     }
+
+    fun playAudio() {
+        if (aidlServiceManager.isServiceBound()) {
+            try {
+                val success = aidlServiceManager.getMessageService()?.playAudio() ?: false
+                if (success) {
+                    Log.d("AudioManager", "Setting play audio: Success")
+                } else {
+                    Log.w("AudioManager", "Setting play audio: Failed (invalid value?)")
+                }
+            } catch (e: android.os.RemoteException) {
+                Log.e("AudioManager", "RemoteException: ${e.message}")
+            }
+        } else {
+            Log.w("AudioManager", "Service not bound")
+        }
+    }
+
+    fun pauseAudio() {
+        if (aidlServiceManager.isServiceBound()) {
+            try {
+                val success = aidlServiceManager.getMessageService()?.pauseAudio() ?: false
+                if (success) {
+                    Log.d("AudioManager", "Setting pause: Success")
+                } else {
+                    Log.w("AudioManager", "Setting pause: Failed (invalid value?)")
+                }
+            } catch (e: android.os.RemoteException) {
+                Log.e("AudioManager", "RemoteException: ${e.message}")
+            }
+        } else {
+            Log.w("AudioManager", "Service not bound")
+        }
+    }
+
+    fun stopAudio() {
+        if (aidlServiceManager.isServiceBound()) {
+            try {
+                val success = aidlServiceManager.getMessageService()?.stopAudio() ?: false
+                if (success) {
+                    Log.d("AudioManager", "Setting stop audio: Success")
+                } else {
+                    Log.w("AudioManager", "Setting stop audio: Failed (invalid value?)")
+                }
+            } catch (e: android.os.RemoteException) {
+                Log.e("AudioManager", "RemoteException: ${e.message}")
+            }
+        } else {
+            Log.w("AudioManager", "Service not bound")
+        }
+    }
 }

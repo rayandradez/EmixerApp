@@ -108,7 +108,10 @@ class UserPage : Fragment() {
                     onMidChanged = { value -> audioManager.setMid(value) }, // Callback para mudança no Mid
                     onTrebleChanged = { value -> audioManager.setTreble(value) }, // Callback para mudança no Treble
                     onMainVolumeChanged = { value -> audioManager.setMainVolume(value) }, // Callback para mudança no Volume Principal
-                    onPanChanged = { value -> audioManager.setPan(value) }  // Callback para mudança no Pan
+                    onPanChanged = { value -> audioManager.setPan(value) },  // Callback para mudança no Pan
+                    playAudio = {  -> audioManager.playAudio() }, // Callback para tocar audio
+                    pauseAudio = {  -> audioManager.stopAudio() }, // Callback para parar audio
+                    stopAudio = {  -> audioManager.pauseAudio() }  // Callback para pausar audio
                 )
 
                 // Configura os listeners para as SeekBars
@@ -117,7 +120,10 @@ class UserPage : Fragment() {
                     binding.midSeekBar,
                     binding.highSeekBar,
                     binding.mainVolumeSeekBar,
-                    binding.panSeekBar
+                    binding.panSeekBar,
+                    binding.btnPlay,
+                    binding.btnPause,
+                    binding.btnStop,
                 )
 
                 // Observa o estado da UI e atualiza os componentes

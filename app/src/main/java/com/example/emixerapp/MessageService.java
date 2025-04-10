@@ -162,6 +162,28 @@ public class MessageService extends Service {
             }
         }
 
+        @Override
+        public boolean playAudio() throws RemoteException {
+            Log.e("MSGRECEIVED", "Play audio");
+            mediaPlayer.reset();
+            mediaPlayer.start();
+            return false;
+        }
+
+        @Override
+        public boolean pauseAudio() throws RemoteException {
+            Log.e("MSGRECEIVED", "Pause audio");
+            mediaPlayer.pause();
+            return false;
+        }
+
+        @Override
+        public boolean stopAudio() throws RemoteException {
+            Log.e("MSGRECEIVED", "Stop audio");
+            mediaPlayer.stop();
+            return false;
+        }
+
         /**
          * Retorna um valor (para fins de demonstração).
          *
