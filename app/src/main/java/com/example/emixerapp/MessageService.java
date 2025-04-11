@@ -165,22 +165,33 @@ public class MessageService extends Service {
         @Override
         public boolean playAudio() throws RemoteException {
             Log.e("MSGRECEIVED", "Play audio");
-            mediaPlayer.reset();
-            mediaPlayer.start();
+            if (!mediaPlayer.isPlaying()) {
+                // Inicializa o MediaPlayer
+                mediaPlayer = MediaPlayer.create(MessageService.this, R.raw.test_audio); // Audio para teste
+                mediaPlayer.setLooping(true); // Define para repetir a música
+                mediaPlayer.start(); // Inicia a reprodução
+                return true;
+            }
             return false;
         }
 
         @Override
         public boolean pauseAudio() throws RemoteException {
             Log.e("MSGRECEIVED", "Pause audio");
-            mediaPlayer.pause();
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+                return true;
+            }
             return false;
         }
 
         @Override
         public boolean stopAudio() throws RemoteException {
             Log.e("MSGRECEIVED", "Stop audio");
-            mediaPlayer.stop();
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+                return true;
+            }
             return false;
         }
 

@@ -1,3 +1,4 @@
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -29,6 +30,7 @@
         android:paddingBottom="0dp"
         app:itemPaddingBottom="0dp"
         android:layout_alignParentBottom="true"
+        android:visibility="gone"
         />
 
 
