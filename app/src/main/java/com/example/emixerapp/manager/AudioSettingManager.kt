@@ -2,6 +2,7 @@
 package com.example.emixerapp.manager
 
 import android.util.Log
+import android.widget.Button
 import android.widget.SeekBar
 import com.example.emixerapp.ui.screens.UserPage
 import com.reaj.emixer.IMessageService
@@ -30,6 +31,10 @@ class AudioSettingsManager(
     private val onTrebleChanged: (Int) -> Unit,
     private val onMainVolumeChanged: (Int) -> Unit,
     private val onPanChanged: (Int) -> Unit,
+    private val playAudio: () -> Unit,
+    private val stopAudio: () -> Unit,
+    private val pauseAudio: () -> Unit,
+
 ) {
 
     /**
@@ -46,7 +51,10 @@ class AudioSettingsManager(
         midSeekBar: SeekBar,
         highSeekBar: SeekBar,
         mainVolumeSeekBar: SeekBar,
-        panSeekBar: SeekBar
+        panSeekBar: SeekBar,
+        btnPlay: Button,
+        btnStop: Button,
+        btnPause: Button
     ) {
         bassSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -107,6 +115,19 @@ class AudioSettingsManager(
             override fun onStartTrackingTouch(seekBar: SeekBar?) {} // Não precisa implementar
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}  // Não precisa implementar
         })
+
+        btnPlay.setOnClickListener {
+            playAudio()
+        }
+
+        btnStop.setOnClickListener {
+            stopAudio()
+        }
+
+        btnPause.setOnClickListener {
+            pauseAudio()
+        }
+
     }
 
     /**
