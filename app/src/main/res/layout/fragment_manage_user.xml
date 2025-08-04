@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_grey"
+    android:background="?android:colorBackground"
     android:orientation="vertical"
     tools:context="com.reaj.emixer.ui.screens.ManageUser">
 
@@ -22,6 +23,7 @@
             android:text="@string/no_profiles_message_manage"
             android:textSize="24sp"
             android:gravity="center"
+            android:textColor="?android:textColorPrimary"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -37,6 +39,7 @@
             android:paddingBottom="14dp"
             android:text="@string/select_the_profile_you_want_to_edit"
             android:textSize="40sp"
+            android:textColor="?android:textColorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -65,9 +68,10 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:background="@drawable/circleborderbutton"
+                android:backgroundTint="@color/light_grey_button_darker"
                 android:fontFamily="@font/latolight"
                 android:text="@string/add_profile_button_text"
-                android:textColor="@color/white"
+                android:textColor="@color/button_text_primary"
                 android:textSize="40sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

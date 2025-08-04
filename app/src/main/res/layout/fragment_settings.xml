@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_grey"
+    android:background="?android:colorBackground"
     tools:context="com.example.emixerapp.ui.screens.SettingsFragment">
 
     <ImageView
@@ -27,6 +28,7 @@
         android:fontFamily="@font/latolight"
         android:text="Configurações"
         android:textSize="40sp"
+        android:textColor="?android:textColorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ImgWelcomeLogo" />
@@ -46,12 +48,58 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Seção de Gerenciamento de Usuários -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/cardBackgroundColor"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tema"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/latobold"
+                        android:textColor="?android:textColorPrimary"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alterne entre o tema claro e escuro do aplicativo."
+                        android:textSize="14sp"
+                        android:textColor="?android:textColorSecondary"
+                        android:layout_marginBottom="16dp"/>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/darkModeSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Modo Escuro"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="18sp"
+                        app:thumbTint="?attr/colorPrimary"
+                        app:trackTint="?android:textColorSecondary"
+                        />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/cardBackgroundColor"
                 android:layout_marginBottom="16dp">
 
                 <LinearLayout
@@ -66,6 +114,7 @@
                         android:text="Gerenciamento de Usuários"
                         android:textSize="20sp"
                         android:fontFamily="@font/latobold"
+                        android:textColor="?android:textColorPrimary"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -73,6 +122,7 @@
                         android:layout_height="wrap_content"
                         android:text="Gerencie os perfis de usuário e importe contatos para criar novos perfis."
                         android:textSize="14sp"
+                        android:textColor="?android:textColorSecondary"
                         android:layout_marginBottom="16dp"/>
 
                     <com.google.android.material.button.MaterialButton
@@ -80,6 +130,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/import_contacts_button_text"
+                        android:backgroundTint="@color/button_background_primary"
+                        android:textColor="@color/button_text_primary"
                         android:layout_marginBottom="8dp"/>
 
                     <com.google.android.material.button.MaterialButton
@@ -87,18 +139,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/manage_users_button_text"
+                        android:backgroundTint="@color/button_background_secondary"
+                        android:textColor="@color/button_text_secondary"
                         android:layout_marginBottom="8dp"/>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Seção de Testes do Serviço -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/cardBackgroundColor"
                 android:layout_marginBottom="16dp">
 
                 <LinearLayout
@@ -113,6 +167,7 @@
                         android:text="Testes e Monitoramento do Serviço"
                         android:textSize="20sp"
                         android:fontFamily="@font/latobold"
+                        android:textColor="?android:textColorPrimary"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -120,6 +175,7 @@
                         android:layout_height="wrap_content"
                         android:text="Realize testes de comunicação com o serviço AIDL e monitore o uso de recursos."
                         android:textSize="14sp"
+                        android:textColor="?android:textColorSecondary"
                         android:layout_marginBottom="16dp"/>
 
                     <com.google.android.material.button.MaterialButton
@@ -127,18 +183,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/title_page_AIDL"
+                        android:backgroundTint="@color/button_background_primary"
+                        android:textColor="@color/button_text_primary"
                         android:layout_marginBottom="8dp"/>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Seção de Informações do Sistema -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/cardBackgroundColor"
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -152,6 +211,7 @@
                         android:text="Informações do Sistema"
                         android:textSize="20sp"
                         android:fontFamily="@font/latobold"
+                        android:textColor="?android:textColorPrimary"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -159,6 +219,7 @@
                         android:layout_height="wrap_content"
                         android:text="Visualize informações sobre o sistema e as tarefas em execução."
                         android:textSize="14sp"
+                        android:textColor="?android:textColorSecondary"
                         android:layout_marginBottom="16dp"/>
 
                     <com.google.android.material.button.MaterialButton
@@ -166,6 +227,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Visão Geral do Sistema"
+                        android:backgroundTint="@color/button_background_primary"
+                        android:textColor="@color/button_text_primary"
                         android:layout_marginBottom="8dp"/>
 
                 </LinearLayout>

@@ -1,7 +1,34 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
     <style name="Base.Theme.MVVMApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Cores do tema base semânticas para Dark Mode -->
+        <item name="android:windowBackground">@color/background_color</item>
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary</item>
+        <item name="cardBackgroundColor">@color/card_background_color</item>
+        <item name="colorSurface">@color/card_background_color</item>
+        <item name="colorOnSurface">@color/text_color_primary</item>
+        <item name="android:colorBackground">@color/background_color</item>
+        <item name="android:textColor">@color/text_color_primary</item>
+        <item name="colorPrimary">@color/accent_blue</item> <!-- Para dark mode -->
+        <item name="colorOnPrimary">@color/button_text_primary</item>
+        <item name="android:fontFamily">@font/latoregular</item>
+        <item name="android:statusBarColor">@color/red</item>
+
+        <!-- CORREÇÃO PROPOSTA: Garante que esses atributos de cor sejam definidos corretamente -->
+        <item name="android:colorForeground">@color/light_text_color</item>
+        <item name="android:colorBackgroundFloating">@color/dark_blue_surface</item>
+    </style>
+
+    <style name="Theme.MVVMApp" parent="Base.Theme.MVVMApp" />
+
+    <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorPrimary">@color/bottom_nav_background</item>
+        <item name="colorOnSurface">@color/bottom_nav_item_color</item>
+        <item name="colorSurface">@color/bottom_nav_background</item>
     </style>
 </resources>
