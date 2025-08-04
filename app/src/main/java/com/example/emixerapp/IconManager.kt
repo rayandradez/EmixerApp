@@ -12,11 +12,10 @@ object IconManager {
      * Os índices deste array correspondem aos índices usados no método `getDrawableResource()`.
      */
     val iconDrawables = arrayOf(
-        R.drawable.accordionb,
-        R.drawable.drumsb,
-        R.drawable.guitarb,
-        R.drawable.headsetb,
-        R.drawable.hornb
+        R.drawable.car_blue_suv,
+        R.drawable.car_dark_pickup,
+        R.drawable.car_red_sport,
+        R.drawable.car_white_bronco,
     )
 
     /**
