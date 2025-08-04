@@ -183,13 +183,11 @@ class AddUser : Fragment() {
 
     private fun centerRecyclerViewItems() {
         val recyclerViewWidth = binding.recyclerViewIcons.width
-        // Largura total de um item de carro (80dp de largura + 2*6dp de margem = 92dp total)
-        val singleItemTotalWidth = 80.dpToPx(requireContext()) + 2 * 6.dpToPx(requireContext())
+        val singleItemTotalWidth = 110.dpToPx(requireContext()) + 2 * 8.dpToPx(requireContext())
 
         val numberOfItems = adapterIconList.itemCount
         val totalItemsContentWidth = numberOfItems * singleItemTotalWidth
 
-        // Obter os paddings originais definidos no XML para preservar se o conteúdo preencher
         val originalPaddingStart = binding.recyclerViewIcons.paddingStart
         val originalPaddingEnd = binding.recyclerViewIcons.paddingEnd
 
@@ -197,13 +195,13 @@ class AddUser : Fragment() {
             val extraSpace = recyclerViewWidth - totalItemsContentWidth
             val padding = extraSpace / 2
             binding.recyclerViewIcons.setPadding(padding, 0, padding, 0)
-            binding.recyclerViewIcons.clipToPadding = false // Permite que os itens desenhem na área de padding
+            binding.recyclerViewIcons.clipToPadding = false
         } else {
-            // Se o conteúdo preencher ou exceder a largura do RecyclerView, reverter para o padding original
             binding.recyclerViewIcons.setPadding(originalPaddingStart, 0, originalPaddingEnd, 0)
-            binding.recyclerViewIcons.clipToPadding = true // Reverter se necessário
+            binding.recyclerViewIcons.clipToPadding = true
         }
     }
+
 
     private fun showDeleteProfileDialog() {
         val builder = AlertDialog.Builder(requireContext())

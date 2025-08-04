@@ -2,9 +2,9 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/iconCard"
-    android:layout_width="80dp"
-    android:layout_height="70dp"
-    android:layout_margin="6dp"
+    android:layout_width="110dp"
+    android:layout_height="100dp"
+    android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="0dp"
     app:cardBackgroundColor="@android:color/transparent">
@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerInside"
-        android:padding="2dp"
+        android:padding="4dp"
         android:src="@drawable/car_blue_suv"
         android:contentDescription="Car icon"
         />
