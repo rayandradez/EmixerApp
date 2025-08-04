@@ -2,40 +2,44 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="80dp"
     android:layout_marginBottom="12dp"
     app:cardCornerRadius="16dp"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="?attr/cardBackgroundColor">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
+        android:background="?attr/cardBackgroundColor"
         android:paddingStart="16dp"
         android:paddingEnd="16dp">
 
         <ImageView
             android:id="@+id/userIconImageView"
-            android:layout_width="150dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:scaleType="centerInside"
             android:padding="6dp"
+            android:src="@drawable/car_blue_suv"
             android:contentDescription="User profile car icon"
-            android:layout_marginEnd="16dp"
-        />
+            android:layout_marginEnd="12dp"
+            />
 
         <TextView
             android:id="@+id/userNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
             android:layout_toEndOf="@+id/userIconImageView"
             android:fontFamily="@font/latolight"
             android:text="John Doe"
-            android:textColor="@color/black"
-            android:textSize="28sp" />
+            android:textColor="?android:textColorPrimary"
+            android:textSize="28sp"
+            />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

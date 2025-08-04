@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Cores Base para o MODO CLARO -->
     <color name="black">#1C1C1E</color>
     <color name="white">#FFFFFF</color>
     <color name="grey">#B7B7C4</color>
     <color name="light_grey">#F4F4F6</color>
     <color name="red">#FF3131</color>
     <color name="green">#00FF00</color>
-    <color name="light_grey_button_darker">#D0D0D0</color> <!-- Adjust this exact hex value to match Figma if needed -->
-    <color name="light_grey_button">#E0E0E0</color> <!-- Used for the back button, same as welcome add button -->
+    <color name="light_grey_button_darker">#D0D0D0</color>
+    <color name="light_grey_button">#E0E0E0</color>
 
+    <!-- Cores Semânticas para o MODO CLARO -->
+    <color name="background_color">@color/light_grey</color>
+    <color name="text_color_primary">@color/black</color>
+    <color name="text_color_secondary">@color/grey</color>
+    <color name="card_background_color">@color/white</color>
+    <color name="button_background_primary">@color/light_grey_button_darker</color>
+    <color name="button_background_secondary">@color/light_grey_button_darker</color>
 
+    <!-- ALTERAÇÃO AQUI: Cor do texto para botões secundários no Light Mode -->
+    <color name="button_text_primary">@color/black</color>
+    <color name="button_text_secondary">@color/black</color> <!-- Mantenha black ou mude para um tom de primary -->
+
+    <color name="bottom_nav_background">@color/white</color>
+    <color name="bottom_nav_item_color">@color/black</color>
+    <color name="light_mode_primary_color">#4285F4</color>
 </resources>

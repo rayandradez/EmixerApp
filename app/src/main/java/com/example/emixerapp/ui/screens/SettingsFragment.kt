@@ -3,6 +3,7 @@ package com.example.emixerapp.ui.screens
 
 import android.Manifest
 import android.content.ContentUris
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -67,6 +69,9 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Configurar o Switch do Dark Mode
+        setupDarkModeSwitch()
+
         // Define o listener para o botão de importar contatos
         binding.BtnImportContacts.setOnClickListener {
             handleImportContactsClick() // Lida com o clique no botão de importar contatos
@@ -88,6 +93,30 @@ class SettingsFragment : Fragment() {
 
         }
 
+    }
+
+    private fun setupDarkModeSwitch() {
+        // Obter a preferência de tema salva
+        val sharedPrefs = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val currentNightMode = sharedPrefs.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+
+        // Definir o estado inicial do switch
+        binding.darkModeSwitch.isChecked = (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES)
+
+        // Listener para mudanças no switch
+        binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val editor = sharedPrefs.edit()
+            if (isChecked) {
+                // Ativar Dark Mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                editor.putInt("night_mode", AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                // Ativar Light Mode (ou seguir o sistema)
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) // Ou MODE_NIGHT_FOLLOW_SYSTEM
+                editor.putInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            editor.apply()
+        }
     }
 
     /**

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cores Base para o MODO ESCURO (Tons de Azul Escuro) -->
+    <color name="dark_blue_background">#1A2B3D</color>
+    <color name="dark_blue_surface">#2C425D</color>
+    <color name="dark_blue_lighter">#3A506B</color>
+    <color name="light_text_color">#F0F0F0</color>
+    <color name="medium_text_color">#A0B0C0</color>
+    <color name="accent_blue">#5E84B1</color>
+    <color name="darker_blue_nav">#101F2C</color>
+
+    <!-- Cores Semânticas para o MODO ESCURO -->
+    <color name="background_color">@color/dark_blue_background</color>
+    <color name="text_color_primary">@color/light_text_color</color>
+    <color name="text_color_secondary">@color/medium_text_color</color>
+    <color name="card_background_color">@color/dark_blue_surface</color>
+    <color name="button_background_primary">@color/accent_blue</color>
+    <color name="button_background_secondary">@color/dark_blue_lighter</color>
+
+    <!-- ALTERAÇÃO AQUI: Cor do texto para botões secundários no Dark Mode -->
+    <color name="button_text_primary">@color/light_text_color</color>
+    <color name="button_text_secondary">@color/light_text_color</color>
+
+    <color name="bottom_nav_background">@color/darker_blue_nav</color>
+    <color name="bottom_nav_item_color">@color/light_text_color</color>
+
+    <color name="red">#FF3131</color>
+    <color name="green">#00FF00</color>
+
+    <color name="black">@color/light_text_color</color>
+    <color name="white">@color/dark_blue_background</color>
+    <color name="grey">@color/medium_text_color</color>
+    <color name="light_grey">@color/dark_blue_background</color>
+    <color name="light_grey_button_darker">@color/accent_blue</color>
+    <color name="light_grey_button">@color/dark_blue_lighter</color>
+</resources>

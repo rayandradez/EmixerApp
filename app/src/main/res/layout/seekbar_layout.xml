@@ -10,7 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Bass" />
+        android:text="Bass"
+        android:textColor="?android:textColorPrimary"/>
 
     <SeekBar
         android:id="@+id/seekBar"

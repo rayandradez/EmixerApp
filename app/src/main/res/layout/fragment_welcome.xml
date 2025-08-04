@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_grey"
+    android:background="?android:colorBackground"
     tools:context="com.example.emixerapp.ui.screens.Welcome">
 
     <ImageView
@@ -22,12 +22,13 @@
         android:id="@+id/txtwelcome"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="24dp"
         android:fontFamily="@font/latolight"
+        android:text="@string/select_or_manage_profiles"
         android:textSize="36sp"
-        android:textColor="@color/black"
+        android:textColor="?android:textColorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ImgWelcomeLogo" />
@@ -52,10 +53,10 @@
         android:layout_height="70dp"
         android:layout_marginBottom="24dp"
         android:background="@drawable/circleborderbutton"
-        android:backgroundTint="@color/light_grey"
+        android:backgroundTint="@color/light_grey_button_darker"
         android:fontFamily="@font/latolight"
         android:text="@string/add_profile_button_text"
-        android:textColor="@color/grey"
+        android:textColor="@color/black"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
