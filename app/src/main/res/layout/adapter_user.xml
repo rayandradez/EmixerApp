@@ -1,47 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="90dp"
-    android:padding="16dp"
-    android:background="@drawable/circle_users_adapter"
-    android:layout_marginTop="0dp"
-    android:layout_marginBottom="20dp"
-    >
-
+    android:layout_height="120dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:outlineProvider="bounds">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
-    <ImageView
-        android:id="@+id/userIconImageView"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/ic_launcher_foreground"
-        app:tint="@color/black"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:scaleType="fitCenter"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="false"
+        <ImageView
+            android:id="@+id/userIconImageView"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:scaleType="centerInside"
+            android:padding="6dp"
+            android:contentDescription="User profile car icon"
+            android:layout_marginEnd="16dp"
         />
 
-    <TextView
-        android:id="@+id/userNameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:textColor="@color/black"
-        android:text="John Doe bow"
-        android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:fontFamily="@font/latolight"
-        android:layout_toEndOf="@+id/userIconImageView"
-        />
+        <TextView
+            android:id="@+id/userNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/userIconImageView"
+            android:fontFamily="@font/latolight"
+            android:text="John Doe"
+            android:textColor="@color/black"
+            android:textSize="28sp" />
+
     </RelativeLayout>
-
-</RelativeLayout>
+</androidx.cardview.widget.CardView>

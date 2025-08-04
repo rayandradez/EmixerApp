@@ -1,68 +1,75 @@
 package com.reaj.emixer.ui.components.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.reaj.emixer.R
 import com.reaj.emixer.databinding.AdapterIconsBinding
 
-/**
- * Adaptador para RecyclerView que exibe uma lista de ícones.
- * Permite a seleção de um único ícone.
- */
 class IconsAdapter(private val dataSet: ArrayList<Int>) :
     RecyclerView.Adapter<IconsAdapter.ViewHolder>() {
 
-    // Callback para notificar a activity quando um ícone for clicado.
     var onItemClick: ((Int) -> Unit)? = null
-    // Variável para rastrear a posição do item atualmente selecionado.
     var selectedPosition = -1
 
-        /**
-        * ViewHolder para cada item na RecyclerView.
-        * Cada ViewHolder contém uma referência à view de um item e seu listener.
-        */
-        inner class ViewHolder(val binding: AdapterIconsBinding) : RecyclerView.ViewHolder(binding.root) {
-            init {
-                // Define o listener de clique para cada item.
-                itemView.setOnClickListener {
-                    val position = adapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
-                        // Alterna a seleção do item (selecione ou desmarque).
-                        selectedPosition = if (selectedPosition == position) -1 else position
-                        // Notifica o adapter de que os dados foram alterados.
-                        notifyDataSetChanged()
-                        // Chama o callback onItemClick, passando a posição do item clicado.
-                        onItemClick?.invoke(position)
+    inner class ViewHolder(val binding: AdapterIconsBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            itemView.setOnClickListener {
+                val currentAdapterPosition = adapterPosition
+                if (currentAdapterPosition != RecyclerView.NO_POSITION) {
+                    val previousSelectedPosition = selectedPosition
+
+                    selectedPosition = if (selectedPosition == currentAdapterPosition) {
+                        RecyclerView.NO_POSITION
+                    } else {
+                        currentAdapterPosition
                     }
+
+                    if (previousSelectedPosition != RecyclerView.NO_POSITION) {
+                        notifyItemChanged(previousSelectedPosition)
+                    }
+                    notifyItemChanged(currentAdapterPosition)
+
+                    onItemClick?.invoke(selectedPosition)
                 }
             }
-
-            /**
-             * Vincula os dados do ícone à view.
-             * @param iconResource O recurso do ícone a ser exibido.
-             * @param isSelected Indica se o item está atualmente selecionado.
-             */
-            fun bind(iconResource: Int, isSelected: Boolean) {
-                binding.iconImageView.setImageResource(iconResource)
-                // Define o background do ImageView com base no estado de seleção.
-                binding.iconImageView.setBackgroundResource(
-                    if (isSelected) R.drawable.circle_selected_icon else R.drawable.transparent_background
-                )
-            }
         }
 
-        // Infla o layout para criar um novo ViewHolder.
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val binding = AdapterIconsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return ViewHolder(binding)
+        fun bind(iconResource: Int, isSelected: Boolean) {
+            binding.iconImageView.setImageResource(iconResource)
+            binding.selectionBorder.visibility = if (isSelected) View.VISIBLE else View.GONE
         }
-
-        // Vincula os dados do ícone ao ViewHolder correspondente.
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.bind(dataSet[position], position == selectedPosition) // Call the bind function here
-        }
-
-        // Retorna o número total de itens no dataset.
-        override fun getItemCount(): Int = dataSet.size
     }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = AdapterIconsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(dataSet[position], position == selectedPosition)
+    }
+
+    override fun getItemCount(): Int = dataSet.size
+
+    fun setSelectedIconByDrawableResId(drawableResId: Int) {
+        val index = dataSet.indexOf(drawableResId)
+        if (index != -1) {
+            val previousSelectedPosition = selectedPosition
+            selectedPosition = index
+            if (previousSelectedPosition != RecyclerView.NO_POSITION) {
+                notifyItemChanged(previousSelectedPosition)
+            }
+            notifyItemChanged(selectedPosition)
+        }
+    }
+
+    fun getSelectedIconDrawableResId(): Int? {
+        return if (selectedPosition != RecyclerView.NO_POSITION && selectedPosition < dataSet.size) {
+            dataSet[selectedPosition]
+        } else {
+            null
+        }
+    }
+}

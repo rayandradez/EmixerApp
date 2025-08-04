@@ -1,126 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.reaj.emixer.ui.screens.AddUser"
-    android:background="@color/light_grey">
+    android:background="@color/light_grey"
+    tools:context="com.reaj.emixer.ui.screens.AddUser">
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/circleborderbutton"
+        android:backgroundTint="@color/light_grey_button"
+        android:src="@drawable/ic_arrow_back"
+        android:contentDescription="Back"
+        android:scaleType="centerInside"
+        android:padding="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/titleTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/give_a_name_and_icon_to_your_profile"
         android:fontFamily="@font/latolight"
-        android:paddingBottom="15dp"
-        android:textSize="40sp"
+        android:textSize="32sp"
+        android:textColor="@color/black"
         android:layout_marginTop="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp" />
-
-    <ImageView
-        android:id="@+id/userIconImageView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="10dp"
-        android:scaleType="centerCrop"
-        android:layout_above="@+id/filledTextField"
-        android:layout_centerHorizontal="true"
-        />
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnBack" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/filledTextField"
-        style="?attr/textInputFilledStyle"
-        android:layout_width="match_parent"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:hint="@string/name"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:textColorHint="@color/grey"
+        app:boxStrokeColor="@color/grey"
+        app:hintTextColor="@color/grey"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:boxCornerRadiusTopStart="0dp"
+        app:boxCornerRadiusTopEnd="0dp"
+        app:boxCornerRadiusBottomStart="0dp"
+        app:boxCornerRadiusBottomEnd="0dp"
+        app:boxBackgroundColor="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="@+id/titleTextView"
+        app:layout_constraintEnd_toEndOf="@+id/titleTextView"
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView"
         >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editNewName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/light_grey"
+            android:background="@android:color/transparent"
             android:textSize="24sp"
             android:textColor="@color/black"
             android:imeOptions="actionDone"
             android:singleLine="true"
+            android:fontFamily="@font/latolight"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_icons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/filledTextField"
-        tools:listitem="@layout/adapter_icons"
-        />
+    <View
+        android:id="@+id/nameSeparator"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:layout_marginTop="2dp"
+        app:layout_constraintStart_toStartOf="@+id/filledTextField"
+        app:layout_constraintEnd_toEndOf="@+id/filledTextField"
+        app:layout_constraintTop_toBottomOf="@+id/filledTextField" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/recycler_view_icons"
-        android:layout_marginBottom="16dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/iconsCardView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameSeparator"
+        app:layout_constraintBottom_toTopOf="@+id/buttonLayout"
+        android:layout_marginBottom="24dp"
         >
 
-        <Button
-            android:id="@+id/BtnCancelUser"
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:text="Cancel"
-            android:background="@drawable/transparent_background"
-            android:textColor="@color/black"
-            android:layout_alignParentBottom="true"
-            android:fontFamily="@font/latolight"
-            android:textSize="30sp"
-            android:layout_marginRight="16dp"
-            android:textAlignment="textEnd"
-            android:layout_toEndOf="@+id/BtnSaveUser"
-            android:layout_alignParentEnd="true"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_icons"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:clipToPadding="false"
+            android:background="@android:color/white"
+            tools:listitem="@layout/adapter_icons"
             />
+    </androidx.cardview.widget.CardView>
 
-        <ImageButton
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/BtnSaveUser"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:backgroundTint="@color/grey"
-            android:scaleType="fitCenter"
-            android:padding="20dp"
-            android:background="@drawable/circleborderbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="@string/save"
             android:fontFamily="@font/latolight"
-            android:src="@drawable/checkw"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            app:cornerRadius="30dp"
+            android:backgroundTint="@color/light_grey_button_darker"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:layout_marginEnd="12dp"
             />
 
-
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/BtndeleteUser"
-            android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:layout_marginStart="0dp"
-            android:text="Delete"
-            android:background="@drawable/transparent_background"
-            android:textColor="@color/black"
-            android:layout_alignParentBottom="true"
+            android:layout_height="60dp"
+            android:text="@string/delete"
             android:fontFamily="@font/latolight"
-            android:textSize="30sp"
-            android:layout_toStartOf="@+id/BtnSaveUser"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            app:cornerRadius="30dp"
+            android:backgroundTint="@android:color/transparent"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:layout_marginStart="12dp"
             android:visibility="gone"
             />
 
-    </RelativeLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/BtnCancelUser"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="@string/cancel_button_text"
+            android:fontFamily="@font/latolight"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            app:cornerRadius="30dp"
+            android:backgroundTint="@android:color/transparent"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:layout_marginStart="12dp"
+            android:visibility="gone"
+            />
 
-</RelativeLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,8 +3,8 @@ package com.reaj.emixer.ui.screens
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
+import android.content.Context
 import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,173 +20,154 @@ import com.reaj.emixer.ui.components.adapters.IconsAdapter
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
 import com.reaj.emixer.databinding.FragmentAddUserBinding
 import androidx.activity.OnBackPressedCallback
+import android.widget.Toast
 
+fun Int.dpToPx(context: Context): Int {
+    return (this * context.resources.displayMetrics.density + 0.5f).toInt()
+}
 
-
-/**
- * Fragmento para adicionar novos usuários ou editar usuários existentes.
- */
 class AddUser : Fragment() {
 
     private lateinit var binding: FragmentAddUserBinding
     private lateinit var viewModel: MainViewModel
-    private var selectedIconIndex = 0 // Índice do ícone selecionado.
-    private var hasChanges = false  // Indica se há mudanças não salvas.
+    private var selectedIconDrawableResId: Int? = null
+    private var hasChanges = false
 
 
-    // RecyclerView para exibir os ícones.
     lateinit var myRecyclerIcon: RecyclerView
-    // Adaptador para a RecyclerView de ícones.
     lateinit var adapterIconList: IconsAdapter
-    // Obtém os argumentos passados para o fragmento.
-    private val args: AddUserArgs by navArgs() // Get arguments
+    private val args: AddUserArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Infla o layout do fragmento.
+    ): View {
         binding = FragmentAddUserBinding.inflate(inflater, container, false)
-        // Obtém uma instância do ViewModel.
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
-        // Inicializa a RecyclerView e o adaptador.
         myRecyclerIcon = binding.recyclerViewIcons
         adapterIconList = IconsAdapter(IconManager.iconDrawables.toCollection(ArrayList()))
         myRecyclerIcon.adapter = adapterIconList
         myRecyclerIcon.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-        myRecyclerIcon.setHasFixedSize(true)  // Otimização de performance.
 
-        // Define o listener de clique para seleção de ícone.
-        adapterIconList.onItemClick = { position ->
-            selectedIconIndex = position // Atualiza o índice do ícone selecionado.
-            hasChanges = true // Define hasChanges como true quando o ícone muda.
-            updateIconDisplay() // Atualiza a exibição do ícone.
+        adapterIconList.onItemClick = { newSelectedPosition ->
+            selectedIconDrawableResId = adapterIconList.getSelectedIconDrawableResId()
+            hasChanges = true
         }
 
-        // Preenche o formulário com os dados do usuário, se houver.
         args.selectedUser?.let { user ->
             binding.editNewName.setText(user.name)
-            selectedIconIndex = user.iconIndex
-            // Setar a posição inicial pré selecionada
-            adapterIconList.apply {
-                val previousSelectedPosition = selectedPosition
-                selectedPosition = selectedIconIndex
-                // Notifica se houve mudanças
-                if (previousSelectedPosition != -1) {
-                    notifyItemChanged(previousSelectedPosition)
-                }
-                notifyItemChanged(selectedIconIndex)
-            }
-            updateDeleteButtonVisibility(true)
-            updateIconDisplay()
+            selectedIconDrawableResId = user.iconIndex
+            adapterIconList.setSelectedIconByDrawableResId(user.iconIndex)
+
+            updateDeleteAndCancelButtonVisibility(true)
         } ?: run {
-            // Lidar com o caso em que nenhum usuário foi selecionado. O formulário deve estar vazio.
-//             Isso já é tratado no métod saveUser(), mas esta seção é importante para a UI.
-            updateDeleteButtonVisibility(false)
+            updateDeleteAndCancelButtonVisibility(false)
+            if (adapterIconList.itemCount > 0) {
+                adapterIconList.setSelectedIconByDrawableResId(IconManager.iconDrawables[0])
+                selectedIconDrawableResId = IconManager.iconDrawables[0]
+            }
         }
 
+        binding.recyclerViewIcons.post {
+            centerRecyclerViewItems()
+        }
 
-
-
-        // Define o listener de clique para o botão de salvar.
         binding.BtnSaveUser.setOnClickListener {
-            saveUser()  // Salva as informações do usuário.
+            saveUser()
         }
 
-        // Define o listener de clique para o botão "Cancel".
         binding.BtnCancelUser.setOnClickListener {
-            // Mostra um diálogo para confirmar o descarte das alterações, se houver.
             if (hasChanges) {
                 showDiscardChangesDialog()
             } else {
-                findNavController().navigateUp()  // Navega para a tela anterior.
+                findNavController().navigateUp()
             }
         }
 
-
-        // Define o listener de clique para o botão "Delete".
         binding.BtndeleteUser.setOnClickListener() {
             showDeleteProfileDialog()
         }
 
-        // Adiciona um listener para detectar mudanças no campo de nome.
+        binding.btnBack.setOnClickListener {
+            if (hasChanges) {
+                showDiscardChangesDialog()
+            } else {
+                findNavController().navigateUp()
+            }
+        }
+
         binding.editNewName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // Este método é intencionalmente deixado vazio porque não precisamos
-                // realizar nenhuma ação antes que o texto mude. Ele é necessário como parte
-                // da implementação da interface TextWatcher.
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Este método pode ser utilizado para realizar ações durante a mudança do texto.
-                // Atualmente, está vazio porque não há necessidade de manipulação durante a mudança.
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                hasChanges = true  // Define hasChanges como true quando o texto muda.
+                hasChanges = true
             }
         })
-
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Adiciona um callback para o botão de voltar do sistema.
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // Mostra um diálogo para confirmar o descarte das alterações, se houver.
                 if (hasChanges) {
                     showDiscardChangesDialog()
                 } else {
-                    findNavController().navigateUp()  // Navega para a tela anterior.
+                    findNavController().navigateUp()
                 }
             }
         })
     }
 
-    private fun updateDeleteButtonVisibility(shouldDisplayDeleteButton: Boolean) {
-        binding.BtndeleteUser.visibility = if (shouldDisplayDeleteButton) View.VISIBLE else View.GONE
+    private fun updateDeleteAndCancelButtonVisibility(isEditingExistingUser: Boolean) {
+        binding.BtndeleteUser.visibility = if (isEditingExistingUser) View.VISIBLE else View.GONE
+        binding.BtnCancelUser.visibility = if (isEditingExistingUser) View.VISIBLE else View.GONE
     }
 
-    // Atualiza a exibição do ícone selecionado.
-    private fun updateIconDisplay() {
-        val drawableResource = IconManager.getDrawableResource(selectedIconIndex)
-        binding.userIconImageView.setImageResource(drawableResource)
-    }
-
-    // Salva as informações do usuário.
     private fun saveUser() {
-        val userName = binding.editNewName.text.toString()
-        if (userName.isNotEmpty()) {
-            val user = args.selectedUser ?: UserModel(name = userName, iconIndex = selectedIconIndex)
-            user.name = userName
-            user.iconIndex = selectedIconIndex
-            viewModel.updateUser(user)
-            findNavController().navigateUp()
-            binding.editNewName.text?.clear()
-            selectedIconIndex = 0
-        } else {
-            Log.e("AddUser", "User name cannot be empty")
+        val userName = binding.editNewName.text.toString().trim()
+        val currentSelectedIconResId = adapterIconList.getSelectedIconDrawableResId()
+
+        if (userName.isEmpty()) {
+            Toast.makeText(requireContext(), "User name cannot be empty", Toast.LENGTH_SHORT).show()
+            return
         }
+        if (currentSelectedIconResId == null) {
+            Toast.makeText(requireContext(), "Please select an icon", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val user = args.selectedUser ?: UserModel(
+            id = java.util.UUID.randomUUID().toString(),
+            name = userName,
+            iconIndex = currentSelectedIconResId,
+            0, 0, 0, 50,0
+        )
+        user.name = userName
+        user.iconIndex = currentSelectedIconResId
+        viewModel.updateUser(user)
+        findNavController().navigateUp()
+        binding.editNewName.text?.clear()
+        selectedIconDrawableResId = null
+        hasChanges = false
     }
 
     private fun deleteUser() {
-        val userName = binding.editNewName.text.toString()
-        if (userName.isNotEmpty()) {
-            val user = args.selectedUser ?: UserModel(name = userName, iconIndex = selectedIconIndex)
-            viewModel.deleteUser(user)
+        args.selectedUser?.let { userToDelete ->
+            viewModel.deleteUser(userToDelete)
             findNavController().navigateUp()
             binding.editNewName.text?.clear()
-            selectedIconIndex = 0
+            selectedIconDrawableResId = null
+            hasChanges = false
+        } ?: run {
+            Toast.makeText(requireContext(), "No user selected to delete", Toast.LENGTH_SHORT).show()
         }
     }
 
-    // Mostra um diálogo para confirmar o descarte das alterações.
     private fun showDiscardChangesDialog() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Discard Changes?")
@@ -200,7 +181,30 @@ class AddUser : Fragment() {
         builder.show()
     }
 
-    // Mostra um diálogo para confirmar a deleção.
+    private fun centerRecyclerViewItems() {
+        val recyclerViewWidth = binding.recyclerViewIcons.width
+        // Largura total de um item de carro (80dp de largura + 2*6dp de margem = 92dp total)
+        val singleItemTotalWidth = 80.dpToPx(requireContext()) + 2 * 6.dpToPx(requireContext())
+
+        val numberOfItems = adapterIconList.itemCount
+        val totalItemsContentWidth = numberOfItems * singleItemTotalWidth
+
+        // Obter os paddings originais definidos no XML para preservar se o conteúdo preencher
+        val originalPaddingStart = binding.recyclerViewIcons.paddingStart
+        val originalPaddingEnd = binding.recyclerViewIcons.paddingEnd
+
+        if (totalItemsContentWidth < recyclerViewWidth) {
+            val extraSpace = recyclerViewWidth - totalItemsContentWidth
+            val padding = extraSpace / 2
+            binding.recyclerViewIcons.setPadding(padding, 0, padding, 0)
+            binding.recyclerViewIcons.clipToPadding = false // Permite que os itens desenhem na área de padding
+        } else {
+            // Se o conteúdo preencher ou exceder a largura do RecyclerView, reverter para o padding original
+            binding.recyclerViewIcons.setPadding(originalPaddingStart, 0, originalPaddingEnd, 0)
+            binding.recyclerViewIcons.clipToPadding = true // Reverter se necessário
+        }
+    }
+
     private fun showDeleteProfileDialog() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Delete Profile?")
@@ -214,5 +218,3 @@ class AddUser : Fragment() {
         builder.show()
     }
 }
-
-

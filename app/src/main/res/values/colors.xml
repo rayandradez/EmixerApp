@@ -6,5 +6,8 @@
     <color name="light_grey">#F4F4F6</color>
     <color name="red">#FF3131</color>
     <color name="green">#00FF00</color>
+    <color name="light_grey_button_darker">#D0D0D0</color> <!-- Adjust this exact hex value to match Figma if needed -->
+    <color name="light_grey_button">#E0E0E0</color> <!-- Used for the back button, same as welcome add button -->
+
 
 </resources>

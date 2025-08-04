@@ -3,7 +3,6 @@ package com.reaj.emixer.ui.components.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.reaj.emixer.IconManager
 import com.reaj.emixer.data.model.UserModel
 import com.reaj.emixer.R
 import com.reaj.emixer.databinding.AdapterUserBinding
@@ -57,15 +56,9 @@ class UsersAdapter(var dataSet: ArrayList<UserModel>) :
             binding.userNameTextView.text = user.name
 
             // Obtém o recurso de desenho do ícone usando o IconManager.
-            val drawableResource = IconManager.getDrawableResource(user.iconIndex)
-            binding.userIconImageView.setImageResource(drawableResource)
+            binding.userIconImageView.setImageResource(user.iconIndex)
 
-            // Define o tamanho do ícone.
-            val iconSize = 120
-            val layoutParams = binding.userIconImageView.layoutParams
-            layoutParams.width = iconSize
-            layoutParams.height = iconSize
-            binding.userIconImageView.layoutParams = layoutParams
+
         }
     }
 }

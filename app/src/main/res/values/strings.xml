@@ -35,6 +35,9 @@
     <string name="add_profile_button_text_">Add Profile</string>
     <string name="import_contacts_button_text">Import Contacts</string>
 
+    <!--  Add User Screen  -->
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
 
 
 
