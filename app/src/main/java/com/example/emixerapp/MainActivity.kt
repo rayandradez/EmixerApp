@@ -14,6 +14,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -99,6 +100,9 @@ class MainActivity : AppCompatActivity() {
         // Infla o layout para a activity.
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //Set Light/Dark Mode
+        applySavedTheme()
 
         // Cria uma Intent para o serviço
         val intent = Intent(this, MessageService::class.java)
@@ -235,6 +239,16 @@ class MainActivity : AppCompatActivity() {
             unbindService(connection)
             isBound = false
         }
+    }
+
+    // Metódo para verificar o tema
+    private fun applySavedTheme() {
+        val sharedPrefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        // O valor padrão para o modo noturno é -1 (MODE_NIGHT_FOLLOW_SYSTEM).
+        // Se o usuário nunca configurou, ele seguirá o sistema.
+        // Se 0 (NO) ou 1 (YES) estiver salvo, ele usará essa preferência.
+        val savedNightMode = sharedPrefs.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        AppCompatDelegate.setDefaultNightMode(savedNightMode)
     }
 
 

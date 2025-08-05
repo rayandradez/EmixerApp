@@ -64,6 +64,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.android.material:material:<version>") //Check the latest version
+    implementation(libs.lottie)                            // Animações JSON vetoriais com suporte Lottie
 
 
     val navVersion = "2.7.3"

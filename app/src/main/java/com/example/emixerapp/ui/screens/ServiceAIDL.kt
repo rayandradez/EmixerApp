@@ -99,7 +99,7 @@ class ServiceAIDL : Fragment() {
     private fun updateValue() {
         if (aidlServiceManager.isServiceBound()) {
             try {
-                val aidlInterface = aidlServiceManager.getMessageService()
+                val aidlInterface = aidlServiceManager.messageService
                 if (aidlInterface != null) {
                     val newValue = (0..100).random() // Gera um valor aleatório
                     aidlInterface.setValue(newValue) // Define o novo valor no serviço
@@ -133,7 +133,7 @@ class ServiceAIDL : Fragment() {
     private fun updateUsageInfo() {
         if (aidlServiceManager.isServiceBound()) {
             try {
-                val aidlInterface = aidlServiceManager.getMessageService()
+                val aidlInterface = aidlServiceManager.messageService
                 if (aidlInterface != null) {
                     val memoryUsage = aidlInterface.memoryUsage  // Obtém o uso de memória do serviço
 
@@ -159,7 +159,7 @@ class ServiceAIDL : Fragment() {
     private fun sendAIDLMessage() {
         if (aidlServiceManager.isServiceBound()) {
             try {
-                val aidlInterface = aidlServiceManager.getMessageService()
+                val aidlInterface = aidlServiceManager.messageService
                 if (aidlInterface != null) {
                     aidlInterface.sendMessage("Hello from EMIXER AIDL!") // Envia a mensagem
                 } else {

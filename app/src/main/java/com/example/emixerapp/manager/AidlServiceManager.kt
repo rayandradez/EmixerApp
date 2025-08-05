@@ -7,94 +7,65 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
-import com.reaj.emixer.IMessageService
 import com.example.emixerapp.MessageService
-import java.util.concurrent.atomic.AtomicBoolean
+import com.reaj.emixer.IMessageService // Importe a interface AIDL
 
-
-/**
- * Gerencia a vinculação e a comunicação com o serviço AIDL (Android Interface Definition Language).
- *
- * @param context O contexto da aplicação.
- */
 class AidlServiceManager(private val context: Context) {
 
-    private var messageService: IMessageService? = null // Interface AIDL para comunicação com o serviço
-    private var isServiceBound = AtomicBoolean(false) // Flag atômica para indicar se o serviço está vinculado
-    private var serviceConnection: ServiceConnection? = null // Objeto para gerenciar a conexão com o serviço
+    private val TAG = "AidlServiceManager"
+    // Torna messageService público para que AudioManager possa acessá-lo
+    var messageService: IMessageService? = null
+        private set // Apenas AidlServiceManager pode definir este valor
 
-    /**
-     * Vincula ao serviço AIDL.
-     *
-     * @param onServiceConnected Callback chamado quando o serviço é conectado.
-     * @param onServiceDisconnected Callback chamado quando o serviço é desconectado.
-     */
-    fun bindService(onServiceConnected: (IMessageService) -> Unit, onServiceDisconnected: () -> Unit) {
-        // Cria uma nova ServiceConnection se ainda não existir
-        if (serviceConnection == null) {
-            serviceConnection = object : ServiceConnection {
-                // Chamado quando a conexão com o serviço é estabelecida
-                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                    messageService = IMessageService.Stub.asInterface(service)  // Obtém a interface AIDL do serviço
-                    isServiceBound.set(true) // Define a flag isServiceBound como true
-                    Log.d("AidlServiceManager", "Service connected: ${name?.className}")
-                    messageService?.let { onServiceConnected(it) } // Chama o callback onServiceConnected com a interface AIDL
-                }
+    private var isBound = false
+    private var serviceConnection: ServiceConnection? = null
 
-                // Chamado quando a conexão com o serviço é perdida
-                override fun onServiceDisconnected(name: ComponentName?) {
-                    messageService = null // Limpa a interface AIDL
-                    isServiceBound = AtomicBoolean(false)  // Define a flag isServiceBound como false
-                    Log.d("AidlServiceManager", "Service disconnected")
-                    onServiceDisconnected() // Chama o callback onServiceDisconnected
-                }
+    fun bindService(
+        onServiceConnected: (IMessageService) -> Unit,
+        onServiceDisconnected: () -> Unit
+    ) {
+        if (isBound && messageService != null) {
+            Log.d(TAG, "Service already bound, calling onServiceConnected immediately.")
+            onServiceConnected(messageService!!) // Chama o callback imediatamente se já estiver vinculado
+            return
+        }
+
+        serviceConnection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                messageService = IMessageService.Stub.asInterface(service)
+                isBound = true
+                Log.d(TAG, "AIDL Service connected.")
+                messageService?.let { onServiceConnected(it) } // Chama o callback com a instância do serviço
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+                messageService = null
+                isBound = false
+                Log.w(TAG, "AIDL Service disconnected.")
+                onServiceDisconnected() // Chama o callback de desconexão
             }
         }
 
-        // Cria uma Intent com a ação correta para iniciar o serviço
         val intent = Intent(context, MessageService::class.java)
-        intent.action = MessageService.ACTION_FOREGROUND_SERVICE // Define a ação para o serviço de primeiro plano
-
         try {
-            // Vincula ao serviço usando a Intent e a ServiceConnection
             context.bindService(intent, serviceConnection!!, Context.BIND_AUTO_CREATE)
         } catch (e: SecurityException) {
-            Log.e("AidlServiceManager", "SecurityException while binding service: ${e.message}")
+            Log.e(TAG, "SecurityException when binding service: ${e.message}")
+            // Trate problemas de permissão ou outros problemas de segurança aqui
         }
     }
 
-    /**
-     * Desvincula do serviço AIDL.
-     */
     fun unbindService() {
-        // Verifica se o serviço está vinculado e se a ServiceConnection existe
-        if (isServiceBound.get() && serviceConnection != null) {
-            try {
-                context.unbindService(serviceConnection!!) // Desvincula do serviço
-                isServiceBound.set(false) // Define a flag isServiceBound como false
-                messageService = null // Limpa a interface AIDL
-                Log.d("AidlServiceManager", "Service unbound")
-            } catch (e: IllegalArgumentException) {
-                Log.e("AidlServiceManager", "IllegalArgumentException while unbinding service: ${e.message}")
-            }
+        if (isBound && serviceConnection != null) {
+            context.unbindService(serviceConnection!!)
+            isBound = false
+            messageService = null
+            serviceConnection = null
+            Log.d(TAG, "AIDL Service unbound.")
         }
     }
 
-    /**
-     * Verifica se o serviço está vinculado.
-     *
-     * @return true se o serviço está vinculado, false caso contrário.
-     */
     fun isServiceBound(): Boolean {
-        return isServiceBound.get() // Retorna o valor da flag isServiceBound
-    }
-
-    /**
-     * Retorna a interface AIDL.
-     *
-     * @return A interface IMessageService ou null se o serviço não estiver vinculado.
-     */
-    fun getMessageService(): IMessageService? {
-        return messageService // Retorna a interface AIDL
+        return isBound
     }
 }

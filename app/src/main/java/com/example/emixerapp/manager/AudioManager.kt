@@ -1,123 +1,136 @@
 // AudioManager.kt
-
 package com.example.emixerapp.manager
 
+import android.os.RemoteException
 import android.util.Log
+import com.reaj.emixer.IMessageService
 
-/**
- * Gerencia as configurações de áudio através do serviço AIDL.
- *
- * @param aidlServiceManager O manager para a vinculação e comunicação com o serviço AIDL.
- */
 class AudioManager(private val aidlServiceManager: AidlServiceManager) {
 
-    /**
-     * Define o valor do Bass através do serviço AIDL.
-     *
-     * @param value O valor do Bass a ser definido.
-     */
+    private val TAG = "AudioManager"
+
+    // Propriedade para acessar a instância do IMessageService
+    private val messageService: IMessageService?
+        get() = aidlServiceManager.messageService
+
+    // --- Métodos de controle de áudio ---
     fun setBass(value: Int) {
-        if (aidlServiceManager.isServiceBound()) {
-            try {
-                val success = aidlServiceManager.getMessageService()?.setBass(value) ?: false
-                if (success) {
-                    Log.d("AudioManager", "Setting Bass to $value: Success")
-                } else {
-                    Log.w("AudioManager", "Setting Bass to $value: Failed (invalid value?)")
-                }
-            } catch (e: android.os.RemoteException) {
-                Log.e("AudioManager", "RemoteException: ${e.message}")
-            }
-        } else {
-            Log.w("AudioManager", "Service not bound")
+        try {
+            messageService?.setBass(value)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error setting bass: ${e.message}")
         }
     }
 
-    /**
-     * Define o valor do Mid através do serviço AIDL.
-     *
-     * @param value O valor do Mid a ser definido.
-     */
     fun setMid(value: Int) {
-        if (aidlServiceManager.isServiceBound()) {
-            try {
-                val success = aidlServiceManager.getMessageService()?.setMid(value) ?: false
-                if (success) {
-                    Log.d("AudioManager", "Setting Mid to $value: Success")
-                } else {
-                    Log.w("AudioManager", "Setting Mid to $value: Failed (invalid value?)")
-                }
-            } catch (e: android.os.RemoteException) {
-                Log.e("AudioManager", "RemoteException: ${e.message}")
-            }
-        } else {
-            Log.w("AudioManager", "Service not bound")
+        try {
+            messageService?.setMid(value)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error setting mid: ${e.message}")
         }
     }
 
-    /**
-     * Define o valor do Treble através do serviço AIDL.
-     *
-     * @param value O valor do Treble a ser definido.
-     */
     fun setTreble(value: Int) {
-        if (aidlServiceManager.isServiceBound()) {
-            try {
-                val success = aidlServiceManager.getMessageService()?.setTreble(value) ?: false
-                if (success) {
-                    Log.d("AudioManager", "Setting Treble to $value: Success")
-                } else {
-                    Log.w("AudioManager", "Setting Treble to $value: Failed (invalid value?)")
-                }
-            } catch (e: android.os.RemoteException) {
-                Log.e("AudioManager", "RemoteException: ${e.message}")
-            }
-        } else {
-            Log.w("AudioManager", "Service not bound")
+        try {
+            messageService?.setTreble(value)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error setting treble: ${e.message}")
         }
     }
 
-    /**
-     * Define o valor do Volume Principal através do serviço AIDL.
-     *
-     * @param value O valor do Volume Principal a ser definido.
-     */
     fun setMainVolume(value: Int) {
-        if (aidlServiceManager.isServiceBound()) {
-            try {
-                val success = aidlServiceManager.getMessageService()?.setMainVolume(value) ?: false
-                if (success) {
-                    Log.d("AudioManager", "Setting MainVolume to $value: Success")
-                } else {
-                    Log.w("AudioManager", "Setting MainVolume to $value: Failed (invalid value?)")
-                }
-            } catch (e: android.os.RemoteException) {
-                Log.e("AudioManager", "RemoteException: ${e.message}")
-            }
-        } else {
-            Log.w("AudioManager", "Service not bound")
+        try {
+            messageService?.setMainVolume(value)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error setting main volume: ${e.message}")
         }
     }
 
-    /**
-     * Define o valor do Pan através do serviço AIDL.
-     *
-     * @param value O valor do Pan a ser definido.
-     */
     fun setPan(value: Int) {
-        if (aidlServiceManager.isServiceBound()) {
-            try {
-                val success = aidlServiceManager.getMessageService()?.setPan(value) ?: false
-                if (success) {
-                    Log.d("AudioManager", "Setting Pan to $value: Success")
-                } else {
-                    Log.w("AudioManager", "Setting Pan to $value: Failed (invalid value?)")
-                }
-            } catch (e: android.os.RemoteException) {
-                Log.e("AudioManager", "RemoteException: ${e.message}")
-            }
-        } else {
-            Log.w("AudioManager", "Service not bound")
+        try {
+            messageService?.setPan(value)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error setting pan: ${e.message}")
         }
     }
+
+    // --- NOVOS MÉTODOS DE CONTROLE DE REPRODUÇÃO ---
+
+    fun play() {
+        try {
+            messageService?.play()
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error playing audio: ${e.message}")
+        }
+    }
+
+    fun pause() {
+        try {
+            messageService?.pause()
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error pausing audio: ${e.message}")
+        }
+    }
+
+    fun stop() {
+        try {
+            messageService?.stop()
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error stopping audio: ${e.message}")
+        }
+    }
+
+    fun seekTo(positionMs: Int) {
+        try {
+            messageService?.seekTo(positionMs)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error seeking audio: ${e.message}")
+        }
+    }
+
+    fun getCurrentPosition(): Int {
+        return try {
+            messageService?.getCurrentPosition() ?: 0
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error getting current position: ${e.message}")
+            0
+        }
+    }
+
+    fun getDuration(): Int {
+        return try {
+            messageService?.getDuration() ?: 0
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error getting duration: ${e.message}")
+            0
+        }
+    }
+
+    fun getAvailableTracks(): List<String> {
+        return try {
+            messageService?.getAvailableTracks() ?: emptyList()
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error getting available tracks: ${e.message}")
+            emptyList()
+        }
+    }
+
+    fun selectTrack(trackIndex: Int) {
+        try {
+            messageService?.selectTrack(trackIndex)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error selecting track: ${e.message}")
+        }
+    }
+
+    fun isPlaying(): Boolean { // ADICIONE ESTE MÉTODO
+        return try {
+            messageService?.isPlaying() ?: false
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error getting isPlaying state: ${e.message}")
+            false
+        }
+    }
+
+
 }
