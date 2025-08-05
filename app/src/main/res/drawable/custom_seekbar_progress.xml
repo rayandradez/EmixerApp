@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Background da Seekbar (parte não preenchida) -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="12dp"/> <!-- Cantos arredondados -->
+            <solid android:color="@color/light_grey_button"/> <!-- Cor cinza claro -->
+            <size android:height="24dp"/> <!-- Altura da barra -->
+        </shape>
+    </item>
+
+    <!-- Progresso da Seekbar (parte preenchida) -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="12dp"/> <!-- Cantos arredondados -->
+                <solid android:color="@color/button_background_primary"/> <!-- Cor principal do botão (mais escura) -->
+                <size android:height="8dp"/> <!-- Altura da barra -->
+            </shape>
+        </clip>
+    </item>
+</layer-list>

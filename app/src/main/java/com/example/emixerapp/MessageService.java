@@ -21,6 +21,8 @@ import android.os.Process;
 import com.reaj.emixer.IMessageService;
 import com.reaj.emixer.R;
 
+import java.util.List;
+import java.util.Arrays;
 
 /**
  * Serviço para gerenciar a reprodução de áudio e a equalização.
@@ -29,12 +31,11 @@ public class MessageService extends Service {
 
     private static final String TAG = "MessageService";
     private static final String CHANNEL_ID = "emixer_channel";
-    private static final int NOTIFICATION_ID = 1; // ID único para a notificação
-    public static final String ACTION_FOREGROUND_SERVICE = "com.example.emixerapp.action.FOREGROUND_SERVICE"; // Ação para iniciar o serviço em primeiro plano
-    private int myValue = 0; // Adicione esta variável para armazenar o valor - Valor interno para demonstração
+    private static final int NOTIFICATION_ID = 1;
+    private int myValue = 0;
 
-    private MediaPlayer mediaPlayer; // MediaPlayer para reproduzir áudio
-    private Equalizer equalizer; // Equalizador para ajustar o áudio
+    private MediaPlayer mediaPlayer;
+    private Equalizer equalizer;
 
     private int bassLevel = 0;
     private int midLevel = 0;
@@ -42,156 +43,195 @@ public class MessageService extends Service {
     private int mainVolume = 50;
     private int panValue = 0;
 
-    // Implementação do Binder para a interface IMessageService
+    private int currentTrackIndex = 0;
+    private int[] audioTracks = {R.raw.test_audio, R.raw.skull_music};
+    private String[] trackNames = {"Test Audio Track 1", "Another Audio Track 2"};
+
     private final IMessageService.Stub binder = new IMessageService.Stub() {
         @Override
         public void sendMessage(String message) throws RemoteException {
             Log.d(TAG, "sendMessage() chamado, message: " + message);
-            // Lógica para lidar com a mensagem, por exemplo, exibir uma notificação
         }
 
-        /**
-         * Define o nível de graves.
-         *
-         * @param value O nível de graves a ser definido (0-10).
-         * @return true se o valor for válido, false caso contrário.
-         */
         @Override
         public boolean setBass(int value) throws RemoteException {
             Log.d(TAG, "setBass() chamado, value: " + value);
-            // Validação de exemplo: verifica se o valor está dentro do intervalo aceitável
             if (value >= 0 && value <= 10) {
-                Log.d(TAG, "Setting Bass to: " + value);
-                // Aqui você aplicaria a configuração de graves (Bass) usando a API de áudio
                 bassLevel = value;
                 applyEqualizerSettings();
-                return true; // Indica sucesso
+                return true;
             } else {
                 Log.w(TAG, "Invalid Bass value: " + value);
-                return false; // Indica falha
+                return false;
             }
         }
 
-        /**
-         * Define o nível de médios.
-         *
-         * @param value O nível de médios a ser definido (0-10).
-         * @return true se o valor for válido, false caso contrário.
-         */
         @Override
         public boolean setMid(int value) throws RemoteException {
             Log.d(TAG, "setMid() chamado, value: " + value);
-            // Validação de exemplo: verifica se o valor está dentro do intervalo aceitável
             if (value >= 0 && value <= 10) {
-                Log.d(TAG, "Setting Mid to: " + value);
-                // Aqui você aplicaria a configuração de médios (Mid) usando a API de áudio
                 midLevel = value;
                 applyEqualizerSettings();
-                return true; // Indica sucesso
+                return true;
             } else {
                 Log.w(TAG, "Invalid Mid value: " + value);
-                return false; // Indica falha
+                return false;
             }
         }
 
-        /**
-         * Define o nível de agudos.
-         *
-         * @param value O nível de agudos a ser definido (0-10).
-         * @return true se o valor for válido, false caso contrário.
-         */
         @Override
         public boolean setTreble(int value) throws RemoteException {
             Log.d(TAG, "setTreble() chamado, value: " + value);
-            // Validação de exemplo: verifica se o valor está dentro do intervalo aceitável
             if (value >= 0 && value <= 10) {
-                Log.d(TAG, "Setting Treble to: " + value);
-                // Aqui você aplicaria a configuração de agudos (Treble) usando a API de áudio
                 trebleLevel = value;
                 applyEqualizerSettings();
-                return true; // Indica sucesso
+                return true;
             } else {
                 Log.w(TAG, "Invalid Treble value: " + value);
-                return false; // Indica falha
+                return false;
             }
         }
 
-        /**
-         * Define o volume principal.
-         *
-         * @param value O volume principal a ser definido (0-100).
-         * @return true se o valor for válido, false caso contrário.
-         */
         @Override
         public boolean setMainVolume(int value) throws RemoteException {
             Log.d(TAG, "setMainVolume() chamado, value: " + value);
-            // Validação de exemplo: verifica se o valor está dentro do intervalo aceitável
             if (value >= 0 && value <= 100) {
-                Log.d(TAG, "Setting Main Volume to: " + value);
-                // Aqui você aplicaria a configuração de volume principal (MainVolume) usando a API de áudio
                 mainVolume = value;
                 if (mediaPlayer != null) {
                     mediaPlayer.setVolume(value / 100f, value / 100f);
                 }
-                return true; // Indica sucesso
+                return true;
             } else {
                 Log.w(TAG, "Invalid Main Volume value: " + value);
-                return false; // Indica falha
+                return false;
             }
         }
 
-        /**
-         * Define o balanço estéreo (Pan).
-         *
-         * @param value O balanço estéreo a ser definido (-100 a 100).
-         * @return true se o valor for válido, false caso contrário.
-         */
         @Override
         public boolean setPan(int value) throws RemoteException {
             Log.d(TAG, "setPan() chamado, value: " + value);
-            // Validação de exemplo: verifica se o valor está dentro do intervalo aceitável
             if (value >= -100 && value <= 100) {
-                Log.d(TAG, "Setting Pan to: " + value);
-                // Aqui você aplicaria a configuração de balanço estéreo (Pan) usando a API de áudio
                 panValue = value;
                 applyPanSettings();
-                return true; // Indica sucesso
+                return true;
             } else {
                 Log.w(TAG, "Invalid Pan value: " + value);
-                return false; // Indica falha
+                return false;
             }
         }
 
-        /**
-         * Retorna um valor (para fins de demonstração).
-         *
-         * @return O valor interno.
-         */
         @Override
         public int getValue() throws RemoteException {
-            Log.d(TAG, "getValue() chamado, retornando: " + myValue);
             return myValue;
         }
 
-        /**
-         * Define um valor (para fins de demonstração).
-         *
-         * @param value O valor a ser definido.
-         */
         @Override
-        public void setValue(int value) throws RemoteException { // Modifique este método
-            Log.d(TAG, "setValue() chamado, definindo valor para: " + value);
-            myValue = value; // Atualiza o valor interno
+        public void setValue(int value) throws RemoteException {
+            myValue = value;
         }
 
-        /**
-         * Obtém o uso de memória do serviço.
-         *
-         * @return O uso de memória em KB.
-         */
         @Override
         public long getMemoryUsage() throws RemoteException {
             return getAudioServiceMemoryUsage();
+        }
+
+        @Override
+        public void play() throws RemoteException {
+            if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+                mediaPlayer.start();
+                Log.d(TAG, "Playback started.");
+            }
+        }
+
+        @Override
+        public void pause() throws RemoteException {
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+                Log.d(TAG, "Playback paused.");
+            }
+        }
+
+        @Override
+        public void stop() throws RemoteException {
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.prepareAsync();
+                mediaPlayer.seekTo(0);
+                Log.d(TAG, "Playback stopped.");
+            }
+        }
+
+        @Override
+        public void seekTo(int positionMs) throws RemoteException {
+            if (mediaPlayer != null) {
+                mediaPlayer.seekTo(positionMs);
+            }
+        }
+
+        @Override
+        public int getCurrentPosition() throws RemoteException {
+            if (mediaPlayer != null) {
+                return mediaPlayer.getCurrentPosition();
+            }
+            return 0;
+        }
+
+        @Override
+        public int getDuration() throws RemoteException {
+            if (mediaPlayer != null) {
+                return mediaPlayer.getDuration();
+            }
+            return 0;
+        }
+
+        @Override
+        public List<String> getAvailableTracks() throws RemoteException {
+            return Arrays.asList(trackNames);
+        }
+
+        @Override
+        public void selectTrack(int trackIndex) throws RemoteException {
+            if (trackIndex >= 0 && trackIndex < audioTracks.length) {
+                boolean wasPlaying = false;
+                if (mediaPlayer != null) {
+                    wasPlaying = mediaPlayer.isPlaying();
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+                }
+                if (equalizer != null) {
+                    equalizer.release();
+                    equalizer = null;
+                }
+
+                currentTrackIndex = trackIndex;
+                initializeMediaPlayer(audioTracks[currentTrackIndex]);
+
+                if (wasPlaying) {
+                    if (mediaPlayer != null) {
+                        mediaPlayer.start();
+                    }
+                }
+
+                Log.d(TAG, "Selected track: " + trackNames[currentTrackIndex]);
+
+                if (mediaPlayer != null) {
+                    int audioSessionId = mediaPlayer.getAudioSessionId();
+                    equalizer = new Equalizer(0, audioSessionId);
+                    equalizer.setEnabled(true);
+                    setupEqualizerBands();
+                    applyEqualizerSettings();
+                    applyPanSettings();
+                    mediaPlayer.setVolume(mainVolume / 100f, mainVolume / 100f);
+                }
+            } else {
+                Log.w(TAG, "Invalid track index: " + trackIndex);
+            }
+        }
+
+        @Override
+        public boolean isPlaying() throws RemoteException {
+            return mediaPlayer != null && mediaPlayer.isPlaying();
         }
     };
 
@@ -199,27 +239,38 @@ public class MessageService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate() chamado");
-        createNotificationChannel(); // Cria o canal de notificação
+        createNotificationChannel();
 
-        // Inicializa o MediaPlayer
-        mediaPlayer = MediaPlayer.create(this, R.raw.test_audio); // Audio para teste
-        mediaPlayer.setLooping(true); // Define para repetir a música
-        mediaPlayer.start(); // Inicia a reprodução
+        // Inicializa o MediaPlayer com a primeira faixa
+        initializeMediaPlayer(audioTracks[currentTrackIndex]);
 
-        // Inicializa o Equalizer
+
+
+
+        // Inicializa o Equalizer (ainda depende do mediaPlayer estar criado)
         if (mediaPlayer != null) {
             int audioSessionId = mediaPlayer.getAudioSessionId();
             equalizer = new Equalizer(0, audioSessionId);
             equalizer.setEnabled(true);
             setupEqualizerBands();
+            applyEqualizerSettings();
+            applyPanSettings();
+            mediaPlayer.setVolume(mainVolume / 100f, mainVolume / 100f);
         }
+    }
 
+    // Método auxiliar para inicializar o MediaPlayer
+    private void initializeMediaPlayer(int audioResId) {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
+        mediaPlayer = MediaPlayer.create(this, audioResId);
+        mediaPlayer.setLooping(true);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind() chamado, intent: " + intent);
-        // Retorna o Binder para que os clientes possam interagir com o serviço
         return binder;
     }
 
@@ -227,9 +278,8 @@ public class MessageService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand() chamado, intent: " + intent + ", flags: " + flags + ", startId: " + startId);
 
-        // Cria uma notificação
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.circle_users_adapter) // Substitua pelo seu ícone
+                .setSmallIcon(R.drawable.circle_users_adapter)
                 .setContentTitle("Emixer App")
                 .setContentText("Ajustando áudio em segundo plano")
                 .setPriority(NotificationCompat.PRIORITY_LOW);
@@ -237,10 +287,9 @@ public class MessageService extends Service {
         Notification notification = builder.build();
         Log.d(TAG, "Notificação criada");
 
-        // Inicia o serviço de primeiro plano
         startForeground(NOTIFICATION_ID, notification);
 
-        return START_STICKY; // Garante que o serviço seja reiniciado se for interrompido
+        return START_STICKY;
     }
 
     @Override
@@ -248,7 +297,6 @@ public class MessageService extends Service {
         super.onDestroy();
         Log.d(TAG, "onDestroy() chamado");
 
-        // Libera os recursos do MediaPlayer e Equalizer
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
@@ -260,11 +308,7 @@ public class MessageService extends Service {
         }
     }
 
-    /**
-     * Cria o canal de notificação (necessário para Android 8.0+).
-     */
     private void createNotificationChannel() {
-        // Cria um canal de notificação (necessário para Android 8.0+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
@@ -281,70 +325,67 @@ public class MessageService extends Service {
         }
     }
 
-    /**
-     * Define as frequências centrais para cada banda do equalizador.
-     */
     private void setupEqualizerBands() {
-        // Obtém o número de bandas do equalizador
+        if (equalizer == null) return;
+
         short numberOfBands = equalizer.getNumberOfBands();
         final short minEQLevel = equalizer.getBandLevelRange()[0];
         final short maxEQLevel = equalizer.getBandLevelRange()[1];
 
-        // Define as frequências centrais para cada banda
-        int[] centerFrequencies = {100, 400, 1600, 2500, 10000}; // Frequências de exemplo
+        Log.d(TAG, "Equalizer has " + numberOfBands + " bands.");
+        Log.d(TAG, "Band level range: " + minEQLevel + " to " + maxEQLevel + "mB");
 
         for (short i = 0; i < numberOfBands; i++) {
-            int centerFreq = centerFrequencies[i]; // Obtém a frequência central da banda
-            Log.d(TAG, "Setting band " + i + " to frequency " + centerFreq);
-
-            try {
-                equalizer.setBandLevel(i, (short) (minEQLevel + bassLevel)); // Define o nível da banda
-            } catch (IllegalArgumentException e) {
-                Log.e(TAG, "Wrong argument !", e);
-            } catch (IllegalStateException e) {
-                Log.e(TAG, "Illegal State !", e);
-            }
+            int centerFreq = equalizer.getCenterFreq(i);
+            Log.d(TAG, "Band " + i + " center frequency: " + centerFreq + "mHz");
         }
     }
 
-    /**
-     * Aplica as configurações de equalização para cada banda.
-     */
     private void applyEqualizerSettings() {
+        if (equalizer == null) return;
+
         short numberOfBands = equalizer.getNumberOfBands();
         final short minEQLevel = equalizer.getBandLevelRange()[0];
-        final short maxEQLevel = equalizer.getBandLevelRange()[1];
 
-        // Aplica as configurações de equalização para cada banda
-        for (short i = 0; i < numberOfBands; i++) {
-            short level = minEQLevel;
-            if (i == 0) level = (short) (minEQLevel + bassLevel);
-            else if (i == 1) level = (short) (minEQLevel + midLevel);
-            else level = (short) (minEQLevel + trebleLevel);
-
+        if (numberOfBands > 0) {
+            short level = (short) (minEQLevel + (bassLevel * 100));
             try {
-                equalizer.setBandLevel(i, level);
-            } catch (IllegalArgumentException e) {
-                Log.e(TAG, "Wrong argument !", e);
-            } catch (IllegalStateException e) {
-                Log.e(TAG, "Illegal State !", e);
+                equalizer.setBandLevel((short) 0, level);
+                Log.d(TAG, "Set Bass (Band 0) to " + level + "mB (user: " + bassLevel + ")");
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                Log.e(TAG, "Error setting Bass band level: " + e.getMessage());
+            }
+        }
+
+        if (numberOfBands > 1) {
+            short level = (short) (minEQLevel + (midLevel * 100));
+            try {
+                equalizer.setBandLevel((short) 1, level);
+                Log.d(TAG, "Set Mid (Band 1) to " + level + "mB (user: " + midLevel + ")");
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                Log.e(TAG, "Error setting Mid band level: " + e.getMessage());
+            }
+        }
+
+        if (numberOfBands > 2) {
+            short level = (short) (minEQLevel + (trebleLevel * 100));
+            try {
+                equalizer.setBandLevel((short) 2, level);
+                Log.d(TAG, "Set Treble (Band 2) to " + level + "mB (user: " + trebleLevel + ")");
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                Log.e(TAG, "Error setting Treble band level: " + e.getMessage());
             }
         }
     }
 
-    /**
-     * Aplica as configurações de balanço estéreo (Pan).
-     */
     private void applyPanSettings() {
         if (mediaPlayer != null) {
             float panLeft = 1f;
             float panRight = 1f;
 
             if (panValue > 0) {
-                // Balanço para a direita
                 panLeft = 1 - (panValue / 100f);
             } else if (panValue < 0) {
-                // Balanço para a esquerda
                 panRight = 1 + (panValue / 100f);
             }
 
@@ -352,22 +393,15 @@ public class MessageService extends Service {
         }
     }
 
-    /**
-     * Obtém o uso de memória do serviço.
-     *
-     * @return O uso de memória em KB.
-     */
     private long getAudioServiceMemoryUsage() {
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         if (am != null) {
-            int pid = Process.myPid(); // Obtém o PID do seu serviço
+            int pid = Process.myPid();
             Debug.MemoryInfo[] memInfo = am.getProcessMemoryInfo(new int[]{pid});
             if (memInfo != null && memInfo.length > 0) {
-                return memInfo[0].getTotalPss(); // PSS em KB
+                return memInfo[0].getTotalPss();
             }
         }
         return 0;
     }
-
-
 }

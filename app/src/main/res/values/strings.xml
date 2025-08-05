@@ -38,7 +38,8 @@
     <!--  Add User Screen  -->
     <string name="save">Save</string>
     <string name="delete">Delete</string>
-
+    <string name="volume">Volume</string>
+    <string name="track">Track</string>
 
 
     <!--  Buttons  -->
@@ -50,7 +51,7 @@
     <string name="cancel_button_text">Cancel</string>
     <string name="select_the_profile_you_want_to_edit">Select the profile you want to edit</string>
     <string name="profiles">Profiles</string>
-    <string name="welcome">Welcome,</string>
+    <string name="welcome">Welcome</string>
     <string name="joao">Joao</string>
     <string name="click_here_to_select_another_profile">Click here to select another profile</string>
     <string name="bass">Bass</string>
@@ -71,4 +72,7 @@
     <string name="teste_de_servi_o_aidl">Teste de Serviço AIDL</string>
     <string name="atualizar_valor">Atualizar Valor</string>
     <string name="valor_do_servi_o_n_a">Valor do Serviço: N/A</string>
+    <string name="stop">Stop</string>
+    <string name="next_track">Next Track</string>
+    <string name="current_track">Current Track:</string>
 </resources>

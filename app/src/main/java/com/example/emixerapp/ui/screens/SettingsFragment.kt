@@ -69,8 +69,10 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         // Configurar o Switch do Dark Mode
         setupDarkModeSwitch()
+
 
         // Define o listener para o botão de importar contatos
         binding.BtnImportContacts.setOnClickListener {
@@ -98,24 +100,21 @@ class SettingsFragment : Fragment() {
     private fun setupDarkModeSwitch() {
         // Obter a preferência de tema salva
         val sharedPrefs = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val currentNightMode = sharedPrefs.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
 
-        // Definir o estado inicial do switch
-        binding.darkModeSwitch.isChecked = (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES)
-
-        // Listener para mudanças no switch
-        binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val editor = sharedPrefs.edit()
-            if (isChecked) {
-                // Ativar Dark Mode
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                editor.putInt("night_mode", AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                // Ativar Light Mode (ou seguir o sistema)
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) // Ou MODE_NIGHT_FOLLOW_SYSTEM
-                editor.putInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        binding.darkModeSwitch.isChecked = when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_YES -> true
+            AppCompatDelegate.MODE_NIGHT_NO -> false
+            else -> { // MODE_NIGHT_FOLLOW_SYSTEM ou outros, verifica o tema atual do sistema
+                (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
             }
-            editor.apply()
+        }
+
+        binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val newNightMode = if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            AppCompatDelegate.setDefaultNightMode(newNightMode)
+
+            // Salva a preferência
+            sharedPrefs.edit().putInt("night_mode", newNightMode).apply()
         }
     }
 
