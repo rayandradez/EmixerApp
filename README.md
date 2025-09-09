@@ -29,6 +29,9 @@ Este projeto é um aplicativo Android nativo desenvolvido como parte de um curso
 
 O aplicativo aborda o problema de equalizadores de áudio embarcados limitados ou mal projetados. Muitos veículos oferecem controle insuficiente, deixando os usuários frustrados em suas tentativas de otimizar a experiência auditiva. Nosso aplicativo oferece uma solução flexível e intuitiva.
 
+O foco principal foi não apenas criar a funcionalidade de equalização, mas também construir um **backend de serviço de áudio resiliente e corretamente sincronizado**, capaz de gerenciar múltiplos fluxos de áudio (mídia padrão e áudio processado em C++) de forma estável, demonstrando práticas de engenharia de software sólidas para sistemas críticos como os automotivos.
+
+
 ## Recursos Principais
 
 ## Recursos Principais
@@ -77,22 +80,29 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
 	<img src="images/EmixerApp.png" width="325px">	
 </div>
 
-
 ## Detalhes Técnicos
 
 Este aplicativo utiliza as seguintes tecnologias para atender aos objetivos do curso:
 
-* **Ciclo de Vida das Activities:** O ciclo de vida das Activities é gerenciado através de uma arquitetura MVVM, garantindo que o estado do aplicativo seja preservado e otimizado.
-* **Permissões de Segurança:** Configuramos as permissões necessárias no Android Manifest para proteger os dados do usuário e garantir o funcionamento do aplicativo.
-* **Programação Orientada a Objetos:** Princípios de POO são aplicados em toda a base de código para modularidade e reutilização.
-* **Integração de Interface Gráfica:** Componentes UI são integrados utilizando o Navigation Graph e ViewModels.
-* **Configuração de Intents:** Intents são utilizados para navegação entre as Activities, proporcionando uma experiência de usuário contínua.
-* **Armazenamento de Dados:** Utilizamos Room para persistência local e Firebase para armazenamento na nuvem.
-* **Comunicação Assíncrona:** Broadcast Receivers são usados para detectar mudanças como o Modo Avião.
-* **Content Providers:** Usados para importar perfis de contatos.
-* **Implementação AIDL:** Integração do Android Interface Definition Language para facilitar a comunicação interprocessual.
-* **Serviço de Primeiro Plano:** O aplicativo agora utiliza um serviço de primeiro plano para garantir que as funcionalidades essenciais, como a comunicação AIDL, continuem funcionando mesmo quando o aplicativo não está em primeiro plano. Uma notificação persistente é exibida para informar ao usuário que o serviço está ativo.
-* API android.media.audiofx.Equalizer
+### Arquitetura de Serviço de Áudio Robusta
+
+Para garantir estabilidade e consistência, foi implementada uma arquitetura de serviço desacoplada e resiliente:
+
+*   **Serviço em Segundo Plano (`MessageService`):** Toda a lógica de reprodução e processamento de áudio (`MediaPlayer`, `Equalizer`, `AudioTrack`) é encapsulada em um serviço, garantindo que o áudio continue tocando independentemente do ciclo de vida da UI.
+*   **Comunicação via AIDL:** A interface do usuário se comunica com o serviço de forma segura e interprocessual usando a Android Interface Definition Language (AIDL).
+*   **Gerenciador Singleton (`AidlServiceManager`):** Centraliza a conexão com o serviço, garantindo um único ponto de controle e prevenindo múltiplas conexões.
+*   **Sincronização UI-Serviço:** A UI (`UserPage`) trata o serviço como a **fonte única da verdade**. Ao se tornar visível, ela consulta o serviço para obter o estado atual (faixa, status de reprodução, posição), garantindo que a interface sempre reflita a realidade.
+*   **Inicialização Sob Demanda (`Lazy Initialization`):** O `MediaPlayer` é criado apenas quando necessário (no primeiro `play`), otimizando o uso de recursos.
+*   **Lógica de Volume Unificada:** Uma única função (`applyVolumeAndPan`) no serviço calcula o volume final para os canais esquerdo e direito, considerando tanto o volume principal quanto o pan, evitando conflitos e garantindo o funcionamento correto de ambos os controles.
+
+### Integração C++ para Processamento de Áudio (DSP)
+
+*   **Propósito:** Demonstrar a capacidade de realizar Processamento de Sinal Digital (DSP) de alto desempenho na camada nativa.
+*   **Tecnologias:**
+    *   **JNI (Java Native Interface):** Cria a ponte de comunicação entre o `MessageService` (Java) e a lógica de equalização em C++.
+    *   **CMake:** Gerencia a compilação do código C++ em uma biblioteca compartilhada (`.so`).
+    *   **Filtros Biquad (IIR):** Implementados em C++ para aplicar os efeitos de equalização (low-shelf, peaking, high-shelf) a um sinal de áudio de teste.
+*   **Pipeline de Teste:** O serviço gera uma onda de teste, a envia para a camada C++ via JNI para processamento, e reproduz o resultado usando `AudioTrack` em `MODE_STREAM` para máxima compatibilidade e robustez.
 
 
 ### Implementação da Lógica de Equalização
@@ -232,10 +242,11 @@ Os testes unitários validam a funcionalidade individual de componentes menores 
 
 * **Casos de Teste dos `Managers`:**
 
-*   **AidlServiceManagerTest:** Valida a vinculação e desvinculação do serviço AIDL.
-*   **AudioManagerTest:** Valida a configuração dos parâmetros de áudio (Bass, Mid, Treble, MainVolume e Pan).
-*   **AudioSettingsManagerTest:** Valida o comportamento dos listeners das SeekBars.
-*   **PermissionManagerTest:** Valida a verificação e solicitação de permissões.
+* **`Managers`:**
+    *   **`AidlServiceManagerTest`:** Valida a vinculação e desvinculação do serviço.
+    *   **`AudioManagerTest`:** Valida a correta conversão e envio dos parâmetros de áudio (Bass, Mid, Treble, Pan, Volume).
+    *   **`AudioSettingsManagerTest`:** Valida o comportamento dos listeners das SeekBars.
+    *   **`PermissionManagerTest`:** Valida a lógica de verificação e solicitação de permissões.
 
 
 ### Testes Instrumentais (UI)
@@ -262,6 +273,7 @@ Para executar os testes:
 * **Testes Unitários:** Execute os testes JUnit utilizando o seu ambiente de desenvolvimento (ex: Android Studio).
 * **Testes Instrumentais:** Execute os testes instrumentais com o Android Studio, utilizando o menu "Run" -> "Run 'Todos os Testes Instrumentais'".
 
+* A arquitetura desacoplada (UI -> Managers -> Service) facilita a criação de testes focados, melhorando a manutenibilidade e a confiabilidade do código.
 
 ## Melhorias Futuras
 
@@ -269,7 +281,8 @@ O desenvolvimento futuro se concentrará em:
 
 * **Integração com Sistemas Automotivos:** Conectar o aplicativo ao sistema de áudio de um veículo para controle direto, aproveitando a base estabelecida pela integração da HAL C++.
 * **Recursos Avançados de Equalização:** Explorar algoritmos e opções de equalização mais sofisticados, possivelmente implementando processame
-* **Recursos Adicionais:** Implementar recursos como predefinições, visualizações, sincronização entre dispositivos, tela para escolha de quais contatos importar, modo escuro, controle de acesso e recursos de interação social.
+* **Módulo de Notificação Dinâmico:** Implementar uma notificação persistente e interativa para controlar a reprodução de mídia em segundo plano.
+* **Recursos Adicionais:** Implementar recursos como predefinições, visualizações, sincronização entre dispositivos, tela para escolha de quais contatos importar, controle de acesso e recursos de interação social.
 
 
 
