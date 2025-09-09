@@ -427,7 +427,7 @@
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
             android:text="@string/save"
-            android:textColor="@color/white"
+            android:textColor="@color/button_text_secondary"
             android:textSize="24sp"
             app:cornerRadius="30dp" />
 
