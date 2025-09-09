@@ -24,4 +24,8 @@ interface IMessageService {
      List<String> getAvailableTracks(); // Retorna uma lista de nomes das faixas disponíveis
      void selectTrack(int trackIndex); // Seleciona uma faixa pelo índice
      boolean isPlaying();
+
+    // Method para acionar a HAL C++
+     int triggerNativeHalAudioWrite(); // <<< ADICIONADO AQUI
+
 }
