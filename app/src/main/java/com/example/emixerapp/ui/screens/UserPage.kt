@@ -1,7 +1,10 @@
 package com.example.emixerapp.ui.screens
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,6 +19,8 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -26,15 +31,13 @@ import com.airbnb.lottie.LottieAnimationView
 import com.example.emixerapp.manager.AidlServiceManager
 import com.example.emixerapp.manager.AudioManager
 import com.example.emixerapp.manager.AudioSettingsManager
-import com.example.emixerapp.manager.PermissionManager
+// import com.example.emixerapp.manager.PermissionManager // <<< PODE REMOVER ESTE IMPORT
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
-import com.google.firebase.analytics.logEvent
 import com.reaj.emixer.IMessageService
 import com.reaj.emixer.R
 import com.reaj.emixer.data.local.database.AppDatabase
-import com.reaj.emixer.data.model.UserModel
 import com.reaj.emixer.data.repository.UsersRepository
 import com.reaj.emixer.databinding.FragmentUserPageBinding
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
@@ -44,13 +47,58 @@ import java.lang.ref.WeakReference
 
 class UserPage : Fragment() {
 
+    // --- LÓGICA DE PERMISSÃO INTEGRADA DIRETAMENTE AQUI ---
+
+    // 1. Define as permissões necessárias com base na versão do Android.
+    private val requiredPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(
+            Manifest.permission.READ_MEDIA_AUDIO,
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.POST_NOTIFICATIONS
+        )
+    } else {
+        arrayOf(
+            Manifest.permission.READ_MEDIA_AUDIO,
+            Manifest.permission.READ_CONTACTS
+        )
+    }
+
+    // 2. Registra o "lançador" de permissões.
+    //    Isto é feito na inicialização da classe, o que acontece cedo o suficiente no ciclo de vida.
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            permissions.entries.forEach {
+                val permissionName = it.key
+                val isGranted = it.value
+                if (isGranted) {
+                    Log.d(TAG, "Permissão concedida: $permissionName")
+                } else {
+                    Log.w(TAG, "Permissão negada: $permissionName")
+                    // Opcional: Mostrar um aviso se uma permissão crucial for negada.
+                }
+            }
+        }
+
+    // 3. Função para verificar e solicitar as permissões.
+    private fun checkAndRequestPermissions() {
+        val permissionsToRequest = requiredPermissions.filter {
+            ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (permissionsToRequest.isNotEmpty()) {
+            requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
+        }
+    }
+    // --- FIM DA LÓGICA DE PERMISSÃO ---
+
+
     private var _binding: FragmentUserPageBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
     private lateinit var analytics: FirebaseAnalytics
     private var hasChanges = false
 
-    private lateinit var permissionManager: PermissionManager
+    // Não precisamos mais da variável permissionManager
+    // private lateinit var permissionManager: PermissionManager
     private lateinit var audioManager: AudioManager
     private lateinit var audioSettingsManager: AudioSettingsManager
 
@@ -64,31 +112,8 @@ class UserPage : Fragment() {
         1 to R.raw.dancing
     )
 
-    private fun syncUiWithServiceState(service: IMessageService) {
-        try {
-            currentTrackIndex = service.selectedTrackIndex
-            val isPlaying = service.isPlaying
-            val duration = service.duration
-            val position = service.currentPosition
-
-            Log.d(TAG, "Sincronizando UI: Track=$currentTrackIndex, IsPlaying=$isPlaying, Duration=$duration, Position=$position")
-
-            updateLottieAnimation(currentTrackIndex, isPlaying)
-
-            if (duration > 0) {
-                binding.playbackSeekBar.max = duration
-                binding.playbackSeekBar.progress = position
-            } else {
-                binding.playbackSeekBar.max = 100
-                binding.playbackSeekBar.progress = 0
-            }
-        } catch (e: RemoteException) {
-            Log.e(TAG, "Erro ao sincronizar UI com o serviço: ${e.message}")
-        }
-    }
-
     private val serviceConnectedCallback: (IMessageService) -> Unit = { service ->
-        Log.d(TAG, "Serviço AIDL conectado (callback UserPage).")
+        Log.d(TAG, "Serviço AIDL conectado (callback UserPage). Inicializando managers.")
         audioManager = AudioManager(AidlServiceManager)
         audioSettingsManager = AudioSettingsManager(
             WeakReference(this),
@@ -127,18 +152,19 @@ class UserPage : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         analytics = Firebase.analytics
-        permissionManager = PermissionManager(requireContext(), requireActivity())
 
         val factory = MainViewModelFactory(UsersRepository(AppDatabase.getDatabase(requireContext()).usersDao()))
         viewModel = ViewModelProvider(requireActivity(), factory)[MainViewModel::class.java]
 
         lottieAnimationView = binding.animationView
         setupBackPressedDispatcher()
-        permissionManager.checkAudioPermissions(100)
+
+        // Chama a nova função local para verificar permissões
+        checkAndRequestPermissions()
 
         updatePlaybackProgressRunnable = object : Runnable {
             override fun run() {
-                if (::audioManager.isInitialized && view != null && AidlServiceManager.isServiceBound()) {
+                if (AidlServiceManager.isServiceBound() && view != null) {
                     syncUiWithServiceState(AidlServiceManager.messageService!!)
                 }
                 playbackHandler.postDelayed(this, 1000)
@@ -154,15 +180,6 @@ class UserPage : Fragment() {
         super.onStart()
         AidlServiceManager.addServiceConnectedCallback(serviceConnectedCallback)
         AidlServiceManager.addServiceDisconnectedCallback(serviceDisconnectedCallback)
-
-        AidlServiceManager.messageService?.let { service ->
-            Log.d(TAG, "Serviço já conectado no onStart. Sincronizando UI.")
-            if (!::audioManager.isInitialized) {
-                serviceConnectedCallback.invoke(service)
-            } else {
-                syncUiWithServiceState(service)
-            }
-        }
     }
 
     override fun onStop() {
@@ -175,6 +192,25 @@ class UserPage : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    // O resto do arquivo permanece igual...
+
+    private fun syncUiWithServiceState(service: IMessageService) {
+        if (view == null) return
+        try {
+            currentTrackIndex = service.selectedTrackIndex
+            val isPlaying = service.isPlaying
+            val duration = service.duration
+            val position = service.currentPosition
+            updateLottieAnimation(currentTrackIndex, isPlaying)
+            if (duration > 0) {
+                binding.playbackSeekBar.max = duration
+                binding.playbackSeekBar.progress = position
+            }
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Erro ao sincronizar UI: ${e.message}")
+        }
     }
 
     private fun setupPlaybackControls() {
@@ -303,16 +339,14 @@ class UserPage : Fragment() {
             .show()
     }
 
-    // <<< FUNÇÃO CORRIGIDA >>>
     private fun updateLottieAnimation(trackIndex: Int, isPlaying: Boolean) {
         if (view == null) return
 
         val lottieResId = trackLottieMap[trackIndex] ?: R.raw.skull
 
-        // Correção: Usa a tag da view para verificar se a animação já é a correta.
         if (lottieAnimationView.tag != lottieResId) {
             lottieAnimationView.setAnimation(lottieResId)
-            lottieAnimationView.tag = lottieResId // Guarda o ID atual na tag
+            lottieAnimationView.tag = lottieResId
             Log.d(TAG, "Nova animação Lottie carregada: $lottieResId")
         }
 
