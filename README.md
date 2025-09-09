@@ -77,7 +77,9 @@ O foco principal foi não apenas criar a funcionalidade de equalização, mas ta
 #### The original project: [Figma](https://www.figma.com/design/ahaN4lSCMNpfLZp3OSnHPf/Emixer?node-id=0-1&p=f&t=YtUwxEKy6SIWXL8c-0)
 
 <div style="display: flex; flex-direction: 'row'; align-items: 'center';">
-	<img src="images/EmixerApp.png" width="325px">	
+	<img src="images/automotive_home.png" width="325px"> <img src="images/automotive_user_page_horizontal.png" width="325px"> <img src="images/testing_services_page.png" width="325px"> 	
+	<img src="images/light_mode.png" width="325px"> <img src="images/add_new_user.png" width="325px"> <img src="images/visao_geral_sistema.png" width="325px"> 	
+
 </div>
 
 ## Detalhes Técnicos
@@ -192,10 +194,6 @@ Para ajustar os parâmetros de equalização de forma eficaz, o aplicativo preci
 - **Importância:** Sem esta permissão, o aplicativo não poderá ajustar as configurações de equalização.
 - **Privacidade:** Não coleta informações pessoais.
 
-<div style="display: flex; flex-direction: 'row'; align-items: 'center';">
-	<img src="images/audio_permission.png" width="325px">	
-</div>
-
 ### Permissão para Modificar Configurações de Áudio
 
 O aplicativo tem a capacidade de modificar as configurações de áudio globais.
@@ -212,10 +210,6 @@ Para permitir a importação de perfis, o aplicativo requer acesso à lista de c
 - **Função:** Garante acesso somente à leitura da lista de contatos, sem acessar outros dados do dispositivo.
 - **Importância:** Sem esta permissão, o aplicativo não poderá importar as configurações para a criação do perfil.
 - **Privacidade:** Não coleta informações pessoais.
-
-<div style="display: flex; flex-direction: 'row'; align-items: 'center';">
-	<img src="images/contacts_permission.png" width="325px">	
-</div>
 
 ### Permissões para Serviço de Primeiro Plano
 O aplicativo utiliza um serviço de primeiro plano para garantir a execução contínua de funcionalidades essenciais, como a equalização de áudio, mesmo quando o aplicativo está em segundo plano. Para isso, são necessárias as seguintes permissões:
