@@ -42,6 +42,9 @@
     <!-- Permissão personalizada para o serviço de mensagens do aplicativo. -->
     <uses-permission android:name="com.example.emixerapp.permission.MESSAGE_SERVICE" />
 
+    <!-- Permissão personalizada para o mandar notificação. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <!-- Definição da permissão personalizada para o serviço de mensagens. -->
     <permission

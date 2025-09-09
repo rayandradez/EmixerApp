@@ -4,99 +4,103 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import com.example.emixerapp.MessageService
-import com.reaj.emixer.IMessageService // Importe a interface AIDL
+import com.reaj.emixer.IMessageService
 
-// Transformando AidlServiceManager em um singleton
-object AidlServiceManager { // <<< MUDANÇA AQUI: de class para object
+// Singleton para gerenciar a conexão com o serviço AIDL
+object AidlServiceManager {
 
-    private val TAG = "AidlServiceManager"
+    private const val TAG = "AidlServiceManager"
 
-    // O IMessageService agora é gerenciado por este singleton
     var messageService: IMessageService? = null
-        private set // Apenas AidlServiceManager pode definir este valor
+        private set
 
     private var isBound = false
     private var serviceConnection: ServiceConnection? = null
-    private var applicationContext: Context? = null // Para vincular ao contexto da aplicação
+    private var applicationContext: Context? = null
 
-    // O onServiceConnectedCallback e onServiceDisconnectedCallback agora são listas
-    // para que múltiplos componentes possam ser notificados
     private val connectedCallbacks = mutableListOf<(IMessageService) -> Unit>()
     private val disconnectedCallbacks = mutableListOf<() -> Unit>()
 
-    // Método para inicializar o manager com o contexto da aplicação
+    // Handler para postar execuções no thread principal de forma assíncrona
+    private val mainThreadHandler = Handler(Looper.getMainLooper())
+
     fun initialize(context: Context) {
         if (applicationContext == null) {
-            applicationContext = context.applicationContext // Usar contexto da aplicação para evitar vazamentos
+            applicationContext = context.applicationContext
         }
     }
 
-    // Adiciona um callback para quando o serviço estiver conectado
     fun addServiceConnectedCallback(callback: (IMessageService) -> Unit) {
         connectedCallbacks.add(callback)
         if (isBound && messageService != null) {
-            // Se já estiver vinculado, chame o callback imediatamente
-            callback(messageService!!)
+            // <<< CORREÇÃO CRÍTICA PARA EVITAR ANR >>>
+            // Em vez de chamar o callback diretamente e bloquear o chamador (ex: onStart),
+            // postamos a execução na fila de mensagens do UI thread.
+            // Isso permite que o método onStart() termine imediatamente.
+            mainThreadHandler.post {
+                Log.d(TAG, "Notificando novo callback sobre conexão existente (assíncrono).")
+                callback(messageService!!)
+            }
         }
     }
 
-    // Adiciona um callback para quando o serviço estiver desconectado
     fun addServiceDisconnectedCallback(callback: () -> Unit) {
         disconnectedCallbacks.add(callback)
     }
 
-    // Remove um callback
     fun removeServiceConnectedCallback(callback: (IMessageService) -> Unit) {
         connectedCallbacks.remove(callback)
     }
 
-    // Remove um callback
     fun removeServiceDisconnectedCallback(callback: () -> Unit) {
         disconnectedCallbacks.remove(callback)
     }
 
-
-    fun bindService() { // <<< REMOVIDO O PARÂMETRO context
+    fun bindService() {
         if (applicationContext == null) {
             Log.e(TAG, "AidlServiceManager não inicializado! Chame initialize(context) primeiro.")
             return
         }
 
-        if (isBound && messageService != null) {
-            Log.d(TAG, "Service already bound, calling onServiceConnected callbacks immediately.")
-            messageService?.let { service ->
-                connectedCallbacks.forEach { it(service) } // Chamar todos os callbacks
-            }
-            return
-        }
+        // Se já estivermos no processo de vinculação, não faça nada.
+        if (isBound || serviceConnection != null) return
 
         serviceConnection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 messageService = IMessageService.Stub.asInterface(service)
                 isBound = true
-                Log.d(TAG, "AIDL Service connected.")
-                messageService?.let { serviceInstance ->
-                    connectedCallbacks.forEach { it(serviceInstance) } // Chamar todos os callbacks
-                }
+                Log.d(TAG, "Serviço AIDL conectado. Notificando callbacks.")
+                // Notifica todos os callbacks que estavam esperando
+                connectedCallbacks.forEach { it(messageService!!) }
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
                 messageService = null
                 isBound = false
-                Log.w(TAG, "AIDL Service disconnected.")
-                disconnectedCallbacks.forEach { it() } // Chamar todos os callbacks
+                serviceConnection = null // Limpa a conexão para permitir nova vinculação
+                Log.w(TAG, "Serviço AIDL desconectado.")
+                disconnectedCallbacks.forEach { it() }
             }
         }
 
         val intent = Intent(applicationContext, MessageService::class.java)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            applicationContext?.startForegroundService(intent)
+        } else {
+            applicationContext?.startService(intent)
+        }
+
         try {
             applicationContext?.bindService(intent, serviceConnection!!, Context.BIND_AUTO_CREATE)
         } catch (e: SecurityException) {
-            Log.e(TAG, "SecurityException when binding service: ${e.message}")
-            // Trate problemas de permissão ou outros problemas de segurança aqui
+            Log.e(TAG, "SecurityException ao vincular serviço: ${e.message}")
         }
     }
 
@@ -106,7 +110,7 @@ object AidlServiceManager { // <<< MUDANÇA AQUI: de class para object
             isBound = false
             messageService = null
             serviceConnection = null
-            Log.d(TAG, "AIDL Service unbound.")
+            Log.d(TAG, "Serviço AIDL desvinculado.")
         }
     }
 
