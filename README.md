@@ -61,6 +61,11 @@ O foco principal foi não apenas criar a funcionalidade de equalização, mas ta
         *   **Informações de Aplicativos:** Lista todos os aplicativos instalados, útil para verificar compatibilidade e integração.
     *   **Ajuste do Brilho da Tela:** O aplicativo agora ajusta o brilho da tela usando o `WindowManager`. Isso pode ser útil para otimizar a experiência do usuário em diferentes condições de iluminação.
     *   **Serviço de Primeiro Plano:** O aplicativo utiliza um serviço de primeiro plano para garantir que as funcionalidades essenciais, como a equalização de áudio, continuem funcionando mesmo quando o aplicativo não está em primeiro plano. Uma notificação persistente é exibida para informar ao usuário que o serviço está ativo.
+
+<div style="display: flex; flex-direction: 'row'; align-items: 'center';">
+	<img src="images/notification_pausado.png" width="325px"> <img src="images/notification_parado.png" width="325px"> <img src="images/notification.png" width="325px">		
+</div>
+ 
 *   **Integração C++ e HAL Simulada:**
     *   **Propósito:** Para explorar otimizações de baixo nível e interação com hardware, o aplicativo agora integra código C++ que simula uma Hardware Abstraction Layer (HAL) de áudio. Esta camada nativa permite um controle mais granular sobre recursos e prepara o terreno para futuras integrações com sistemas automotivos reais.
     *   **Tecnologias:**
@@ -68,8 +73,6 @@ O foco principal foi não apenas criar a funcionalidade de equalização, mas ta
         *   **CMake:** Gerencia o processo de build do código C++, compilando os arquivos-fonte em uma biblioteca compartilhada (`.so`) que é então carregada pelo aplicativo Android.
         *   **HAL Simulada:** Implementações em C++ de estruturas e métodos (`hw_module_t`, `audio_hw_device_t`, `audio_open`, `audio_write`) que replicam a interface de uma HAL de áudio do Android, permitindo testar o fluxo de comunicação e o comportamento esperado de uma HAL real.
     *   **Fluxo de Chamada:** A funcionalidade C++ é exposta ao aplicativo através da interface AIDL (`IMessageService.aidl`). O `MessageService.java` carrega a biblioteca nativa e invoca as funções JNI, que por sua vez interagem com a HAL C++ simulada. Isso permite que a UI (via `ServiceAIDL` Fragment) acione e teste a camada nativa.
- 
-
 
 
 ## Layout 
