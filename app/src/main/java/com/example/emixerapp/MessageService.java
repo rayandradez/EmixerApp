@@ -34,6 +34,14 @@ public class MessageService extends Service {
     private static final int NOTIFICATION_ID = 1;
     private int myValue = 0;
 
+    // NOVO: Carrega a biblioteca nativa
+    static {
+        System.loadLibrary("emixer"); // "emixer" deve corresponder ao nome em CMakeLists.txt
+    }
+
+    // NOVO: Declaração do método nativo
+    public native int triggerHalAudioWrite(); // <<< ADICIONADO AQUI
+
     private MediaPlayer mediaPlayer;
     private Equalizer equalizer;
 
@@ -232,6 +240,13 @@ public class MessageService extends Service {
         @Override
         public boolean isPlaying() throws RemoteException {
             return mediaPlayer != null && mediaPlayer.isPlaying();
+        }
+
+        // NOVO: Implementação do método AIDL para chamar a função nativa
+        @Override
+        public int triggerNativeHalAudioWrite() throws RemoteException { // <<< ADICIONADO AQUI
+            Log.d(TAG, "triggerNativeHalAudioWrite() chamado, invocando JNI...");
+            return triggerHalAudioWrite(); // Chama a função nativa C++
         }
     };
 

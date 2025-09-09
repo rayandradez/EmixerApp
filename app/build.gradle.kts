@@ -25,6 +25,11 @@ android {
 
         val apiKey: String = project.findProperty("FIREBASE_API_KEY") as? String ?: "API_KEY_PLACEHOLDER"
         buildConfigField("String", "FIREBASE_API_KEY", "\"$apiKey\"")
+        externalNativeBuild {
+            cmake {
+                cppFlags += ""
+            }
+        }
 
     }
 
@@ -43,6 +48,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
     }
 
     buildFeatures{

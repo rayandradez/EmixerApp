@@ -55,6 +55,11 @@ class ServiceAIDL : Fragment() {
             sendAIDLMessage() // Chama o método para enviar uma mensagem
         }
 
+        // NOVO: Define o listener para o botão de teste do HAL nativo
+        binding.btnTriggerNativeHal.setOnClickListener { // <<< ADICIONADO AQUI
+            triggerNativeHalAudioWrite()
+        }
+
         bindAidlService() // Vincula ao serviço AIDL
     }
 
@@ -173,4 +178,27 @@ class ServiceAIDL : Fragment() {
         }
     }
 
+    /**
+     * Aciona a função HAL nativa através do serviço AIDL.
+     */
+    private fun triggerNativeHalAudioWrite() { // <<< ADICIONADO AQUI
+        if (aidlServiceManager.isServiceBound()) {
+            try {
+                val aidlInterface = aidlServiceManager.messageService
+                if (aidlInterface != null) {
+                    val result = aidlInterface.triggerNativeHalAudioWrite()
+                    Log.d("ServiceAIDL", "Resultado da chamada HAL nativa: $result")
+                    Toast.makeText(context, "HAL Nativa acionada. Resultado: $result", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.w("ServiceAIDL", "Interface AIDL nula ao tentar acionar HAL nativa")
+                }
+            } catch (e: Exception) {
+                Log.e("ServiceAIDL", "Erro ao chamar HAL nativa via serviço: ${e.message}")
+                Toast.makeText(context, "Erro ao acionar HAL nativa: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        } else {
+            Log.w("ServiceAIDL", "Serviço não vinculado ao tentar acionar HAL nativa")
+            Toast.makeText(context, "Serviço não vinculado", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
