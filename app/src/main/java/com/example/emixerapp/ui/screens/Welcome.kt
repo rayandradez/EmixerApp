@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 // Importar os managers necessários
 import com.example.emixerapp.manager.AidlServiceManager
 import com.example.emixerapp.manager.AudioManager
+import com.reaj.emixer.IMessageService // Importe a interface AIDL
 
 class Welcome : Fragment() {
 
@@ -34,9 +35,27 @@ class Welcome : Fragment() {
     lateinit var myRecyclerUser: RecyclerView
     lateinit var adapterUserList: UsersAdapter
 
-    // Declarar os managers para o serviço AIDL
-    private lateinit var aidlServiceManager: AidlServiceManager
+    // Removido: private lateinit var aidlServiceManager: AidlServiceManager
     private lateinit var audioManager: AudioManager // Será inicializado após a conexão do serviço
+
+    // Callbacks para o AidlServiceManager
+    private val serviceConnectedCallback: (IMessageService) -> Unit = { service ->
+        Log.d("Welcome", "Serviço AIDL conectado (callback Fragment).")
+        audioManager = AudioManager(AidlServiceManager) // Inicializa AudioManager após conexão
+        // Verifica se há um usuário selecionado no ViewModel.
+        // Se não houver (ex: app inicia sem perfis, ou todos os perfis foram deletados),
+        // garante que a música esteja parada.
+        if (viewModel.uiState.value.user == null) {
+            audioManager.stop()
+            Log.d("Welcome", "No user selected in ViewModel on service connect, stopping music.")
+        }
+    }
+
+    private val serviceDisconnectedCallback: () -> Unit = {
+        Log.w("Welcome", "Serviço AIDL desconectado (callback Fragment).")
+        // Lógica para lidar com a desconexão do serviço, se necessário
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,8 +64,7 @@ class Welcome : Fragment() {
         _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
-        // Inicializar AidlServiceManager aqui, pois precisa de um Context
-        aidlServiceManager = AidlServiceManager(requireContext())
+        // Removido: aidlServiceManager = AidlServiceManager(requireContext())
 
         myRecyclerUser = binding.recyclerViewUser
         adapterUserList = UsersAdapter(arrayListOf())
@@ -108,30 +126,23 @@ class Welcome : Fragment() {
         return binding.root
     }
 
-    // Vincular ao serviço AIDL quando o fragmento inicia
+    // Adiciona os callbacks ao AidlServiceManager quando o fragmento inicia
     override fun onStart() {
         super.onStart()
-        aidlServiceManager.bindService(
-            onServiceConnected = { service ->
-                audioManager = AudioManager(aidlServiceManager) // Inicializa AudioManager após conexão
-                // Verifica se há um usuário selecionado no ViewModel.
-                // Se não houver (ex: app inicia sem perfis, ou todos os perfis foram deletados),
-                // garante que a música esteja parada.
-                if (viewModel.uiState.value.user == null) {
-                    audioManager.stop()
-                    Log.d("Welcome", "No user selected in ViewModel on service connect, stopping music.")
-                }
-            },
-            onServiceDisconnected = {
-                Log.w("Welcome", "AIDL Service disconnected from Welcome fragment.")
-            }
-        )
+        AidlServiceManager.addServiceConnectedCallback(serviceConnectedCallback)
+        AidlServiceManager.addServiceDisconnectedCallback(serviceDisconnectedCallback)
+
+        // Se o serviço já estiver vinculado, chame o callback de conectado manualmente
+        AidlServiceManager.messageService?.let { service ->
+            serviceConnectedCallback(service)
+        }
     }
 
-    // Desvincular do serviço AIDL quando o fragmento para
+    // Remove os callbacks do AidlServiceManager quando o fragmento para
     override fun onStop() {
         super.onStop()
-        aidlServiceManager.unbindService()
+        AidlServiceManager.removeServiceConnectedCallback(serviceConnectedCallback)
+        AidlServiceManager.removeServiceDisconnectedCallback(serviceDisconnectedCallback)
     }
 
     // Sua classe UsersDiffCallback permanece a mesma

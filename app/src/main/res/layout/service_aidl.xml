@@ -1,47 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".ui.screens.ServiceAIDL">
+    android:fillViewport="true" > <!-- fillViewport garante que o conteúdo preencha a altura se for menor que a tela -->
 
-    <TextView
-        android:id="@+id/textViewValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Valor do Serviço: N/A"
-        android:textSize="18sp"
-        android:layout_marginBottom="8dp"/>
-
-    <TextView
-        android:id="@+id/textViewMemoryUsage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Uso de Memória: N/A"
-        android:textSize="18sp"
-        android:layout_marginBottom="16dp"/>
-
-    <Button
-        android:id="@+id/buttonUpdateValue"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Atualizar Valor do Serviço"
-        android:layout_marginBottom="8dp"/>
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context=".ui.screens.ServiceAIDL">
 
-    <Button
-        android:id="@+id/BtnSendMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Enviar Mensagem AIDL"
-        android:layout_marginBottom="8dp"/>
+        <TextView
+            android:id="@+id/textViewValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Valor do Serviço: N/A"
+            android:textSize="18sp"
+            android:layout_marginBottom="8dp"/>
 
-    <Button
-        android:id="@+id/btnTriggerNativeHal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Acionar HAL Nativa (C++)"
-        android:layout_marginBottom="8dp"/>
+        <TextView
+            android:id="@+id/textViewMemoryUsage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Uso de Memória: N/A"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp"/>
 
-</LinearLayout>
+        <Button
+            android:id="@+id/buttonUpdateValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Atualizar Valor do Serviço"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/BtnSendMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enviar Mensagem AIDL"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnTriggerNativeHal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Acionar HAL Nativa (C++)"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnTestNativeEqualizer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Testar Equalizador Nativo (C++) - Log Only"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Testes de Equalização C++ (Onda Composta)"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnPlayNativeEqualizedBassBoost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tocar Onda (C++ Bass Boost)"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnPlayNativeEqualizedMidBoost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tocar Onda (C++ Mid Boost)"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnPlayNativeEqualizedHighBoost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tocar Onda (C++ High Boost)"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnPlayNativeEqualizedFlat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tocar Onda (C++ Flat)"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnStopNativeEqualized"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Parar Onda de Teste (C++)"
+            android:layout_marginBottom="8dp"/>
+
+    </LinearLayout>
+</ScrollView>

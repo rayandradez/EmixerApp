@@ -7,6 +7,10 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.media.audiofx.Equalizer;
 import android.os.Build;
@@ -24,9 +28,8 @@ import com.reaj.emixer.R;
 import java.util.List;
 import java.util.Arrays;
 
-/**
- * Serviço para gerenciar a reprodução de áudio e a equalização.
- */
+import com.example.emixerapp.equalization.NativeEqualizerProcessor;
+
 public class MessageService extends Service {
 
     private static final String TAG = "MessageService";
@@ -34,117 +37,91 @@ public class MessageService extends Service {
     private static final int NOTIFICATION_ID = 1;
     private int myValue = 0;
 
-    // NOVO: Carrega a biblioteca nativa
     static {
-        System.loadLibrary("emixer"); // "emixer" deve corresponder ao nome em CMakeLists.txt
+        try {
+            System.loadLibrary("emixer");
+            Log.d(TAG, "Native library 'emixer' loaded successfully.");
+        } catch (UnsatisfiedLinkError e) {
+            Log.e(TAG, "Failed to load native library 'emixer': " + e.getMessage());
+        }
     }
 
-    // NOVO: Declaração do método nativo
-    public native int triggerHalAudioWrite(); // <<< ADICIONADO AQUI
+    public native int triggerHalAudioWrite();
 
+    private NativeEqualizerProcessor nativeEqualizerProcessor;
     private MediaPlayer mediaPlayer;
     private Equalizer equalizer;
+    private AudioTrack audioTrackNative;
 
-    private int bassLevel = 0;
-    private int midLevel = 0;
-    private int trebleLevel = 0;
+    private final int SAMPLE_RATE = 44100;
+    private final double MAX_AMPLITUDE = 32767.0;
+    private final double TEST_FREQ_BASS = 100.0;
+    private final double TEST_FREQ_MID = 1000.0;
+    private final double TEST_FREQ_HIGH = 5000.0;
+
+    // <<< A CORREÇÃO FINAL ESTÁ AQUI >>>
+    // Os valores padrão devem ser 50 (centro/flat), não 0.
+    private int bassLevel = 50, midLevel = 50, trebleLevel = 50;
+
     private int mainVolume = 50;
-    private int panValue = 0;
+    private int panValue = 0; // -100 (Esquerda) a 100 (Direita)
 
     private int currentTrackIndex = 0;
-    private int[] audioTracks = {R.raw.test_audio, R.raw.skull_music};
-    private String[] trackNames = {"Test Audio Track 1", "Another Audio Track 2"};
+    private final int[] audioTracks = {R.raw.test_audio, R.raw.skull_music};
+    private final String[] trackNames = {"Test Audio Track 1", "Another Audio Track 2"};
 
     private final IMessageService.Stub binder = new IMessageService.Stub() {
         @Override
-        public void sendMessage(String message) throws RemoteException {
-            Log.d(TAG, "sendMessage() chamado, message: " + message);
-        }
+        public void sendMessage(String message) throws RemoteException { }
 
         @Override
         public boolean setBass(int value) throws RemoteException {
-            Log.d(TAG, "setBass() chamado, value: " + value);
-            if (value >= 0 && value <= 10) {
-                bassLevel = value;
-                applyEqualizerSettings();
-                return true;
-            } else {
-                Log.w(TAG, "Invalid Bass value: " + value);
-                return false;
-            }
+            bassLevel = value;
+            applyEqualizerSettings();
+            return true;
         }
 
         @Override
         public boolean setMid(int value) throws RemoteException {
-            Log.d(TAG, "setMid() chamado, value: " + value);
-            if (value >= 0 && value <= 10) {
-                midLevel = value;
-                applyEqualizerSettings();
-                return true;
-            } else {
-                Log.w(TAG, "Invalid Mid value: " + value);
-                return false;
-            }
+            midLevel = value;
+            applyEqualizerSettings();
+            return true;
         }
 
         @Override
         public boolean setTreble(int value) throws RemoteException {
-            Log.d(TAG, "setTreble() chamado, value: " + value);
-            if (value >= 0 && value <= 10) {
-                trebleLevel = value;
-                applyEqualizerSettings();
-                return true;
-            } else {
-                Log.w(TAG, "Invalid Treble value: " + value);
-                return false;
-            }
+            trebleLevel = value;
+            applyEqualizerSettings();
+            return true;
         }
 
         @Override
         public boolean setMainVolume(int value) throws RemoteException {
-            Log.d(TAG, "setMainVolume() chamado, value: " + value);
-            if (value >= 0 && value <= 100) {
-                mainVolume = value;
-                if (mediaPlayer != null) {
-                    mediaPlayer.setVolume(value / 100f, value / 100f);
-                }
-                return true;
-            } else {
-                Log.w(TAG, "Invalid Main Volume value: " + value);
-                return false;
-            }
+            mainVolume = value;
+            applyVolumeAndPan();
+            return true;
         }
 
         @Override
         public boolean setPan(int value) throws RemoteException {
-            Log.d(TAG, "setPan() chamado, value: " + value);
-            if (value >= -100 && value <= 100) {
-                panValue = value;
-                applyPanSettings();
-                return true;
-            } else {
-                Log.w(TAG, "Invalid Pan value: " + value);
-                return false;
-            }
+            panValue = value;
+            applyVolumeAndPan();
+            return true;
         }
 
         @Override
-        public int getValue() throws RemoteException {
-            return myValue;
-        }
+        public int getValue() throws RemoteException { return myValue; }
 
         @Override
-        public void setValue(int value) throws RemoteException {
-            myValue = value;
-        }
+        public void setValue(int value) throws RemoteException { myValue = value; }
 
         @Override
-        public long getMemoryUsage() throws RemoteException {
-            return getAudioServiceMemoryUsage();
-        }
+        public long getMemoryUsage() throws RemoteException { return getAudioServiceMemoryUsage(); }
 
         @Override
         public void play() throws RemoteException {
+            MessageService.this.stopProcessedAudioNativeInternal();
+            MessageService.this.ensurePlayerInitializedIfNeeded();
             if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
                 mediaPlayer.start();
                 Log.d(TAG, "Playback started.");
@@ -161,10 +138,18 @@ public class MessageService extends Service {
 
         @Override
         public void stop() throws RemoteException {
+            MessageService.this.stopProcessedAudioNativeInternal();
             if (mediaPlayer != null) {
-                mediaPlayer.stop();
-                mediaPlayer.prepareAsync();
-                mediaPlayer.seekTo(0);
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+                try {
+                    mediaPlayer.prepare();
+                    mediaPlayer.seekTo(0);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error on stop/prepare: " + e.getMessage());
+                    initializeMediaPlayer(audioTracks[currentTrackIndex]);
+                }
                 Log.d(TAG, "Playback stopped.");
             }
         }
@@ -178,18 +163,14 @@ public class MessageService extends Service {
 
         @Override
         public int getCurrentPosition() throws RemoteException {
-            if (mediaPlayer != null) {
-                return mediaPlayer.getCurrentPosition();
-            }
-            return 0;
+            MessageService.this.ensurePlayerInitializedIfNeeded();
+            return mediaPlayer != null ? mediaPlayer.getCurrentPosition() : 0;
         }
 
         @Override
         public int getDuration() throws RemoteException {
-            if (mediaPlayer != null) {
-                return mediaPlayer.getDuration();
-            }
-            return 0;
+            MessageService.this.ensurePlayerInitializedIfNeeded();
+            return mediaPlayer != null ? mediaPlayer.getDuration() : 0;
         }
 
         @Override
@@ -199,41 +180,17 @@ public class MessageService extends Service {
 
         @Override
         public void selectTrack(int trackIndex) throws RemoteException {
-            if (trackIndex >= 0 && trackIndex < audioTracks.length) {
-                boolean wasPlaying = false;
-                if (mediaPlayer != null) {
-                    wasPlaying = mediaPlayer.isPlaying();
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
-                }
-                if (equalizer != null) {
-                    equalizer.release();
-                    equalizer = null;
-                }
+            if (trackIndex < 0 || trackIndex >= audioTracks.length) return;
 
-                currentTrackIndex = trackIndex;
-                initializeMediaPlayer(audioTracks[currentTrackIndex]);
+            boolean wasPlaying = isPlaying();
+            MessageService.this.stopCurrentPlaybackInternal();
+            MessageService.this.stopProcessedAudioNativeInternal();
 
-                if (wasPlaying) {
-                    if (mediaPlayer != null) {
-                        mediaPlayer.start();
-                    }
-                }
+            currentTrackIndex = trackIndex;
+            initializeMediaPlayer(audioTracks[currentTrackIndex]);
 
-                Log.d(TAG, "Selected track: " + trackNames[currentTrackIndex]);
-
-                if (mediaPlayer != null) {
-                    int audioSessionId = mediaPlayer.getAudioSessionId();
-                    equalizer = new Equalizer(0, audioSessionId);
-                    equalizer.setEnabled(true);
-                    setupEqualizerBands();
-                    applyEqualizerSettings();
-                    applyPanSettings();
-                    mediaPlayer.setVolume(mainVolume / 100f, mainVolume / 100f);
-                }
-            } else {
-                Log.w(TAG, "Invalid track index: " + trackIndex);
+            if (wasPlaying) {
+                play();
             }
         }
 
@@ -242,169 +199,210 @@ public class MessageService extends Service {
             return mediaPlayer != null && mediaPlayer.isPlaying();
         }
 
-        // NOVO: Implementação do método AIDL para chamar a função nativa
         @Override
-        public int triggerNativeHalAudioWrite() throws RemoteException { // <<< ADICIONADO AQUI
-            Log.d(TAG, "triggerNativeHalAudioWrite() chamado, invocando JNI...");
-            return triggerHalAudioWrite(); // Chama a função nativa C++
+        public int getSelectedTrackIndex() throws RemoteException {
+            return currentTrackIndex;
+        }
+
+        @Override
+        public int triggerNativeHalAudioWrite() throws RemoteException {
+            return triggerHalAudioWrite();
+        }
+
+        @Override
+        public int applyNativeEqualizationTest(int[] gains) throws RemoteException {
+            return 0;
+        }
+
+        @Override
+        public void playProcessedAudioNative(int[] gains, int durationSeconds) throws RemoteException {
+            MessageService.this.stopCurrentPlaybackInternal();
+            MessageService.this.stopProcessedAudioNativeInternal();
+            if (nativeEqualizerProcessor == null) return;
+            short[] rawAudioData = generateMultiToneWave(SAMPLE_RATE, TEST_FREQ_BASS, TEST_FREQ_MID, TEST_FREQ_HIGH, MAX_AMPLITUDE, durationSeconds);
+            nativeEqualizerProcessor.applyEqualizationNative(rawAudioData, gains);
+            int minBufferSize = AudioTrack.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
+            try {
+                audioTrackNative = new AudioTrack.Builder()
+                        .setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
+                        .setAudioFormat(new AudioFormat.Builder().setEncoding(AudioFormat.ENCODING_PCM_16BIT).setSampleRate(SAMPLE_RATE).setChannelMask(AudioFormat.CHANNEL_OUT_MONO).build())
+                        .setBufferSizeInBytes(Math.max(minBufferSize, rawAudioData.length * Short.BYTES))
+                        .setTransferMode(AudioTrack.MODE_STREAM)
+                        .build();
+                int state = audioTrackNative.getState();
+                Log.d(TAG, "AudioTrack (STREAM) criado. Estado: " + state);
+                if (state == AudioTrack.STATE_INITIALIZED) {
+                    audioTrackNative.play();
+                    int writeResult = audioTrackNative.write(rawAudioData, 0, rawAudioData.length);
+                    if (writeResult < 0) Log.e(TAG, "Erro ao escrever dados para AudioTrack (STREAM): " + writeResult);
+                    else Log.d(TAG, "Reprodução C++ (STREAM) iniciada com sucesso.");
+                } else {
+                    Log.e(TAG, "AudioTrack (STREAM) não inicializado. Estado: " + state);
+                    audioTrackNative.release();
+                    audioTrackNative = null;
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Erro fatal ao criar AudioTrack (STREAM): " + e.getMessage(), e);
+                if (audioTrackNative != null) audioTrackNative.release();
+                audioTrackNative = null;
+            }
+        }
+
+        @Override
+        public void stopProcessedAudioNative() throws RemoteException {
+            MessageService.this.stopProcessedAudioNativeInternal();
         }
     };
+
+    private void ensurePlayerInitializedIfNeeded() {
+        if (mediaPlayer == null) {
+            Log.d(TAG, "ensurePlayerInitializedIfNeeded: criando MediaPlayer para trackIndex=" + currentTrackIndex);
+            initializeMediaPlayer(audioTracks[currentTrackIndex]);
+        }
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate() chamado");
         createNotificationChannel();
-
-        // Inicializa o MediaPlayer com a primeira faixa
-        initializeMediaPlayer(audioTracks[currentTrackIndex]);
-
-
-
-
-        // Inicializa o Equalizer (ainda depende do mediaPlayer estar criado)
-        if (mediaPlayer != null) {
-            int audioSessionId = mediaPlayer.getAudioSessionId();
-            equalizer = new Equalizer(0, audioSessionId);
-            equalizer.setEnabled(true);
-            setupEqualizerBands();
-            applyEqualizerSettings();
-            applyPanSettings();
-            mediaPlayer.setVolume(mainVolume / 100f, mainVolume / 100f);
-        }
-    }
-
-    // Método auxiliar para inicializar o MediaPlayer
-    private void initializeMediaPlayer(int audioResId) {
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-        }
-        mediaPlayer = MediaPlayer.create(this, audioResId);
-        mediaPlayer.setLooping(true);
+        nativeEqualizerProcessor = new NativeEqualizerProcessor();
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind() chamado, intent: " + intent);
         return binder;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand() chamado, intent: " + intent + ", flags: " + flags + ", startId: " + startId);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.circle_users_adapter)
-                .setContentTitle("Emixer App")
-                .setContentText("Ajustando áudio em segundo plano")
-                .setPriority(NotificationCompat.PRIORITY_LOW);
-
-        Notification notification = builder.build();
-        Log.d(TAG, "Notificação criada");
-
-        startForeground(NOTIFICATION_ID, notification);
-
+        startForeground(NOTIFICATION_ID, createNotification());
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy() chamado");
+        stopAllAudio();
+    }
 
+    private void stopAllAudio() {
+        stopCurrentPlaybackInternal();
+        stopProcessedAudioNativeInternal();
+    }
+
+    private void stopProcessedAudioNativeInternal() {
+        if (audioTrackNative != null) {
+            if (audioTrackNative.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) audioTrackNative.stop();
+            audioTrackNative.release();
+            audioTrackNative = null;
+        }
+    }
+
+    private void stopCurrentPlaybackInternal() {
         if (mediaPlayer != null) {
-            mediaPlayer.stop();
+            if (mediaPlayer.isPlaying()) mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
+            if (equalizer != null) {
+                equalizer.release();
+                equalizer = null;
+            }
         }
-        if (equalizer != null) {
-            equalizer.release();
+    }
+
+    private void initializeMediaPlayer(int audioResId) {
+        stopCurrentPlaybackInternal();
+        mediaPlayer = MediaPlayer.create(this, audioResId);
+        if (mediaPlayer == null) return;
+        mediaPlayer.setLooping(true);
+        try {
+            equalizer = new Equalizer(0, mediaPlayer.getAudioSessionId());
+            equalizer.setEnabled(true);
+            applyEqualizerSettings();
+            applyVolumeAndPan();
+        } catch (Exception e) {
+            Log.e(TAG, "Erro ao inicializar Equalizer: " + e.getMessage());
             equalizer = null;
         }
     }
 
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Emixer Service Channel",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            if (manager != null) {
-                manager.createNotificationChannel(channel);
-                Log.d(TAG, "Canal de notificação criado, ID: " + CHANNEL_ID);
-            } else {
-                Log.e(TAG, "NotificationManager não disponível");
-            }
+    private void applyVolumeAndPan() {
+        if (mediaPlayer == null) return;
+        float baseVolume = mainVolume / 100.0f;
+        float leftVolume;
+        float rightVolume;
+        if (panValue > 0) {
+            rightVolume = baseVolume;
+            float leftMultiplier = 1.0f - (panValue / 100.0f);
+            leftVolume = baseVolume * leftMultiplier;
+        } else if (panValue < 0) {
+            leftVolume = baseVolume;
+            float rightMultiplier = 1.0f + (panValue / 100.0f);
+            rightVolume = baseVolume * rightMultiplier;
+        } else {
+            leftVolume = baseVolume;
+            rightVolume = baseVolume;
         }
+        Log.d(TAG, "Aplicando Volume/Pan: Base=" + baseVolume + ", Pan=" + panValue + ", Final L=" + leftVolume + ", Final R=" + rightVolume);
+        mediaPlayer.setVolume(leftVolume, rightVolume);
     }
 
-    private void setupEqualizerBands() {
-        if (equalizer == null) return;
-
-        short numberOfBands = equalizer.getNumberOfBands();
-        final short minEQLevel = equalizer.getBandLevelRange()[0];
-        final short maxEQLevel = equalizer.getBandLevelRange()[1];
-
-        Log.d(TAG, "Equalizer has " + numberOfBands + " bands.");
-        Log.d(TAG, "Band level range: " + minEQLevel + " to " + maxEQLevel + "mB");
-
-        for (short i = 0; i < numberOfBands; i++) {
-            int centerFreq = equalizer.getCenterFreq(i);
-            Log.d(TAG, "Band " + i + " center frequency: " + centerFreq + "mHz");
+    private short[] generateMultiToneWave(int sampleRate, double freqBass, double freqMid, double freqHigh, double amplitude, int durationSeconds) {
+        int numSamples = sampleRate * durationSeconds;
+        short[] audioData = new short[numSamples];
+        double individualAmplitude = amplitude / 3.0;
+        for (int i = 0; i < numSamples; i++) {
+            double time = (double) i / sampleRate;
+            double sample = individualAmplitude * (Math.sin(2 * Math.PI * freqBass * time) + Math.sin(2 * Math.PI * freqMid * time) + Math.sin(2 * Math.PI * freqHigh * time));
+            audioData[i] = (short) Math.max(Short.MIN_VALUE, Math.min(Short.MAX_VALUE, sample));
         }
+        return audioData;
     }
 
     private void applyEqualizerSettings() {
-        if (equalizer == null) return;
-
+        if (equalizer == null) {
+            Log.w(TAG, "Equalizer é null em applyEqualizerSettings.");
+            return;
+        }
         short numberOfBands = equalizer.getNumberOfBands();
-        final short minEQLevel = equalizer.getBandLevelRange()[0];
-
         if (numberOfBands > 0) {
-            short level = (short) (minEQLevel + (bassLevel * 100));
+            short level = (short) ((bassLevel - 50) * 30);
             try {
                 equalizer.setBandLevel((short) 0, level);
                 Log.d(TAG, "Set Bass (Band 0) to " + level + "mB (user: " + bassLevel + ")");
-            } catch (IllegalArgumentException | IllegalStateException e) {
+            } catch (Exception e) {
                 Log.e(TAG, "Error setting Bass band level: " + e.getMessage());
             }
         }
-
-        if (numberOfBands > 1) {
-            short level = (short) (minEQLevel + (midLevel * 100));
+        if (numberOfBands > 2) {
+            short level = (short) ((midLevel - 50) * 30);
             try {
-                equalizer.setBandLevel((short) 1, level);
-                Log.d(TAG, "Set Mid (Band 1) to " + level + "mB (user: " + midLevel + ")");
-            } catch (IllegalArgumentException | IllegalStateException e) {
+                equalizer.setBandLevel((short) 2, level);
+                Log.d(TAG, "Set Mid (Band 2) to " + level + "mB (user: " + midLevel + ")");
+            } catch (Exception e) {
                 Log.e(TAG, "Error setting Mid band level: " + e.getMessage());
             }
         }
-
-        if (numberOfBands > 2) {
-            short level = (short) (minEQLevel + (trebleLevel * 100));
+        if (numberOfBands > 0) {
+            short level = (short) ((trebleLevel - 50) * 30);
             try {
-                equalizer.setBandLevel((short) 2, level);
-                Log.d(TAG, "Set Treble (Band 2) to " + level + "mB (user: " + trebleLevel + ")");
-            } catch (IllegalArgumentException | IllegalStateException e) {
+                equalizer.setBandLevel((short) (numberOfBands - 1), level);
+                Log.d(TAG, "Set Treble (Band " + (numberOfBands - 1) + ") to " + level + "mB (user: " + trebleLevel + ")");
+            } catch (Exception e) {
                 Log.e(TAG, "Error setting Treble band level: " + e.getMessage());
             }
         }
     }
 
-    private void applyPanSettings() {
-        if (mediaPlayer != null) {
-            float panLeft = 1f;
-            float panRight = 1f;
+    private Notification createNotification() {
+        return new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.circle_users_adapter).setContentTitle("Emixer App").setContentText("Ajustando áudio em segundo plano").setPriority(NotificationCompat.PRIORITY_LOW).build();
+    }
 
-            if (panValue > 0) {
-                panLeft = 1 - (panValue / 100f);
-            } else if (panValue < 0) {
-                panRight = 1 + (panValue / 100f);
-            }
-
-            mediaPlayer.setVolume(panLeft, panRight);
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Emixer Service Channel", NotificationManager.IMPORTANCE_LOW);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
         }
     }
 

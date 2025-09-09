@@ -1,7 +1,7 @@
 // IMessageService.aidl
 package com.reaj.emixer;
 
-// Declare any non-default types here with import statements
+import java.util.List;
 
 interface IMessageService {
     void sendMessage(String message);
@@ -10,22 +10,27 @@ interface IMessageService {
     boolean setTreble(int value);
     boolean setMainVolume(int value);
     boolean setPan(int value);
+
     int getValue();
     void setValue(int value);
     long getMemoryUsage();
 
-   // Novas funções para controle de reprodução
-     void play();
-     void pause();
-     void stop();
-     void seekTo(int positionMs); // Define a posição de reprodução em milissegundos
-     int getCurrentPosition();    // Retorna a posição atual em milissegundos
-     int getDuration();           // Retorna a duração total da faixa em milissegundos
-     List<String> getAvailableTracks(); // Retorna uma lista de nomes das faixas disponíveis
-     void selectTrack(int trackIndex); // Seleciona uma faixa pelo índice
-     boolean isPlaying();
+    void play();
+    void pause();
+    void stop();
+    void seekTo(int positionMs);
+    int getCurrentPosition();
+    int getDuration();
+    List<String> getAvailableTracks();
+    void selectTrack(int trackIndex);
+    boolean isPlaying();
 
-    // Method para acionar a HAL C++
-     int triggerNativeHalAudioWrite(); // <<< ADICIONADO AQUI
+    // Nativo
+    int triggerNativeHalAudioWrite();
+    int applyNativeEqualizationTest(in int[] gains);
+    void playProcessedAudioNative(in int[] gains, int durationSeconds);
+    void stopProcessedAudioNative();
 
+    // <<< NOVO MÉTODO PARA SINCRONIZAR A UI >>>
+    int getSelectedTrackIndex();
 }

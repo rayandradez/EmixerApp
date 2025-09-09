@@ -1,4 +1,3 @@
-// MainActivity.kt
 package com.reaj.emixer
 
 import android.app.ActivityManager
@@ -27,6 +26,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.emixerapp.MessageService
+import com.example.emixerapp.manager.AidlServiceManager // <<< IMPORTADO AQUI
 import com.reaj.emixer.data.local.database.AppDatabase
 import com.reaj.emixer.data.repository.UsersRepository
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
@@ -46,27 +46,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var receiver: AirplaneModeBroadcastReceiver    // Receptor para escutar mudanças no modo avião
     private lateinit var analytics: FirebaseAnalytics // Firebase para rastrear eventos do usuário
 
-    private var messageService: IMessageService? = null  // Interface AIDL para comunicação com o serviço
-    private var isBound = false // Variável para rastrear se o serviço está vinculado
-
-    // Objeto que gerencia a conexão com o serviço
-    private val connection: ServiceConnection = object : ServiceConnection {
-        // Chamado quando a conexão com o serviço é estabelecida
-        override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
-            messageService = IMessageService.Stub.asInterface(service)  // Obtém a interface AIDL do serviço
-            isBound = true // Define a variável isBound como true
-        }
-
-        // Chamado quando a conexão com o serviço é perdida
-        override fun onServiceDisconnected(className: ComponentName?) {
-            messageService = null  // Limpa a interface AIDL
-            isBound = false // Define a variável isBound como false
-        }
-    }
+    // Removido: messageService e isBound daqui, pois agora são gerenciados pelo AidlServiceManager singleton
+    // Removido: connection ServiceConnection daqui
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("MainActivity", "onCreate")
+
+        // Inicializa o AidlServiceManager com o contexto da aplicação
+        AidlServiceManager.initialize(applicationContext) // <<< ADICIONADO AQUI
 
         // Inicia o serviço explicitamente se ele ainda não estiver rodando
         if (!isServiceRunning(MessageService::class.java)) {
@@ -74,6 +62,9 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.startForegroundService(this, serviceIntent)
             Log.d("MainActivity", "Serviço iniciado explicitamente")
         }
+
+        // NOVO: Vincula o AidlServiceManager ao MessageService
+        AidlServiceManager.bindService() // <<< ADICIONADO AQUI
 
         // Recupera informações sobre as tarefas em execução
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -91,7 +82,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", "App: $appName")
         }
 
-        // Obrir a instância do Firebase Analytics.
+        // Abrir a instância do Firebase Analytics.
         analytics = Firebase.analytics
 
         // Habilita a exibição de borda a borda, removendo as áreas de inserção da UI do sistema.
@@ -104,9 +95,7 @@ class MainActivity : AppCompatActivity() {
         //Set Light/Dark Mode
         applySavedTheme()
 
-        // Cria uma Intent para o serviço
-        val intent = Intent(this, MessageService::class.java)
-        bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        // Removido: bindService(intent, connection, Context.BIND_AUTO_CREATE) daqui
 
         // Define um listener para lidar com assetSmallIcon áreas de inserção da janela (barras do sistema, como status e navegação).
         // Isso garante que o conteúdo seja desenhado corretamente, evitando sobreposição com elementos da UI do sistema.
@@ -130,15 +119,6 @@ class MainActivity : AppCompatActivity() {
             registerReceiver(receiver, it)
         }
 
-
-
-        // Obtém uma instância do MainViewModel usando o delegado viewModels().  Este é um padrão
-        // do AndroidX que simplifica a criação e gerenciamento de ViewModels.  O uso de
-        // viewModels() garante que:
-        //   - Um único MainViewModel é criado e associado a esta Activity.
-        //   - O ViewModel sobrevive a mudanças de configuração (como rotações de tela).
-        //   - O ViewModel é automaticamente destruído quando a Activity é destruída, prevenindo vazamentos de memória.
-        //   - O ViewModel é criado usando a injeção de dependências (se configurado), garantindo a testabilidade.
         // Inicializar o banco de dados e o repositório
         val database = AppDatabase.getDatabase(applicationContext)
         val usersRepository = UsersRepository(database.usersDao())
@@ -235,10 +215,8 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d("MainActivity", "onDestroy")
-        if (isBound) {
-            unbindService(connection)
-            isBound = false
-        }
+        // Removido: unbindService(connection), pois agora é gerenciado pelo AidlServiceManager
+        AidlServiceManager.unbindService() // <<< ADICIONADO AQUI: Desvincula o serviço via singleton
     }
 
     // Metódo para verificar o tema
