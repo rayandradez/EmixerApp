@@ -1,4 +1,3 @@
-// SettingsFragment.kt
 package com.example.emixerapp.ui.screens
 
 import android.Manifest
@@ -7,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.util.Log // Adicionar import para Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +24,7 @@ import com.reaj.emixer.R
 import com.reaj.emixer.data.model.UserModel
 import com.reaj.emixer.ui.components.viewModels.MainViewModel
 import com.reaj.emixer.databinding.FragmentSettingsBinding
+import com.reaj.emixer.IMessageService // Importe a interface AIDL
 
 /**
  * Fragmento para exibir as configurações do aplicativo.
@@ -33,7 +34,19 @@ class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null // Variável para armazenar a instância do ViewBinding
     private val binding get() = _binding!! // Obtém a instância do ViewBinding, garantindo que não seja nula
     private lateinit var viewModel: MainViewModel // ViewModel para gerenciar os dados da UI
-    private lateinit var aidlServiceManager: AidlServiceManager // Gerenciador para a comunicação com o serviço AIDL
+    // Removido: private lateinit var aidlServiceManager: AidlServiceManager // Gerenciador para a comunicação com o serviço AIDL
+
+    // Callbacks para o AidlServiceManager (opcional, dependendo se SettingsFragment precisa ouvir eventos do serviço)
+    private val serviceConnectedCallback: (IMessageService) -> Unit = { service ->
+        Log.d("SettingsFragment", "Serviço AIDL conectado (callback SettingsFragment).")
+        // Exemplo: Se SettingsFragment precisar de alguma informação do serviço AIDL ao conectar
+        // Log.d("SettingsFragment", "Valor do serviço: ${service.getValue()}")
+    }
+
+    private val serviceDisconnectedCallback: () -> Unit = {
+        Log.w("SettingsFragment", "Serviço AIDL desconectado (callback SettingsFragment).")
+        // Lógica para lidar com a desconexão do serviço, se necessário
+    }
 
     // Registra um launcher para solicitar permissão de leitura de contatos.
     private val requestPermissionLauncher =
@@ -58,7 +71,7 @@ class SettingsFragment : Fragment() {
     ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)  // Infla o layout usando ViewBinding
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]  // Obtém uma instância do ViewModel
-        aidlServiceManager = AidlServiceManager(requireContext()) // Initialize AidlServiceManager
+        // Removido: aidlServiceManager = AidlServiceManager(requireContext()) // Initialize AidlServiceManager
         return binding.root  // Retorna a view raiz do layout
     }
 
@@ -69,6 +82,9 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Adiciona os callbacks para o AidlServiceManager
+        AidlServiceManager.addServiceConnectedCallback(serviceConnectedCallback)
+        AidlServiceManager.addServiceDisconnectedCallback(serviceDisconnectedCallback)
 
         // Configurar o Switch do Dark Mode
         setupDarkModeSwitch()
@@ -119,21 +135,24 @@ class SettingsFragment : Fragment() {
     }
 
     /**
-     * Limpa a referência do ViewBinding e desvincula do serviço AIDL para evitar vazamentos de memória.
+     * Limpa a referência do ViewBinding e remove os callbacks do serviço AIDL para evitar vazamentos de memória.
      */
     override fun onDestroyView() {
         super.onDestroyView()
-        unbindAidlService() // Unbind from the service
+        // Remove os callbacks do AidlServiceManager para evitar vazamentos
+        AidlServiceManager.removeServiceConnectedCallback(serviceConnectedCallback)
+        AidlServiceManager.removeServiceDisconnectedCallback(serviceDisconnectedCallback)
         _binding = null
     }
 
 
     /**
-     * Desvincula do serviço AIDL.
+     * Removido: Desvincula do serviço AIDL.
+     * O unbind agora é gerenciado globalmente pela MainActivity no onDestroy.
      */
-    private fun unbindAidlService() {
-        aidlServiceManager.unbindService() // Desvincula do serviço AIDL
-    }
+    // private fun unbindAidlService() {
+    //    aidlServiceManager.unbindService() // Desvincula do serviço AIDL
+    // }
 
 
 

@@ -13,9 +13,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ImageButton // Importe ImageButton
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -34,6 +31,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
+import com.reaj.emixer.IMessageService
 import com.reaj.emixer.R
 import com.reaj.emixer.data.local.database.AppDatabase
 import com.reaj.emixer.data.model.UserModel
@@ -50,25 +48,76 @@ class UserPage : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
     private lateinit var analytics: FirebaseAnalytics
-
-    private val AUDIO_PERMISSION_REQUEST = 100
     private var hasChanges = false
 
     private lateinit var permissionManager: PermissionManager
-    private lateinit var aidlServiceManager: AidlServiceManager
     private lateinit var audioManager: AudioManager
     private lateinit var audioSettingsManager: AudioSettingsManager
 
-    private lateinit var playbackHandler: Handler
+    private val playbackHandler = Handler(Looper.getMainLooper())
     private lateinit var updatePlaybackProgressRunnable: Runnable
     private var currentTrackIndex: Int = 0
 
     private lateinit var lottieAnimationView: LottieAnimationView
-
     private val trackLottieMap = mapOf(
         0 to R.raw.skull,
         1 to R.raw.dancing
     )
+
+    private fun syncUiWithServiceState(service: IMessageService) {
+        try {
+            currentTrackIndex = service.selectedTrackIndex
+            val isPlaying = service.isPlaying
+            val duration = service.duration
+            val position = service.currentPosition
+
+            Log.d(TAG, "Sincronizando UI: Track=$currentTrackIndex, IsPlaying=$isPlaying, Duration=$duration, Position=$position")
+
+            updateLottieAnimation(currentTrackIndex, isPlaying)
+
+            if (duration > 0) {
+                binding.playbackSeekBar.max = duration
+                binding.playbackSeekBar.progress = position
+            } else {
+                binding.playbackSeekBar.max = 100
+                binding.playbackSeekBar.progress = 0
+            }
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Erro ao sincronizar UI com o serviço: ${e.message}")
+        }
+    }
+
+    private val serviceConnectedCallback: (IMessageService) -> Unit = { service ->
+        Log.d(TAG, "Serviço AIDL conectado (callback UserPage).")
+        audioManager = AudioManager(AidlServiceManager)
+        audioSettingsManager = AudioSettingsManager(
+            WeakReference(this),
+            service,
+            AidlServiceManager.isServiceBound(),
+            onSettingsChanged = { hasChanges = true },
+            onBassChanged = { value -> audioManager.setBass(value) },
+            onMidChanged = { value -> audioManager.setMid(value) },
+            onTrebleChanged = { value -> audioManager.setTreble(value) },
+            onMainVolumeChanged = { value -> audioManager.setMainVolume(value) },
+            onPanChanged = { value -> audioManager.setPan(value) }
+        )
+
+        audioSettingsManager.setupSeekBarListeners(
+            binding.bassSeekBar, binding.midSeekBar, binding.highSeekBar,
+            binding.mainVolumeSeekBar, binding.panSeekBar
+        )
+
+        setupPlaybackControls()
+        observeUiState()
+        syncUiWithServiceState(service)
+        playbackHandler.post(updatePlaybackProgressRunnable)
+    }
+
+    private val serviceDisconnectedCallback: () -> Unit = {
+        Log.w(TAG, "Serviço AIDL desconectado (callback UserPage).")
+        playbackHandler.removeCallbacks(updatePlaybackProgressRunnable)
+        if (view != null) lottieAnimationView.pauseAnimation()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentUserPageBinding.inflate(inflater, container, false)
@@ -77,114 +126,102 @@ class UserPage : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         analytics = Firebase.analytics
-
-        aidlServiceManager = AidlServiceManager(requireContext())
         permissionManager = PermissionManager(requireContext(), requireActivity())
 
-        val database = AppDatabase.getDatabase(requireContext().applicationContext)
-        val usersRepository = UsersRepository(database.usersDao())
-        val factory = MainViewModelFactory(usersRepository)
+        val factory = MainViewModelFactory(UsersRepository(AppDatabase.getDatabase(requireContext()).usersDao()))
         viewModel = ViewModelProvider(requireActivity(), factory)[MainViewModel::class.java]
 
+        lottieAnimationView = binding.animationView
         setupBackPressedDispatcher()
-        checkAudioPermissions()
+        permissionManager.checkAudioPermissions(100)
 
-        playbackHandler = Handler(Looper.getMainLooper())
         updatePlaybackProgressRunnable = object : Runnable {
             override fun run() {
-                if (aidlServiceManager.isServiceBound()) {
-                    val isPlayingAudio = audioManager.isPlaying()
-                    if (isPlayingAudio && !lottieAnimationView.isAnimating) {
-                        lottieAnimationView.playAnimation()
-                    } else if (!isPlayingAudio && lottieAnimationView.isAnimating) {
-                        lottieAnimationView.pauseAnimation()
-                    }
-
-                    try {
-                        val currentPosition = audioManager.getCurrentPosition()
-                        val duration = audioManager.getDuration()
-                        if (duration > 0) {
-                            binding.playbackSeekBar.max = duration
-                            binding.playbackSeekBar.progress = currentPosition
-                        }
-                    } catch (e: RemoteException) {
-                        Log.e(TAG, "Error getting playback progress: ${e.message}")
-                    }
+                if (::audioManager.isInitialized && view != null && AidlServiceManager.isServiceBound()) {
+                    syncUiWithServiceState(AidlServiceManager.messageService!!)
                 }
                 playbackHandler.postDelayed(this, 1000)
             }
         }
 
-        lottieAnimationView = binding.animationView
-
-        bindAidlService()
-
         binding.saveAudioSettingsButton.setOnClickListener { saveAudioSettingsAndNavigate() }
         binding.resetAudioSettingsButton.setOnClickListener { resetAudioSettings() }
+        binding.btnSelectTrack.setOnClickListener { showTrackSelectionDialog() }
+    }
 
-        // NOVO: Listener para o botão de seleção de faixa
-        binding.btnSelectTrack.setOnClickListener {
-            showTrackSelectionDialog()
+    override fun onStart() {
+        super.onStart()
+        AidlServiceManager.addServiceConnectedCallback(serviceConnectedCallback)
+        AidlServiceManager.addServiceDisconnectedCallback(serviceDisconnectedCallback)
+
+        AidlServiceManager.messageService?.let { service ->
+            Log.d(TAG, "Serviço já conectado no onStart. Sincronizando UI.")
+            if (!::audioManager.isInitialized) {
+                serviceConnectedCallback.invoke(service)
+            } else {
+                syncUiWithServiceState(service)
+            }
         }
     }
 
-    private fun bindAidlService() {
-        aidlServiceManager.bindService(
-            onServiceConnected = { service ->
-                audioManager = AudioManager(aidlServiceManager)
-                audioSettingsManager = AudioSettingsManager(
-                    WeakReference(this),
-                    aidlServiceManager.messageService!!,
-                    aidlServiceManager.isServiceBound(),
-                    onSettingsChanged = { hasChanges = true },
-                    onBassChanged = { value -> audioManager.setBass(value) },
-                    onMidChanged = { value -> audioManager.setMid(value) },
-                    onTrebleChanged = { value -> audioManager.setTreble(value) },
-                    onMainVolumeChanged = { value -> audioManager.setMainVolume(value) },
-                    onPanChanged = { value -> audioManager.setPan(value) }
-                )
-
-                audioSettingsManager.setupSeekBarListeners(
-                    binding.bassSeekBar,
-                    binding.midSeekBar,
-                    binding.highSeekBar,
-                    binding.mainVolumeSeekBar,
-                    binding.panSeekBar
-                )
-
-                setupPlaybackControls()
-
-                observeUiState()
-
-                currentTrackIndex = 0
-                updateLottieAnimation(currentTrackIndex, audioManager.isPlaying())
-
-                playbackHandler.post(updatePlaybackProgressRunnable)
-            },
-            onServiceDisconnected = {
-                Log.w(TAG, "AIDL Service disconnected")
-                playbackHandler.removeCallbacks(updatePlaybackProgressRunnable)
-                lottieAnimationView.pauseAnimation()
-            }
-        )
+    override fun onStop() {
+        super.onStop()
+        AidlServiceManager.removeServiceConnectedCallback(serviceConnectedCallback)
+        AidlServiceManager.removeServiceDisconnectedCallback(serviceDisconnectedCallback)
+        playbackHandler.removeCallbacks(updatePlaybackProgressRunnable)
     }
 
-    private fun setupBackPressedDispatcher() {
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (hasChanges) {
-                    showDiscardChangesDialog()
-                } else {
-                    findNavController().navigateUp()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setupPlaybackControls() {
+        binding.btnPlay.setOnClickListener {
+            if (!::audioManager.isInitialized) return@setOnClickListener
+            if (audioManager.isPlaying()) {
+                audioManager.pause()
+            } else {
+                audioManager.play()
+            }
+        }
+
+        binding.btnStop.setOnClickListener {
+            if (!::audioManager.isInitialized) return@setOnClickListener
+            audioManager.stop()
+        }
+
+        binding.btnPrevious.setOnClickListener {
+            if (!::audioManager.isInitialized) return@setOnClickListener
+            val tracks = audioManager.getAvailableTracks()
+            if (tracks.isNotEmpty()) {
+                val newIndex = (currentTrackIndex - 1 + tracks.size) % tracks.size
+                audioManager.selectTrack(newIndex)
+            }
+        }
+
+        binding.btnNext.setOnClickListener {
+            if (!::audioManager.isInitialized) return@setOnClickListener
+            val tracks = audioManager.getAvailableTracks()
+            if (tracks.isNotEmpty()) {
+                val newIndex = (currentTrackIndex + 1) % tracks.size
+                audioManager.selectTrack(newIndex)
+            }
+        }
+
+        binding.playbackSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                playbackHandler.removeCallbacks(updatePlaybackProgressRunnable)
+            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                if (::audioManager.isInitialized) {
+                    seekBar?.progress?.let { audioManager.seekTo(it) }
+                    playbackHandler.post(updatePlaybackProgressRunnable)
                 }
             }
         })
-    }
-
-    private fun checkAudioPermissions() {
-        permissionManager.checkAudioPermissions(AUDIO_PERMISSION_REQUEST)
     }
 
     private fun observeUiState() {
@@ -196,79 +233,45 @@ class UserPage : Fragment() {
                     val fullText = welcomeText + userName
 
                     val spannableString = SpannableStringBuilder(fullText)
-                    val start = welcomeText.length
-                    val end = fullText.length
-
-                    spannableString.setSpan(
-                        StyleSpan(Typeface.BOLD),
-                        start,
-                        end,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
+                    spannableString.setSpan(StyleSpan(Typeface.BOLD), welcomeText.length, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     binding.txtUserName.text = spannableString
 
-                    binding.bassSeekBar.progress = data.user?.bass ?: 50
-                    binding.midSeekBar.progress = data.user?.middle ?: 50
-                    binding.highSeekBar.progress = data.user?.high ?: 50
-                    binding.mainVolumeSeekBar.progress = data.user?.mainVolume ?: 50
-                    binding.panSeekBar.progress = (data.user?.pan?.let { (it + 100) / 2 } ?: 50)
-                    hasChanges = false
+                    if (!hasChanges) {
+                        binding.bassSeekBar.progress = data.user?.bass ?: 50
+                        binding.midSeekBar.progress = data.user?.middle ?: 50
+                        binding.highSeekBar.progress = data.user?.high ?: 50
+                        binding.mainVolumeSeekBar.progress = data.user?.mainVolume ?: 50
+                        binding.panSeekBar.progress = (data.user?.pan?.let { (it + 100) / 2 } ?: 50)
+                    }
                 }
             }
         }
     }
 
     private fun saveAudioSettingsAndNavigate() {
-        hasChanges = false
         saveAudioSettings()
         findNavController().navigate(R.id.action_userPage_to_welcome)
     }
 
-    private fun navigateBack() {
-        if (hasChanges) {
-            showDiscardChangesDialog()
-        } else {
-            findNavController().navigateUp()
-        }
-    }
-
     private fun saveAudioSettings() {
-        viewModel.updateUser(viewModel.uiState.value.user?.let {
-            analytics.logEvent("eqSave") {
-                param("profileid", it.id)
-                param("profilename", it.name)
-                param("bass", binding.bassSeekBar.progress.toLong())
-                param("mid", binding.midSeekBar.progress.toLong())
-                param("high", binding.highSeekBar.progress.toLong())
-                param("main", binding.mainVolumeSeekBar.progress.toLong())
-                val panValue = (binding.panSeekBar.progress * 2) - 100
-                param("pan", panValue.toLong())
-            }
-            UserModel(
-                it.id,
-                it.name,
-                it.iconIndex,
-                binding.bassSeekBar.progress,
-                binding.midSeekBar.progress,
-                binding.highSeekBar.progress,
-                binding.mainVolumeSeekBar.progress,
-                (binding.panSeekBar.progress * 2) - 100
-            )
-        })
-
         hasChanges = false
-        Toast.makeText(requireContext(), "Audio settings saved (simulated)", Toast.LENGTH_SHORT).show()
+        val user = viewModel.uiState.value.user ?: return
+        val panValue = (binding.panSeekBar.progress * 2) - 100
+        val updatedUser = user.copy(
+            bass = binding.bassSeekBar.progress,
+            middle = binding.midSeekBar.progress,
+            high = binding.highSeekBar.progress,
+            mainVolume = binding.mainVolumeSeekBar.progress,
+            pan = panValue
+        )
+        viewModel.updateUser(updatedUser)
+        Toast.makeText(requireContext(), "Audio settings saved", Toast.LENGTH_SHORT).show()
     }
 
     private fun resetAudioSettings() {
+        if (!::audioSettingsManager.isInitialized) return
         hasChanges = true
-        audioSettingsManager.resetToDefaults(
-            binding.bassSeekBar,
-            binding.midSeekBar,
-            binding.highSeekBar,
-            binding.mainVolumeSeekBar,
-            binding.panSeekBar
-        )
+        audioSettingsManager.resetToDefaults(binding.bassSeekBar, binding.midSeekBar, binding.highSeekBar, binding.mainVolumeSeekBar, binding.panSeekBar)
     }
 
     private fun showDiscardChangesDialog() {
@@ -276,116 +279,48 @@ class UserPage : Fragment() {
             .setTitle("Discard Changes?")
             .setMessage("You have unsaved changes. Do you want to discard them?")
             .setPositiveButton("Discard") { _, _ -> findNavController().navigateUp() }
-            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun setupPlaybackControls() {
-        binding.btnPlay.setOnClickListener {
-            if (audioManager.isPlaying()) {
-                audioManager.pause()
-                lottieAnimationView.pauseAnimation()
-            } else {
-                audioManager.play()
-                lottieAnimationView.playAnimation()
-            }
-            playbackHandler.post(updatePlaybackProgressRunnable)
-        }
-
-        binding.btnStop.setOnClickListener {
-            audioManager.stop()
-            lottieAnimationView.pauseAnimation()
-            binding.playbackSeekBar.progress = 0
-            playbackHandler.removeCallbacks(updatePlaybackProgressRunnable)
-        }
-
-        binding.btnPrevious.setOnClickListener {
-            val tracks = audioManager.getAvailableTracks()
-            if (tracks.isNotEmpty()) {
-                currentTrackIndex = (currentTrackIndex - 1 + tracks.size) % tracks.size
-                audioManager.selectTrack(currentTrackIndex)
-                updateLottieAnimation(currentTrackIndex, true)
-                playbackHandler.post(updatePlaybackProgressRunnable)
-            }
-        }
-
-        binding.btnNext.setOnClickListener {
-            val tracks = audioManager.getAvailableTracks()
-            if (tracks.isNotEmpty()) {
-                currentTrackIndex = (currentTrackIndex + 1) % tracks.size
-                audioManager.selectTrack(currentTrackIndex)
-                updateLottieAnimation(currentTrackIndex, true)
-                playbackHandler.post(updatePlaybackProgressRunnable)
-            }
-        }
-
-        binding.playbackSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) { }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                playbackHandler.removeCallbacks(updatePlaybackProgressRunnable)
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                seekBar?.progress?.let {
-                    audioManager.seekTo(it)
-                    playbackHandler.post(updatePlaybackProgressRunnable)
-                }
+    private fun setupBackPressedDispatcher() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (hasChanges) showDiscardChangesDialog() else findNavController().navigateUp()
             }
         })
     }
 
-    /**
-     * Exibe um diálogo para selecionar uma faixa de áudio da lista de faixas disponíveis.
-     */
     private fun showTrackSelectionDialog() {
-        val availableTracks = audioManager.getAvailableTracks()
-
-        if (availableTracks.isEmpty()) {
-            Toast.makeText(requireContext(), "No tracks available.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Converte a lista de Kotlin para um Array de CharSequence para o setItems
-        val trackNamesArray = availableTracks.toTypedArray<CharSequence>()
+        if (!::audioManager.isInitialized) return
+        val availableTracks = audioManager.getAvailableTracks().toTypedArray<CharSequence>()
+        if (availableTracks.isEmpty()) return
 
         AlertDialog.Builder(requireContext())
             .setTitle("Select a Track")
-            .setItems(trackNamesArray) { dialog, which ->
-                // 'which' é o índice do item clicado
-                audioManager.selectTrack(which)
-                currentTrackIndex = which // Atualiza o índice da faixa atual
-                updateLottieAnimation(currentTrackIndex, true) // Assume que a nova faixa começa a tocar
-                playbackHandler.post(updatePlaybackProgressRunnable) // Reinicia/continua a atualização da seek bar
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setItems(availableTracks) { _, which -> audioManager.selectTrack(which) }
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
+    // <<< FUNÇÃO CORRIGIDA >>>
     private fun updateLottieAnimation(trackIndex: Int, isPlaying: Boolean) {
-        val lottieResId = trackLottieMap[trackIndex] ?: R.raw.skull
-        lottieAnimationView.setAnimation(lottieResId)
+        if (view == null) return
 
-        if (isPlaying) {
+        val lottieResId = trackLottieMap[trackIndex] ?: R.raw.skull
+
+        // Correção: Usa a tag da view para verificar se a animação já é a correta.
+        if (lottieAnimationView.tag != lottieResId) {
+            lottieAnimationView.setAnimation(lottieResId)
+            lottieAnimationView.tag = lottieResId // Guarda o ID atual na tag
+            Log.d(TAG, "Nova animação Lottie carregada: $lottieResId")
+        }
+
+        if (isPlaying && !lottieAnimationView.isAnimating) {
             lottieAnimationView.playAnimation()
-        } else {
+        } else if (!isPlaying && lottieAnimationView.isAnimating) {
             lottieAnimationView.pauseAnimation()
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    override fun onStop() {
-        super.onStop()
-        aidlServiceManager.unbindService()
-        playbackHandler.removeCallbacks(updatePlaybackProgressRunnable)
-        lottieAnimationView.pauseAnimation()
     }
 
     companion object {

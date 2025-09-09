@@ -1,136 +1,137 @@
-// AudioManager.kt
 package com.example.emixerapp.manager
 
 import android.os.RemoteException
 import android.util.Log
-import com.reaj.emixer.IMessageService
 
-class AudioManager(private val aidlServiceManager: AidlServiceManager) {
+class AudioManager(private val serviceManager: AidlServiceManager) {
 
-    private val TAG = "AudioManager"
-
-    // Propriedade para acessar a instância do IMessageService
-    private val messageService: IMessageService?
-        get() = aidlServiceManager.messageService
-
-    // --- Métodos de controle de áudio ---
-    fun setBass(value: Int) {
-        try {
-            messageService?.setBass(value)
-        } catch (e: RemoteException) {
-            Log.e(TAG, "Error setting bass: ${e.message}")
-        }
+    companion object {
+        private const val TAG = "AudioManager"
     }
-
-    fun setMid(value: Int) {
-        try {
-            messageService?.setMid(value)
-        } catch (e: RemoteException) {
-            Log.e(TAG, "Error setting mid: ${e.message}")
-        }
-    }
-
-    fun setTreble(value: Int) {
-        try {
-            messageService?.setTreble(value)
-        } catch (e: RemoteException) {
-            Log.e(TAG, "Error setting treble: ${e.message}")
-        }
-    }
-
-    fun setMainVolume(value: Int) {
-        try {
-            messageService?.setMainVolume(value)
-        } catch (e: RemoteException) {
-            Log.e(TAG, "Error setting main volume: ${e.message}")
-        }
-    }
-
-    fun setPan(value: Int) {
-        try {
-            messageService?.setPan(value)
-        } catch (e: RemoteException) {
-            Log.e(TAG, "Error setting pan: ${e.message}")
-        }
-    }
-
-    // --- NOVOS MÉTODOS DE CONTROLE DE REPRODUÇÃO ---
 
     fun play() {
+        if (!serviceManager.isServiceBound()) {
+            Log.w(TAG, "Play: Service not bound")
+            return
+        }
         try {
-            messageService?.play()
+            serviceManager.messageService?.play()
         } catch (e: RemoteException) {
-            Log.e(TAG, "Error playing audio: ${e.message}")
+            Log.e(TAG, "Error calling play", e)
         }
     }
 
     fun pause() {
+        if (!serviceManager.isServiceBound()) {
+            Log.w(TAG, "Pause: Service not bound")
+            return
+        }
         try {
-            messageService?.pause()
+            serviceManager.messageService?.pause()
         } catch (e: RemoteException) {
-            Log.e(TAG, "Error pausing audio: ${e.message}")
+            Log.e(TAG, "Error calling pause", e)
         }
     }
 
     fun stop() {
+        if (!serviceManager.isServiceBound()) {
+            Log.w(TAG, "Stop: Service not bound")
+            return
+        }
         try {
-            messageService?.stop()
+            serviceManager.messageService?.stop()
         } catch (e: RemoteException) {
-            Log.e(TAG, "Error stopping audio: ${e.message}")
+            Log.e(TAG, "Error calling stop", e)
         }
     }
 
     fun seekTo(positionMs: Int) {
+        if (!serviceManager.isServiceBound()) return
         try {
-            messageService?.seekTo(positionMs)
+            serviceManager.messageService?.seekTo(positionMs)
         } catch (e: RemoteException) {
-            Log.e(TAG, "Error seeking audio: ${e.message}")
-        }
-    }
-
-    fun getCurrentPosition(): Int {
-        return try {
-            messageService?.getCurrentPosition() ?: 0
-        } catch (e: RemoteException) {
-            Log.e(TAG, "Error getting current position: ${e.message}")
-            0
-        }
-    }
-
-    fun getDuration(): Int {
-        return try {
-            messageService?.getDuration() ?: 0
-        } catch (e: RemoteException) {
-            Log.e(TAG, "Error getting duration: ${e.message}")
-            0
-        }
-    }
-
-    fun getAvailableTracks(): List<String> {
-        return try {
-            messageService?.getAvailableTracks() ?: emptyList()
-        } catch (e: RemoteException) {
-            Log.e(TAG, "Error getting available tracks: ${e.message}")
-            emptyList()
+            Log.e(TAG, "Error calling seekTo", e)
         }
     }
 
     fun selectTrack(trackIndex: Int) {
+        if (!serviceManager.isServiceBound()) return
         try {
-            messageService?.selectTrack(trackIndex)
+            serviceManager.messageService?.selectTrack(trackIndex)
         } catch (e: RemoteException) {
-            Log.e(TAG, "Error selecting track: ${e.message}")
+            Log.e(TAG, "Error calling selectTrack", e)
         }
     }
 
-    fun isPlaying(): Boolean { // ADICIONE ESTE MÉTODO
+    fun isPlaying(): Boolean {
+        if (!serviceManager.isServiceBound()) return false
         return try {
-            messageService?.isPlaying() ?: false
+            serviceManager.messageService?.isPlaying ?: false
         } catch (e: RemoteException) {
-            Log.e(TAG, "Error getting isPlaying state: ${e.message}")
+            Log.e(TAG, "Error calling isPlaying", e)
             false
         }
     }
 
+    fun getAvailableTracks(): List<String> {
+        if (!serviceManager.isServiceBound()) return emptyList()
+        return try {
+            serviceManager.messageService?.availableTracks ?: emptyList()
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error calling getAvailableTracks", e)
+            emptyList()
+        }
+    }
 
+    // --- MÉTODOS DE CONTROLE DE ÁUDIO ---
+
+    fun setBass(value: Int) {
+        if (!serviceManager.isServiceBound()) return
+        try {
+            serviceManager.messageService?.setBass(value)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error setting bass", e)
+        }
+    }
+
+    fun setMid(value: Int) {
+        if (!serviceManager.isServiceBound()) return
+        try {
+            serviceManager.messageService?.setMid(value)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error setting mid", e)
+        }
+    }
+
+    fun setTreble(value: Int) {
+        if (!serviceManager.isServiceBound()) return
+        try {
+            serviceManager.messageService?.setTreble(value)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error setting treble", e)
+        }
+    }
+
+    fun setMainVolume(value: Int) {
+        if (!serviceManager.isServiceBound()) return
+        try {
+            serviceManager.messageService?.setMainVolume(value)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error setting main volume", e)
+        }
+    }
+
+    fun setPan(progress: Int) {
+        if (!serviceManager.isServiceBound()) return
+
+        // Converte o progresso do slider (0-100) para o range do serviço (-100 a 100)
+        val panValue = (progress * 2) - 100
+
+        try {
+            Log.d(TAG, "Setting Pan: Slider Progress=$progress -> Service Value=$panValue")
+            serviceManager.messageService?.setPan(panValue)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error setting pan", e)
+        }
+    }
 }
