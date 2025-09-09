@@ -53,9 +53,21 @@ O aplicativo aborda o problema de equalizadores de áudio embarcados limitados o
     	*  **Uso de Memória:** Exibe a quantidade de memória RAM que o serviço está utilizando. Um valor alto não é necessariamente um problema, mas pode indicar que o serviço está consumindo muitos recursos e pode ser otimizado.
     *   **Visão Geral do Sistema (InfoFragment):** O aplicativo inclui um `InfoFragment` que fornece uma visão geral do sistema, listando as tarefas em execução e os aplicativos instalados. Este fragmento é útil para depuração, monitoramento e verificação de compatibilidade.
         *   **Informações de Tarefas:** Exibe as atividades em execução no aplicativo, úteis para monitorar o estado atual do app.
+        *   **Integração C++ e HAL Simulada:** Nesta página, também é possível acionar uma função nativa C++ que simula a interação com uma Hardware Abstraction Layer (HAL) de áudio. Este recurso é fundamental para testar a comunicação entre as camadas Java/Kotlin e C++ do aplicativo.
+
         *   **Informações de Aplicativos:** Lista todos os aplicativos instalados, útil para verificar compatibilidade e integração.
     *   **Ajuste do Brilho da Tela:** O aplicativo agora ajusta o brilho da tela usando o `WindowManager`. Isso pode ser útil para otimizar a experiência do usuário em diferentes condições de iluminação.
     *   **Serviço de Primeiro Plano:** O aplicativo utiliza um serviço de primeiro plano para garantir que as funcionalidades essenciais, como a equalização de áudio, continuem funcionando mesmo quando o aplicativo não está em primeiro plano. Uma notificação persistente é exibida para informar ao usuário que o serviço está ativo.
+*   **Integração C++ e HAL Simulada:**
+    *   **Propósito:** Para explorar otimizações de baixo nível e interação com hardware, o aplicativo agora integra código C++ que simula uma Hardware Abstraction Layer (HAL) de áudio. Esta camada nativa permite um controle mais granular sobre recursos e prepara o terreno para futuras integrações com sistemas automotivos reais.
+    *   **Tecnologias:**
+        *   **JNI (Java Native Interface):** Utilizado para criar uma ponte de comunicação eficiente entre o código Kotlin/Java do aplicativo e as funções implementadas em C++.
+        *   **CMake:** Gerencia o processo de build do código C++, compilando os arquivos-fonte em uma biblioteca compartilhada (`.so`) que é então carregada pelo aplicativo Android.
+        *   **HAL Simulada:** Implementações em C++ de estruturas e métodos (`hw_module_t`, `audio_hw_device_t`, `audio_open`, `audio_write`) que replicam a interface de uma HAL de áudio do Android, permitindo testar o fluxo de comunicação e o comportamento esperado de uma HAL real.
+    *   **Fluxo de Chamada:** A funcionalidade C++ é exposta ao aplicativo através da interface AIDL (`IMessageService.aidl`). O `MessageService.java` carrega a biblioteca nativa e invoca as funções JNI, que por sua vez interagem com a HAL C++ simulada. Isso permite que a UI (via `ServiceAIDL` Fragment) acione e teste a camada nativa.
+ 
+
+
 
 ## Layout 
 
@@ -106,8 +118,10 @@ A interface `IMessageService.aidl` define os seguintes métodos:
 *   `boolean setTreble(int value)`: Define o nível de agudos.
 *   `boolean setMainVolume(int value)`: Define o volume principal.
 *   `boolean setPan(int value)`: Define o balanço estéreo (pan).
+*   `int triggerNativeHalAudioWrite()`: Aciona a função C++ para simular a escrita na HAL.
 
-Cada método retorna um valor booleano (`true` ou `false`) para indicar se a configuração foi aplicada com sucesso.
+
++Cada método retorna um valor booleano (`true` ou `false`) para indicar se a configuração foi aplicada com sucesso (ou um `int` para o método nativo).
 
 #### Validação de Valores
 
@@ -253,8 +267,8 @@ Para executar os testes:
 
 O desenvolvimento futuro se concentrará em:
 
-* **Integração com Sistemas Automotivos:** Conectar o aplicativo ao sistema de áudio de um veículo para controle direto.
-* **Recursos Avançados de Equalização:** Explorar algoritmos e opções de equalização mais sofisticados.
+* **Integração com Sistemas Automotivos:** Conectar o aplicativo ao sistema de áudio de um veículo para controle direto, aproveitando a base estabelecida pela integração da HAL C++.
+* **Recursos Avançados de Equalização:** Explorar algoritmos e opções de equalização mais sofisticados, possivelmente implementando processame
 * **Recursos Adicionais:** Implementar recursos como predefinições, visualizações, sincronização entre dispositivos, tela para escolha de quais contatos importar, modo escuro, controle de acesso e recursos de interação social.
 
 
