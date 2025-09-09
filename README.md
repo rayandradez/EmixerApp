@@ -77,7 +77,8 @@ O foco principal foi não apenas criar a funcionalidade de equalização, mas ta
 #### The original project: [Figma](https://www.figma.com/design/ahaN4lSCMNpfLZp3OSnHPf/Emixer?node-id=0-1&p=f&t=YtUwxEKy6SIWXL8c-0)
 
 <div style="display: flex; flex-direction: 'row'; align-items: 'center';">
-	<img src="images/EmixerApp.png" width="325px">	
+	<img src="images/automotive_home.png" width="325px"> <img src="images/automotive_user_page_horizontal.png" width="325px"> <img src="images/testing_services_page.png" width="325px">		
+    <img src="images/visao_geral_sistema.png" width="325px"> <img src="images/add_new_user.png" width="325px"> <img src="images/light_mode.png" width="325px">			
 </div>
 
 ## Detalhes Técnicos
@@ -193,7 +194,7 @@ Para ajustar os parâmetros de equalização de forma eficaz, o aplicativo preci
 - **Privacidade:** Não coleta informações pessoais.
 
 <div style="display: flex; flex-direction: 'row'; align-items: 'center';">
-	<img src="images/audio_permission.png" width="325px">	
+	<img src="images/permission_screen.png" width="325px">	
 </div>
 
 ### Permissão para Modificar Configurações de Áudio
@@ -214,7 +215,7 @@ Para permitir a importação de perfis, o aplicativo requer acesso à lista de c
 - **Privacidade:** Não coleta informações pessoais.
 
 <div style="display: flex; flex-direction: 'row'; align-items: 'center';">
-	<img src="images/contacts_permission.png" width="325px">	
+	<img src="images/import_contacts.png" width="325px">	
 </div>
 
 ### Permissões para Serviço de Primeiro Plano
