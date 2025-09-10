@@ -204,7 +204,23 @@ class UserPage : Fragment() {
     }
 
     // --- Métodos restantes sem alterações ---
-    private fun syncUiWithServiceState(service: IMessageService) { if (view == null) return; try { currentTrackIndex = service.selectedTrackIndex; val isPlaying = service.isPlaying; val duration = service.duration; val position = service.currentPosition; updateLottieAnimation(currentTrackIndex, isPlaying); if (duration > 0) { binding.playbackSeekBar.max = duration; binding.playbackSeekBar.progress = position; } } catch (e: RemoteException) { Log.e(TAG, "Erro ao sincronizar UI: ${e.message}"); } }
+    private fun syncUiWithServiceState(service: IMessageService) {
+        if (view == null) return; try {
+            currentTrackIndex = service.selectedTrackIndex;
+            val isPlaying = service.isPlaying;
+            val duration = service.duration;
+            val position = service.currentPosition;
+            updateLottieAnimation(currentTrackIndex, isPlaying);
+            binding.btnPlay.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
+
+            if (duration > 0) {
+                binding.playbackSeekBar.max = duration;
+                binding.playbackSeekBar.progress = position;
+            }
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Erro ao sincronizar UI: ${e.message}");
+        }
+    }
     private fun setupPlaybackControls() { binding.btnPlay.setOnClickListener { if (!::audioManager.isInitialized) return@setOnClickListener; if (audioManager.isPlaying()) audioManager.pause() else audioManager.play() }; binding.btnStop.setOnClickListener { if (!::audioManager.isInitialized) return@setOnClickListener; audioManager.stop() }; binding.btnPrevious.setOnClickListener { if (!::audioManager.isInitialized) return@setOnClickListener; val tracks = audioManager.getAvailableTracks(); if (tracks.isNotEmpty()) { val newIndex = (currentTrackIndex - 1 + tracks.size) % tracks.size; audioManager.selectTrack(newIndex) } }; binding.btnNext.setOnClickListener { if (!::audioManager.isInitialized) return@setOnClickListener; val tracks = audioManager.getAvailableTracks(); if (tracks.isNotEmpty()) { val newIndex = (currentTrackIndex + 1) % tracks.size; audioManager.selectTrack(newIndex) } }; binding.playbackSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener { override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}; override fun onStartTrackingTouch(seekBar: SeekBar?) { playbackHandler.removeCallbacks(updatePlaybackProgressRunnable) }; override fun onStopTrackingTouch(seekBar: SeekBar?) { if (::audioManager.isInitialized) { seekBar?.progress?.let { audioManager.seekTo(it) }; playbackHandler.post(updatePlaybackProgressRunnable) } } }) }
     private fun saveAudioSettingsAndNavigate() { saveAudioSettings(); findNavController().navigate(R.id.action_userPage_to_welcome) }
     private fun saveAudioSettings() { hasChanges = false; val user = viewModel.uiState.value.user ?: return; val panValue = (binding.panSeekBar.progress * 2) - 100; val updatedUser = user.copy(bass = binding.bassSeekBar.progress, middle = binding.midSeekBar.progress, high = binding.highSeekBar.progress, mainVolume = binding.mainVolumeSeekBar.progress, pan = panValue); viewModel.updateUser(updatedUser); Toast.makeText(requireContext(), "Audio settings saved", Toast.LENGTH_SHORT).show() }
